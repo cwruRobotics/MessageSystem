@@ -10,7 +10,7 @@ def failExecution(errorMsg):
     print("Failed Build Stack:")
     traceback.print_stack(file=sys.stdout)
 
-    print("********************\n* FAILURE %s\n********************\n")
+    print("********************\n* FAILURE %s\n********************\n" % errorMsg)
     sys.exit(1)
 
 
@@ -73,7 +73,7 @@ def copyTree(srcPath, destPath):
         if os.path.isdir(destPath):
             failExecution("cannot copy directory [%s]: %s exists!" %
                           (srcPath, destPath))
-        elif os.path.isFile(destPath):
+        elif os.path.isfile(destPath):
             failExecution("Cannot copy directory [%s]: %s is a File!" %
                           (srcPath, destPath))
         shutil.copytree(srcPath, destPath)

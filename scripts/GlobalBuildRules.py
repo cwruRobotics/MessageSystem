@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import traceback
+import _winreg
 
 
 def failExecution(errorMsg):
@@ -79,3 +80,56 @@ def copyTree(srcPath, destPath):
         shutil.copytree(srcPath, destPath)
     else:
         shutil.copy2(srcPath, destPath)  # copy2() copies file metaData
+
+
+def getProcessor():
+    return getRegistryValue(
+        "HKEY_LOCAL_MACHINE",
+        "SYSTEM\\CurrentControlSet\Control\\Session Manager\\Environment",
+        "PROCESSOR_ARCHITECTURE"
+    ).lower()
+
+
+def getRegistryValue(key, subkey, value):
+    key = getattr(_winreg, key)
+    handle = _winreg.OpenKey(key, subkey)
+
+    # this returns (value, type) where the value
+    # is the value of the processor and the type
+    # is the registry type of the value
+    return _winreg.QueryValueEx(handle, value)[0]
+
+
+def parseCommandLine(commandLine):
+    parsedCommandedValues = {}
+    parsedCommandedMethods = []
+    key = None
+    for command in commandLine:
+        if '-' in command:
+            key = command.replace('-', '', 1)
+        elif key is not None:
+            parsedCommandedValues[key] = command
+            key = None
+        else:
+            parsedCommandedMethods.append(command)
+    return (parsedCommandedMethods, parsedCommandedValues)
+
+
+class FileSystemDirectory():
+    ROOT = 1
+    WORKING = 2
+    SCRIPT_ROOT = 3
+    PROJECT_ROOT = 4
+    MANUAL_DIR = 5
+    CPP_INCLUDE_DIR = 6
+    CPP_SOUCE_DIR = 7
+    TEST_ROOT = 8
+    UNITTEST_DIR = 9
+    CMAKE_BASE_DIR = 10
+    CMAKE_TOOLCHAIN_DIR = 11
+    CMAKE_MODULE_DIR = 12
+    OUT_ROOT = 13
+    INSTALL_ROOT = 14
+    INSTALL_DIR = 15
+
+

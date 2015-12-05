@@ -134,6 +134,7 @@ class FileSystemDirectory():
     INSTALL_ROOT = 14
     INSTALL_DIR = 15
 
+
 def getDirectory(directoryEnum):
     if directoryEnum == FileSystemDirectory.ROOT:
         return os.path.join(os.getcwd(), '..')
@@ -165,3 +166,6 @@ def getDirectory(directoryEnum):
         return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'installRoot')
     elif directoryEnum == FileSystemDirectory.INSTALL_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'install')
+    else:
+        failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
+

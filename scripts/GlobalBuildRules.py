@@ -117,6 +117,66 @@ def parseCommandLine(commandLine):
     return (parsedCommandedMethods, parsedCommandedValues)
 
 
+def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment={}):
+    appAndArgs = list(argsForApp)
+    if appToExecute is not None:
+        appAndArgs.append(appToExecute)
+
+    # there will be an environment variable set externally called
+    # VS_VERSION that will declare the version of Visual Studio's Compiler
+    # you want this build to use. Defaults to 2014
+    visualStudioPathBase = os.environ.get('VS%s0COMNTOOLS' % (
+                                          os.environ.get('VS_VERSION')
+                                          if os.environ.get('VS_VERSION') is not None else '14'
+                                          ))
+
+    # this is the fully qualified path to vcvarsall.bat
+    visualStudioUtilsPath = (
+        os.path.join(visualStudioPathBase, '..', '..', 'VC', 'vcvarsall.bat')
+        if visualStudioPathBase is not None else
+        (
+            failExecution('No Visual Studio Compiler present on system')
+        )
+    )
+
+    # we want to execute the command in the appropriate working directory.
+    # so we will change into that directory at the beginning of the command
+    # execution.
+    if wd is not None:
+        appAndArgs.insert(0, 'cd "%s" &&' % wd)
+
+    # this is important. We want to execute vcvarsall.bat so that the following
+    # commands execute in the visual studio environment. vcvarsall.bat prints lots
+    # of information and is optimized if we tell it what the processor architecture
+    # is. So, we give it the processor architecture and redirect all output to 'nul'
+    # which means we won't see it. Then, we add all the commands we want to execute.
+    cmdString = '("%s" %s > nul) && %s' % (visualStudioUtilsPath,
+                                            getProcessor(),
+                                            ' '.join(appAndArgs))
+
+    # allows additional environment variables to be set / altered.
+    realEnv = dict(os.environ)
+    realEnv.update(environment)
+    print cmdString
+
+    # fork a child process to execute out commands, piping the output to stdout (eventually)
+    # and applying the environment given.
+    childProcess = subprocess.Popen(cmdString, cwd=wd, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, env=realEnv, bufsize=1)
+
+    for line in iter(childProcess.stdout.readline, b''):
+        print line.rstrip() + '\n'
+
+    # this waits for the childProcess to finish its execution.
+    # this is necessary to allow the childProcess variables to settle,
+    # most importantly the returncode variable.
+    childProcess.communicate()
+
+    # fail execution if there was an error.
+    if childProcess.returncode < 0:
+        failExecution('execute with visual studio failed with returncode [%s]' % childProcess.returncode)
+
+
 class FileSystemDirectory():
     ROOT = 1
     WORKING = 2

@@ -82,6 +82,7 @@ def copyTree(srcPath, destPath):
         shutil.copy2(srcPath, destPath)  # copy2() copies file metaData
 
 
+# this is windows specific
 def getProcessor():
     return getRegistryValue(
         "HKEY_LOCAL_MACHINE",
@@ -90,6 +91,7 @@ def getProcessor():
     ).lower()
 
 
+# this is windows specific
 def getRegistryValue(key, subkey, value):
     key = getattr(_winreg, key)
     handle = _winreg.OpenKey(key, subkey)
@@ -124,7 +126,7 @@ class FileSystemDirectory():
     CPP_INCLUDE_DIR = 6
     CPP_SOUCE_DIR = 7
     TEST_ROOT = 8
-    UNITTEST_DIR = 9
+    TEST_REPORT_DIR = 9
     CMAKE_BASE_DIR = 10
     CMAKE_TOOLCHAIN_DIR = 11
     CMAKE_MODULE_DIR = 12
@@ -132,4 +134,38 @@ class FileSystemDirectory():
     INSTALL_ROOT = 14
     INSTALL_DIR = 15
 
+
+def getDirectory(directoryEnum):
+    if directoryEnum == FileSystemDirectory.ROOT:
+        return os.path.join(os.getcwd(), '..')
+    elif directoryEnum == FileSystemDirectory.WORKING:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'build')
+    elif directoryEnum == FileSystemDirectory.SCRIPT_ROOT:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'scripts')
+    elif directoryEnum == FileSystemDirectory.PROJECT_ROOT:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'projects')
+    elif directoryEnum == FileSystemDirectory.MANUAL_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'manual')
+    elif directoryEnum == FileSystemDirectory.CPP_INCLUDE_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp', 'include')
+    elif directoryEnum == FileSystemDirectory.CPP_SOUCE_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp', 'source')
+    elif directoryEnum == FileSystemDirectory.TEST_ROOT:
+        return os.path.join(getDirectory(FileSystemDirectory.CPP_SOUCE_DIR), 'unittest')
+    elif directoryEnum == FileSystemDirectory.TEST_REPORT_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'testReports')
+    elif directoryEnum == FileSystemDirectory.CMAKE_BASE_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cmake')
+    elif directoryEnum == FileSystemDirectory.CMAKE_TOOLCHAIN_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.CMAKE_BASE_DIR), 'toolchains')
+    elif directoryEnum == FileSystemDirectory.CMAKE_MODULE_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.CMAKE_BASE_DIR), 'modules')
+    elif directoryEnum == FileSystemDirectory.OUT_ROOT:
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'out')
+    elif directoryEnum == FileSystemDirectory.INSTALL_ROOT:
+        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'installRoot')
+    elif directoryEnum == FileSystemDirectory.INSTALL_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'install')
+    else:
+        failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 

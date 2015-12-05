@@ -117,6 +117,44 @@ def parseCommandLine(commandLine):
     return (parsedCommandedMethods, parsedCommandedValues)
 
 
+def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment={}):
+    appAndArgs = list(argsForApp)
+    if appToExecute is not None:
+        appAndArgs.append(appToExecute)
+
+    visualStudioPathBase = os.environ.get('VS%s0COMNTOOLS' % (
+                                          os.environ.get('VS_VERSION')
+                                          if os.environ.get('VS_VERSION') is not None else '14'
+                                          ))
+
+    visualStudioUtilsPath = (
+        os.path.join(visualStudioPathBase, '..', '..', 'VC', 'vcvarsall.bat')
+        if visualStudioPathBase is not None else
+        (
+            failExecution('No Visual Studio Compiler present on system')
+        )
+    )
+
+    if wd is not None:
+        appAndArgs.insert(0, 'cd "%s" &&' % wd)
+    cmdString = '("%s" %s > nul) && %s' % (visualStudioUtilsPath,
+                                            getProcessor(),
+                                            ' '.join(appAndArgs))
+
+    realEnv = dict(os.environ)
+    realEnv.update(environment)
+    print cmdString
+    childProcess = subprocess.Popen(cmdString, cwd=wd, shell=True, stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT, env=realEnv, bufsize=1)
+
+    for line in iter(childProcess.stdout.readline, b''):
+        print line.rstrip() + '\n'
+    childProcess.communicate()
+
+    if childProcess.returncode < 0:
+        failExecution('execute with visual studio failed with returncode [%s]' % childProcess.returncode)
+
+
 class FileSystemDirectory():
     ROOT = 1
     WORKING = 2

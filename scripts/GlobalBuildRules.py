@@ -231,6 +231,7 @@ class FileSystemDirectory():
     OUT_ROOT = 12               # the absolute path to the directory where built code goes
     INSTALL_ROOT = 13           # the absolute path to the top level directory where all built code goes
     INSTALL_DIR = 14            # the absolute path to the directory where public c++ headers go when built
+    LOG_DIR = 15                # the absolute path to the directory where all log files will be written
 
 
 # a method to get the absolute path to a directory within the project based
@@ -264,6 +265,8 @@ def getDirectory(directoryEnum):
         return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'installRoot')
     elif directoryEnum == FileSystemDirectory.INSTALL_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'install')
+    elif directoryEnum == FileSystemDirectory.LOG_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'logs')
     else:
         failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 

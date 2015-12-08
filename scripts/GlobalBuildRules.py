@@ -178,13 +178,34 @@ def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment
         failExecution('execute with visual studio failed with returncode [%s]' % childProcess.returncode)
 
 
+# this is a nifty function to attempt to call any callable object with its desired arguments.
 def call(callable, args):
+    # we need to build a dictionary of all the arguments that the callable object requires
+    # to execute
     callableArgs = {}
+
+    # inspect is a cool module that is used to analyze a callable object at runtime.
+    # here we are getting the set of parameters that "callable" has in its method/function
+    # signature. inspect has converted the parameter names to strings.
     for arg in inspect.getargspec(callable).args:
         if arg in args:
             callableArgs[arg] = args[arg]
 
+    # note that at this point, callableArgs may NOT contain all arguments in "callables"
+    # method/function signature. This is ok. Python allows default values to be specified
+    # so we will hope that the arguments NOT contained in "callableArgs" are default parameters.
+    # An example of this is if "callable" is a method. Methods in Python require the first
+    # parameter to be "self" referring to the object that the method belongs to. inspect will
+    # return "self" as a parameter, which we cannot provide, but will be provided by the Python
+    # interpreter when executed.
+
     try:
+        # this is known as variable unpacking. We are taking the dictionary, and unpacking
+        # it, which the interpreter treats as a parameter list in this context. It will build
+        # a final parameter list combining the default values of the method/function and the ones
+        # we have provided and call the method/function with it. This throws an error if the total
+        # parameter list does not match the callable's signature EXACTLY. This is why we needed
+        # to construct "callableArgs" in the first place, to filter out excess arguments.
         callable(**callableArgs)
         return True
     except:
@@ -192,23 +213,28 @@ def call(callable, args):
 
 
 class FileSystemDirectory():
-    ROOT = 1
-    WORKING = 2
-    SCRIPT_ROOT = 3
-    PROJECT_ROOT = 4
-    MANUAL_DIR = 5
-    CPP_INCLUDE_DIR = 6
-    CPP_SOUCE_DIR = 7
-    TEST_ROOT = 8
-    TEST_REPORT_DIR = 9
-    CMAKE_BASE_DIR = 10
-    CMAKE_TOOLCHAIN_DIR = 11
-    CMAKE_MODULE_DIR = 12
-    OUT_ROOT = 13
-    INSTALL_ROOT = 14
-    INSTALL_DIR = 15
+    ROOT = 1                    # the absolute path to the top level of the project
+    WORKING = 2                 # the absolute path to the build directory of the project
+    SCRIPT_ROOT = 3             # the absolute path to the directory where all static scripts are kept
+                                #   (a static script is abstract enough that it can be shared between
+                                #    projects, this script is a good example)
+    PROJECT_ROOT = 4            # the absolute path to the top level CMAKE directory of the project
+    MANUAL_DIR = 5              # the absolute path to the documentation directory of the project
+    CPP_SOURCE_DIR = 6          # the absolute path to the top level directory of c++ source directories
+    TEST_ROOT = 7               # the absolute path to the top level directory of c++ unit test directories
+    TEST_REPORT_DIR = 8         # the absolute path to the directory containing test reports
+    CMAKE_BASE_DIR = 9          # the absolute path to the top level directory of CMAKE utilities
+    CMAKE_TOOLCHAIN_DIR = 10    # the absolute path to the CMAKE toolchain directory
+                                #   - toolchain files are used for certain platforms to separate
+                                #     CMAKE functionality
+    CMAKE_MODULE_DIR = 11       # the absolute path to the CMAKE modules directory
+    OUT_ROOT = 12               # the absolute path to the directory where built code goes
+    INSTALL_ROOT = 13           # the absolute path to the top level directory where all built code goes
+    INSTALL_DIR = 14            # the absolute path to the directory where public c++ headers go when built
 
 
+# a method to get the absolute path to a directory within the project based
+# on the FileSystemDirectory enums described above
 def getDirectory(directoryEnum):
     if directoryEnum == FileSystemDirectory.ROOT:
         return os.path.join(os.getcwd(), '..')
@@ -220,12 +246,10 @@ def getDirectory(directoryEnum):
         return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'projects')
     elif directoryEnum == FileSystemDirectory.MANUAL_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'manual')
-    elif directoryEnum == FileSystemDirectory.CPP_INCLUDE_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp', 'include')
-    elif directoryEnum == FileSystemDirectory.CPP_SOUCE_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp', 'source')
+    elif directoryEnum == FileSystemDirectory.CPP_SOURCE_DIR:
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp')
     elif directoryEnum == FileSystemDirectory.TEST_ROOT:
-        return os.path.join(getDirectory(FileSystemDirectory.CPP_SOUCE_DIR), 'unittest')
+        return os.path.join(getDirectory(FileSystemDirectory.CPP_SOURCE_DIR), 'source', 'unitTest')
     elif directoryEnum == FileSystemDirectory.TEST_REPORT_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'testReports')
     elif directoryEnum == FileSystemDirectory.CMAKE_BASE_DIR:
@@ -244,6 +268,8 @@ def getDirectory(directoryEnum):
         failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 
 
+# the parent class of the build process. It contains methods common to all build processes as well
+# as the ability to run methods in user specified order with user given arguments.
 class GlobalBuild(object):
     def __init__(self):
         self._project_name = ""
@@ -255,9 +281,12 @@ class GlobalBuild(object):
         self._build_directory = getDirectory(FileSystemDirectory.WORKING)
         # execute local environment
 
+    # just to see if user method calls will work
     def testMethod(self):
         print("Test complete!")
 
+    # executes a particular part of the build process and fails the build
+    # if that build step fails.
     def executeStep(self, buildStep):
         if hasattr(self, buildStep):
             print("-Executing build step [%s]" % buildStep)
@@ -269,26 +298,40 @@ class GlobalBuild(object):
             failExecution("Project %s does not have build step [%s]" %
                           (self._project_name, buildStep))
 
+    # executes all build steps
     def executeBuildSteps(self, buildSteps):
         for buildStep in buildSteps:
             self.executeStep(buildStep)
 
+    # entry point into the build process. At this point, user supplied
+    # methods and arguments will have been entered and parsed. If no methods
+    # are present, then the default build steps will be run.
+    # (note that the default steps will be left to the child (LocalBuild) of
+    #  GlobalBuild to define so that the default build steps can be unique
+    #  for each project).
     def run(self, parsedCommandLine):
         (buildSteps, self._custom_args) = parsedCommandLine
 
-        # if self._project_name == "":
-        #    failExecution("Project name not set")
+        # this build MUST have a project name to run
+        if self._project_name == "":
+           failExecution("Project name not set")
 
+        # if the user has not specified any build steps, run the default
         if len(buildSteps) == 0:
             buildSteps = self._build_steps
 
+        # run the build for the user specified configuration else run for
+        # all configurations (the user can restrict this to build for
+        # debug or release versions)
         if "configuration" in self._custom_args:
-            print("\n[%s]\n" % self._custom_args["configuration"])
             self._config = self._custom_args["configuration"]
+            if self._config != "release" or self._config != "debug":
+                failExecution("Unknown configuration [%s]" % self._config)
+            print("\nbuilding configuration [%s]\n" % self._config)
             self.executeBuildSteps(buildSteps)
         else:
             for configuration in self._configurations:
-                print("\n[%s]\n" % configuration)
+                print("\nbuilding configuration [%s]\n" % configuration)
                 self._config = configuration
                 self.executeBuildSteps(buildSteps)
 

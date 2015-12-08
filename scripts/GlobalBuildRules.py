@@ -1,4 +1,5 @@
 
+import inspect
 import os
 import shutil
 import subprocess
@@ -177,6 +178,19 @@ def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment
         failExecution('execute with visual studio failed with returncode [%s]' % childProcess.returncode)
 
 
+def call(callable, args):
+    callableArgs = {}
+    for arg in inspect.getargspec(callable).args:
+        if arg in args:
+            callableArgs[arg] = args[arg]
+
+    try:
+        callable(**callableArgs)
+        return True
+    except:
+        failExecution("Error: %s" % sys.exc_info()[0])
+
+
 class FileSystemDirectory():
     ROOT = 1
     WORKING = 2
@@ -229,3 +243,55 @@ def getDirectory(directoryEnum):
     else:
         failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 
+
+class GlobalBuild(object):
+    def __init__(self):
+        self._project_name = ""
+        self._project_namespace = ""
+        self._source_dirs = ["cpp"]
+        self._build_steps = []
+        self._project_build_number = "0.0.0.0"
+        self._configurations = ["debug", "release"]
+        self._build_directory = getDirectory(FileSystemDirectory.WORKING)
+        # execute local environment
+
+    def testMethod(self):
+        print("Test complete!")
+
+    def executeStep(self, buildStep):
+        if hasattr(self, buildStep):
+            print("-Executing build step [%s]" % buildStep)
+            method = getattr(self, buildStep)
+            success = call(method, self._custom_args)
+            if not success:
+                failExecution("Build step [%s] failed" % buildStep)
+        else:
+            failExecution("Project %s does not have build step [%s]" %
+                          (self._project_name, buildStep))
+
+    def executeBuildSteps(self, buildSteps):
+        for buildStep in buildSteps:
+            self.executeStep(buildStep)
+
+    def run(self, parsedCommandLine):
+        (buildSteps, self._custom_args) = parsedCommandLine
+
+        # if self._project_name == "":
+        #    failExecution("Project name not set")
+
+        if len(buildSteps) == 0:
+            buildSteps = self._build_steps
+
+        if "configuration" in self._custom_args:
+            print("\n[%s]\n" % self._custom_args["configuration"])
+            self._config = self._custom_args["configuration"]
+            self.executeBuildSteps(buildSteps)
+        else:
+            for configuration in self._configurations:
+                print("\n[%s]\n" % configuration)
+                self._config = configuration
+                self.executeBuildSteps(buildSteps)
+
+        print("********************")
+        print("*     COMPLETE     *")
+        print("********************")

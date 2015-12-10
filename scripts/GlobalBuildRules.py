@@ -1,4 +1,5 @@
 
+# BUILT IN MODULES
 import inspect
 import os
 import platform
@@ -7,6 +8,9 @@ import subprocess
 import sys
 import traceback
 import _winreg
+
+# PYTHON PROJECT MODULES
+import LocalEnvironment
 
 
 def failExecution(errorMsg):
@@ -293,7 +297,13 @@ class GlobalBuild(object):
         self._project_build_number = "0.0.0.0"
         self._configurations = ["debug", "release"]
         self._build_directory = getDirectory(FileSystemDirectory.WORKING)
+
         # execute local environment
+        projectSpecificEnvVars = {
+            # project specific static environment variables
+        }
+        localEnv = LocalEnvironment.LocalEnvironment(projectSpecificEnvVars)
+        localEnv.injectAllEnvironmentVariables()
 
     # removes previous builds so that this build
     # is a fresh build (on this machine). This

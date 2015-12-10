@@ -220,7 +220,7 @@ def call(callable, args):
         callable(**callableArgs)
         return True
     except:
-        failExecution("Error: %s" % sys.exc_info()[0])
+        failExecution("Error: %s" % sys.exc_info()[1])
 
 
 class FileSystemDirectory():
@@ -315,6 +315,10 @@ class GlobalBuild(object):
         if os.path.exists(buildDirectory):
             rmTree(buildDirectory)
 
+    def setupWorkspace(self):
+        print("Setting up workspaces for project [%s]" % self._project_name)
+        self.cleanBuildWorkspace()
+
     # this method will generate documentation
     # of the project. We are using Doxygen
     # to fulfill this.
@@ -325,6 +329,9 @@ class GlobalBuild(object):
     # a gzipped tarball (tar.gz) file.
     def package(self):
         print("packaging project [%s]" % self._project_name)
+
+    def runUnitTests(self):
+        print("Running unit tests for project [%s]" % self._project_name)
 
     # executes a particular part of the build process and fails the build
     # if that build step fails.
@@ -351,7 +358,7 @@ class GlobalBuild(object):
     #  GlobalBuild to define so that the default build steps can be unique
     #  for each project).
     def run(self, parsedCommandLine):
-        (buildSteps, self._custom_args) = parsedCommandLine
+        (buildSteps, self._custom_args) = (parsedCommandLine[0], parsedCommandLine[1])
 
         # this build MUST have a project name to run
         if self._project_name == "":

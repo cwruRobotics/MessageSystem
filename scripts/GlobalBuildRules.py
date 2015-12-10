@@ -1,6 +1,7 @@
 
 import inspect
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -84,23 +85,29 @@ def copyTree(srcPath, destPath):
 
 
 # this is windows specific
-def getProcessor():
-    return getRegistryValue(
-        "HKEY_LOCAL_MACHINE",
-        "SYSTEM\\CurrentControlSet\Control\\Session Manager\\Environment",
-        "PROCESSOR_ARCHITECTURE"
-    ).lower()
+def getWindowsProcessorInfo():
+    if platform.system() == "Windows":
+        return getWindowsRegistryValue(
+            "HKEY_LOCAL_MACHINE",
+            "SYSTEM\\CurrentControlSet\Control\\Session Manager\\Environment",
+            "PROCESSOR_ARCHITECTURE"
+        ).lower()
+    else:
+        failExecution("Cannot get processor info on Unix based system")
 
 
 # this is windows specific
-def getRegistryValue(key, subkey, value):
-    key = getattr(_winreg, key)
-    handle = _winreg.OpenKey(key, subkey)
+def getWindowsRegistryValue(key, subkey, value):
+    if platform.system() == "Windows":
+        key = getattr(_winreg, key)
+        handle = _winreg.OpenKey(key, subkey)
 
-    # this returns (value, type) where the value
-    # is the value of the processor and the type
-    # is the registry type of the value
-    return _winreg.QueryValueEx(handle, value)[0]
+        # this returns (value, type) where the value
+        # is the value of the processor and the type
+        # is the registry type of the value
+        return _winreg.QueryValueEx(handle, value)[0]
+    else:
+        failExecution("Cannot get registry values on Unix based system")
 
 
 def parseCommandLine(commandLine):
@@ -152,8 +159,8 @@ def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment
     # is. So, we give it the processor architecture and redirect all output to 'nul'
     # which means we won't see it. Then, we add all the commands we want to execute.
     cmdString = '("%s" %s > nul) && %s' % (visualStudioUtilsPath,
-                                            getProcessor(),
-                                            ' '.join(appAndArgs))
+                                           getWindowsProcessorInfo(),
+                                           ' '.join(appAndArgs))
 
     # allows additional environment variables to be set / altered.
     realEnv = dict(os.environ)
@@ -215,18 +222,22 @@ def call(callable, args):
 class FileSystemDirectory():
     ROOT = 1                    # the absolute path to the top level of the project
     WORKING = 2                 # the absolute path to the build directory of the project
-    SCRIPT_ROOT = 3             # the absolute path to the directory where all static scripts are kept
-                                #   (a static script is abstract enough that it can be shared between
-                                #    projects, this script is a good example)
+    # the absolute path to the directory where all static scripts are kept
+    #   (a static script is abstract enough that it can be shared between
+    #    projects, this script is a good example)
+    SCRIPT_ROOT = 3
+
     PROJECT_ROOT = 4            # the absolute path to the top level CMAKE directory of the project
     MANUAL_DIR = 5              # the absolute path to the documentation directory of the project
     CPP_SOURCE_DIR = 6          # the absolute path to the top level directory of c++ source directories
     TEST_ROOT = 7               # the absolute path to the top level directory of c++ unit test directories
     TEST_REPORT_DIR = 8         # the absolute path to the directory containing test reports
     CMAKE_BASE_DIR = 9          # the absolute path to the top level directory of CMAKE utilities
-    CMAKE_TOOLCHAIN_DIR = 10    # the absolute path to the CMAKE toolchain directory
-                                #   - toolchain files are used for certain platforms to separate
-                                #     CMAKE functionality
+
+    # the absolute path to the CMAKE toolchain directory
+    #   - toolchain files are used for certain platforms to separate
+    #     CMAKE functionality
+    CMAKE_TOOLCHAIN_DIR = 10
     CMAKE_MODULE_DIR = 11       # the absolute path to the CMAKE modules directory
     OUT_ROOT = 12               # the absolute path to the directory where built code goes
     INSTALL_ROOT = 13           # the absolute path to the top level directory where all built code goes
@@ -266,7 +277,7 @@ def getDirectory(directoryEnum):
     elif directoryEnum == FileSystemDirectory.INSTALL_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'install')
     elif directoryEnum == FileSystemDirectory.LOG_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'logs')
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'logs')
     else:
         failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 
@@ -284,9 +295,26 @@ class GlobalBuild(object):
         self._build_directory = getDirectory(FileSystemDirectory.WORKING)
         # execute local environment
 
-    # just to see if user method calls will work
-    def testMethod(self):
-        print("Test complete!")
+    # removes previous builds so that this build
+    # is a fresh build (on this machine). This
+    # guarentees that this build uses the most recent
+    # source files.
+    def cleanBuildWorkspace(self):
+        print("Cleaning build directory for project [%s]" % self._project_name)
+        buildDirectory = getDirectory(FileSystemDirectory.WORKING)
+        if os.path.exists(buildDirectory):
+            rmTree(buildDirectory)
+
+    # this method will generate documentation
+    # of the project. We are using Doxygen
+    # to fulfill this.
+    def document(self):
+        print("generating documentation for project [%s]" % self._project_name)
+
+    # this method will package the project into
+    # a gzipped tarball (tar.gz) file.
+    def package(self):
+        print("packaging project [%s]" % self._project_name)
 
     # executes a particular part of the build process and fails the build
     # if that build step fails.
@@ -317,7 +345,7 @@ class GlobalBuild(object):
 
         # this build MUST have a project name to run
         if self._project_name == "":
-           failExecution("Project name not set")
+            failExecution("Project name not set")
 
         # if the user has not specified any build steps, run the default
         if len(buildSteps) == 0:

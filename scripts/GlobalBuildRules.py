@@ -65,7 +65,7 @@ def mkdir(dir):
     # DURING a build, as all created directories will be
     # deleted at the beginning of each build.
     if not os.path.exists(dir):
-        os.mkdir(dir)
+        os.makedirs(dir)
 
 
 def rmTree(path):
@@ -132,7 +132,7 @@ def parseCommandLine(commandLine):
 def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment={}):
     appAndArgs = list(argsForApp)
     if appToExecute is not None:
-        appAndArgs.append(appToExecute)
+        appAndArgs.insert(0, appToExecute)
 
     # there will be an environment variable set externally called
     # VS_VERSION that will declare the version of Visual Studio's Compiler
@@ -251,11 +251,11 @@ class FileSystemDirectory():
 
 # a method to get the absolute path to a directory within the project based
 # on the FileSystemDirectory enums described above
-def getDirectory(directoryEnum):
+def getDirectory(directoryEnum, configuration=''):
     if directoryEnum == FileSystemDirectory.ROOT:
-        return os.path.join(os.getcwd(), '..')
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     elif directoryEnum == FileSystemDirectory.WORKING:
-        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'build')
+        return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'build', configuration)
     elif directoryEnum == FileSystemDirectory.SCRIPT_ROOT:
         return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'scripts')
     elif directoryEnum == FileSystemDirectory.PROJECT_ROOT:
@@ -265,9 +265,9 @@ def getDirectory(directoryEnum):
     elif directoryEnum == FileSystemDirectory.CPP_SOURCE_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cpp')
     elif directoryEnum == FileSystemDirectory.TEST_ROOT:
-        return os.path.join(getDirectory(FileSystemDirectory.CPP_SOURCE_DIR), 'source', 'unitTest')
+        return os.path.join(getDirectory(FileSystemDirectory.CPP_SOURCE_DIR), 'src', 'unitTest')
     elif directoryEnum == FileSystemDirectory.TEST_REPORT_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'testReports')
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING, configuration), 'testReports')
     elif directoryEnum == FileSystemDirectory.CMAKE_BASE_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.ROOT), 'cmake')
     elif directoryEnum == FileSystemDirectory.CMAKE_TOOLCHAIN_DIR:
@@ -275,13 +275,13 @@ def getDirectory(directoryEnum):
     elif directoryEnum == FileSystemDirectory.CMAKE_MODULE_DIR:
         return os.path.join(getDirectory(FileSystemDirectory.CMAKE_BASE_DIR), 'modules')
     elif directoryEnum == FileSystemDirectory.OUT_ROOT:
-        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'out')
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING, configuration), 'out')
     elif directoryEnum == FileSystemDirectory.INSTALL_ROOT:
-        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'installRoot')
+        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT, configuration), 'installRoot')
     elif directoryEnum == FileSystemDirectory.INSTALL_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT), 'install')
+        return os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT, configuration), 'install')
     elif directoryEnum == FileSystemDirectory.LOG_DIR:
-        return os.path.join(getDirectory(FileSystemDirectory.WORKING), 'logs')
+        return os.path.join(getDirectory(FileSystemDirectory.WORKING, configuration), 'logs')
     else:
         failExecution("Unknown directoryEnum: [%s]" % directoryEnum)
 
@@ -311,13 +311,97 @@ class GlobalBuild(object):
     # source files.
     def cleanBuildWorkspace(self):
         print("Cleaning build directory for project [%s]" % self._project_name)
-        buildDirectory = getDirectory(FileSystemDirectory.WORKING)
+        buildDirectory = getDirectory(FileSystemDirectory.WORKING, self._config)
         if os.path.exists(buildDirectory):
             rmTree(buildDirectory)
 
     def setupWorkspace(self):
         print("Setting up workspaces for project [%s]" % self._project_name)
         self.cleanBuildWorkspace()
+        mkdir(getDirectory(FileSystemDirectory.WORKING, self._config))
+
+    def generateProjectVersion(self):
+        outIncludeDir = os.path.join(
+            getDirectory(FileSystemDirectory.OUT_ROOT),
+            'include'
+        )
+        print("making directory %s" % outIncludeDir)
+        mkdir(outIncludeDir)
+        with open(os.path.join(outIncludeDir, 'version.h'), 'w') as file:
+            file.write("#ifndef VERSION_H \n"
+                       "#define VERSION_H \n\n"
+                       "#define VERSION       " + self._project_build_number + "\n"
+                       "#define VERSION_STR  \"" + self._project_build_number + "\"\n\n"
+                       "#endif  // VERSION_H\n\n")
+
+    def preBuild(self):
+        self.setupWorkspace()
+        self.generateProjectVersion()
+
+    def getCMakeArgs(self, pathPrefix, workingDirectory):
+        CMakeProjectDir = "projects/%s" % self._project_name
+        relCMakeProjectDir = os.path.relpath(CMakeProjectDir,
+                                             workingDirectory)
+
+        projectWorkingDir = getDirectory(FileSystemDirectory.ROOT, self._config)
+        installRootDir = os.path.relpath(getDirectory(FileSystemDirectory.INSTALL_ROOT, self._config))
+
+        # all of these are relative paths that are used by CMake
+        # to place the appropriate build components in the correct
+        # directories.
+        binDir = os.path.relpath(
+            os.path.join(getDirectory(FileSystemDirectory.INSTALL_ROOT, self._config), "bin"),
+            projectWorkingDir
+        )
+
+        includeDir = os.path.relpath(
+            os.path.join(getDirectory(FileSystemDirectory.INSTALL_DIR, self._config), "include"),
+            projectWorkingDir
+        )
+
+        libDir = os.path.relpath(
+            os.path.join(getDirectory(FileSystemDirectory.INSTALL_ROOT, self._config), "lib"),
+            projectWorkingDir
+        )
+        outIncludeDir = os.path.join(getDirectory(FileSystemDirectory.OUT_ROOT, self._config),
+                                     "include")
+        
+        if platform.system() == "Windows":
+            installRootDir = "\"%s\"" % installRootDir.replace("\\", "/")
+            binDir = "\"%s\"" % binDir.replace("\\", "/")
+            includeDir = "\"%s\"" % includeDir.replace("\\", "/")
+            libDir = "\"%s\"" % libDir.replace("\\", "/")
+            outIncludeDir = "\"%s\"" % outIncludeDir.replace("\\", "/")
+
+        print("installRootDir: %s" % installRootDir)
+        print("binDir: %s" % binDir)
+        print("includeDir: %s" % includeDir)
+        print("libDir: %s" % libDir)
+        print("outIncludeDir: %s" % outIncludeDir)
+
+        if self._config == "release":
+            cmake_config = "Release"
+        else:
+            cmake_config = "Debug"
+
+        # remember CMake paths need to be relative to the top level
+        # directory that CMake is called (in this case projects/<project_name>)
+        CMakeArgs = [
+            relCMakeProjectDir,
+            "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, binDir),
+            "-DCMAKE_INCLUDE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, includeDir),
+            "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
+            "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
+            "-DCMAKE_PREFIX_PATH=%s" % (installRootDir),  # absolute path
+            "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
+            "-DCMAKE_BUILD_TYPE=%s" % cmake_config,
+            # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
+            # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
+            # "-DGTEST_ROOT=%s" %  # gtest root (absolute)
+            # "-DCMAKE_TOOLCHAIN_FILE=%s" %  # toolchain file path (relative)
+            # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
+        ]
+        return CMakeArgs
 
     # this method will generate documentation
     # of the project. We are using Doxygen
@@ -373,7 +457,7 @@ class GlobalBuild(object):
         # debug or release versions)
         if "configuration" in self._custom_args:
             self._config = self._custom_args["configuration"]
-            if self._config != "release" or self._config != "debug":
+            if self._config != "release" and self._config != "debug":
                 failExecution("Unknown configuration [%s]" % self._config)
             print("\nbuilding configuration [%s]\n" % self._config)
             self.executeBuildSteps(buildSteps)

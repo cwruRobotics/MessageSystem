@@ -22,7 +22,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( Logging CXX )
+project( FuturesFramework CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE )
@@ -43,22 +43,22 @@ set( PROJECT_VERSION_PATCH "0" )
 # Logging library
 
 # Source files
-set( LOGGING_SRCS
-    ${SRC_ROOT}/Logging/LoggingLevels.cpp
-    ${SRC_ROOT}/Logging/Logger.cpp
-    ${SRC_ROOT}/Logging/Factory.cpp
+set( FUTURESFRAMEWORK_SRCS
+    ${SRC_ROOT}/FuturesFramework/Result.cpp
+    ${SRC_ROOT}/FuturesFramework/WorkItemStates.cpp
 )
 
 # Public header files (installed together with libraries)
-set( LOGGING_PUBLIC_HEADERS
-    ${INC_ROOT}/Logging/LoggingLevels.hpp
-    ${INC_ROOT}/Logging/ILogger.hpp
-    ${INC_ROOT}/Logging/Logger.hpp
-    ${INC_ROOT}/Logging/Factory.hpp
+set( FUTURESFRAMEWORK_PUBLIC_HEADERS
+    ${INC_ROOT}/FuturesFramework/SharedLibExport.hpp
+    ${INC_ROOT}/FuturesFramework/Result.hpp
+    ${INC_ROOT}/FuturesFramework/ScheduleRequestStates.hpp
+    ${INC_ROOT}/FuturesFramework/WorkItemStates.hpp
+    ${INC_ROOT}/FuturesFramework/IWorkItem.hpp
 )
 
 # setup visual studio source groups
-source_group( PublicHeaders FILES ${LOGGING_PUBLIC_HEADERS} )
+source_group( PublicHeaders FILES ${FUTURESFRAMEWORK_PUBLIC_HEADERS} )
 
 # Directories to search for header files
 set( INCLUDE_DIRS
@@ -72,7 +72,7 @@ set( INCLUDE_DIRS
 # set target specific compiler definitions
 # this should ONLY be definitions needed to build the source code.
 # examples: macros ON/OFF, etc.
-set( LOGGING_COMPILE_DEFINITIONS )
+set( FUTURESFRAMEWORK_COMPILE_DEFINITIONS )
 
 # check required libraries and header files and such.
 # this will fail CMake if set to False due to required
@@ -117,17 +117,17 @@ include_directories( ${INCLUDE_DIRS} )
 #
 
 # Logging library
-set( LOGGING_LIB_NAME ${PROJECT_NAME} )
+set( FUTURESFRAMEWORK_LIB_NAME ${PROJECT_NAME} )
 
 # Shared Library export header file supporte
 include( GenerateExportHeader )
 
-add_library( ${LOGGING_LIB_NAME} SHARED ${LOGGING_SRCS} ${LOGGING_PUBLIC_HEADERS} )
-# target_link_libraries( ${LOGGING_LIB_NAME} ${LOGGING_LIBS} )
+add_library( ${FUTURESFRAMEWORK_LIB_NAME} SHARED ${FUTURESFRAMEWORK_SRCS} ${FUTURESFRAMEWORK_PUBLIC_HEADERS} )
+# target_link_libraries( ${FUTURESFRAMEWORK_LIB_NAME} ${FUTURESFRAMEWORK_LIBS} )
 
-set_target_properties( ${LOGGING_LIB_NAME} PROPERTIES
-    PUBLIC_HEADER       "${LOGGING_PUBLIC_HEADERS}"
-    COMPILE_DEFINITIONS "${LOGGING_COMPILE_DEFINITIONS}"
+set_target_properties( ${FUTURESFRAMEWORK_LIB_NAME} PROPERTIES
+    PUBLIC_HEADER       "${FUTURESFRAMEWORK_PUBLIC_HEADERS}"
+    COMPILE_DEFINITIONS "${FUTURESFRAMEWORK_COMPILE_DEFINITIONS}"
     SOVERSION           "${PROJECT_VERSION_MAJOR}"
     VERSION             "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
@@ -137,11 +137,11 @@ set_target_properties( ${LOGGING_LIB_NAME} PROPERTIES
 # -------------------------------------------------------------------------------
 
 # install targets
-install( TARGETS ${LOGGING_LIB_NAME}
+install( TARGETS ${FUTURESFRAMEWORK_LIB_NAME}
          RUNTIME        DESTINATION ${CMAKE_INSTALL_BINDIR}
          LIBRARY        DESTINATION ${CMAKE_INSTALL_LIBDIR}
          ARCHIVE        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Logging
+         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/FuturesFramework
 )
 
 if( MSVC )
@@ -149,6 +149,6 @@ if( MSVC )
     install( DIRECTORY ${PDB_DIR}
         DESTINATION .
         FILES_MATCHING
-        PATTERN ${LOGGING_LIB_NAME}.pdb
+        PATTERN ${FUTURESFRAMEWORK_LIB_NAME}.pdb
     )
 endif()

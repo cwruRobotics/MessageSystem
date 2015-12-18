@@ -53,8 +53,8 @@ list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Logging" )
 list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
 
 # FuturesFramework library
-# add_subdirectory( ${SRC_ROOT}/src/FuturesFramework
-#                   ${OUT_ROOT}/FuturesFramework )
+add_subdirectory( ${SRC_ROOT}/src/FuturesFramework
+                  ${OUT_ROOT}/FuturesFramework )
 
 # give other subprojects a chance to search for libraries and header
 # files created before the "make install"

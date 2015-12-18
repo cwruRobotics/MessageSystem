@@ -8,11 +8,10 @@ namespace Logging
 {
 namespace Factory
 {
-    Loggers::LoggerPtr makeLogger(const char* name,
-                                  const char* outputFile=nullptr)
+    LoggerPtr makeLogger(const char* name,
+                         const char* outputFile=nullptr)
     {
         return std::make_unique<Loggers::Logger>(name, outputFile);
     }
 }
 }
-

@@ -1,9 +1,8 @@
 
 # BUILT IN MODULES
-# import os
-# import platform
-import sys
+import os
 import platform
+import sys
 
 
 # PYTHON PROJECT MODULES
@@ -27,10 +26,10 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
     # CMake is handling all of our compiling and linking.
     def cmake(self):
         # make directory that CMake will dump output to
-        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config)
+        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config, self._project_name)
         GlobalBuildRules.mkdir(wd)
 
-        CMakeArgs = self.getCMakeArgs("../../", wd)
+        CMakeArgs = self.getCMakeArgs("", wd)
         if platform.system() == "Windows":
             CMakeArgs.extend(["-G", "\"NMake Makefiles\""])
             GlobalBuildRules.PForkWithVisualStudio(appToExecute="cmake",
@@ -42,8 +41,7 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
 
     def make(self):
         # make directory that CMake will dump all output to
-        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config)
-        GlobalBuildRules.mkdir(wd)
+        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config, self._project_name)
 
         makeArgs = ["all"]
         if platform.system() == "Windows":

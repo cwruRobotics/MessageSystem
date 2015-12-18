@@ -123,7 +123,6 @@ set( LOGGING_LIB_NAME ${PROJECT_NAME} )
 
 # Shared Library export header file supporte
 include( GenerateExportHeader )
-message("CURRENT BINARY DIR: ${CMAKE_INSTALL_BINARY_DIR}")
 
 add_library( ${LOGGING_LIB_NAME} SHARED ${LOGGING_SRCS} ${LOGGING_PUBLIC_HEADERS} )
 # target_link_libraries( ${LOGGING_LIB_NAME} ${LOGGING_LIBS} )
@@ -148,7 +147,7 @@ install( TARGETS ${LOGGING_LIB_NAME}
 )
 
 if( MSVC )
-    get_filename_component( PDB_DIR ${OUT_ROOT}/out/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
+    get_filename_component( PDB_DIR ${OUT_ROOT}/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
     install( DIRECTORY ${PDB_DIR}
         DESTINATION .
         FILES_MATCHING

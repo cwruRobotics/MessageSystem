@@ -26,14 +26,15 @@ project( MessageFramework CXX )
 
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../cpp ABSOLUTE )
 
-get_filename_component( OUT_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../out ABSOLUTE )
+# this is where all build intermediate files will go
+get_filename_component( OUT_ROOT ${CMAKE_CURRENT_BINARY_DIR}/out ABSOLUTE )
 
 # ===============================================================================
 # PROJECT EXTERNAL OPTIONS
 # ===============================================================================
 
-option( UNIT_TESTS "Unit test support (default OFF)" OFF )
-option( CPP_CHECK  "Static analysis support (default OFF)" OFF )
+option( RUN_UNIT_TESTS "Unit test support (default OFF)" OFF )
+option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
 
 # ===============================================================================
 # PROJECT SUBMODULES
@@ -69,9 +70,9 @@ list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
 # list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/MessageFramework" )
 # list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/MessageFramework" )
 
-if( UNIT_TESTS )
+if( RUN_UNIT_TESTS )
     # Logger unit tests
-    add_subdirectory( ${SRC_ROOT}/src/Logging/unittest
+    add_subdirectory( ${SRC_ROOT}/src/Logging/unitTest
                       ${OUT_ROOT}/LoggerUnit )
 
     # FuturesFramework unit tests
@@ -85,7 +86,7 @@ if( UNIT_TESTS )
 endif()
 
 
-# if( CPP_CHECK )
+# if( RUN_CPP_CHECK )
 #     find_package( cppcheck REQUIRED)
 #     if( CPPCHECK_FOUND )
 #          # include the .cmake file for CppCheck to run

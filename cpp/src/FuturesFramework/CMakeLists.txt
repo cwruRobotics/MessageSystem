@@ -46,6 +46,9 @@ set( PROJECT_VERSION_PATCH "0" )
 set( FUTURESFRAMEWORK_SRCS
     ${SRC_ROOT}/FuturesFramework/Result.cpp
     ${SRC_ROOT}/FuturesFramework/WorkItemStates.cpp
+    ${SRC_ROOT}/FuturesFramework/WorkItemStateMachine.cpp
+    ${SRC_ROOT}/FuturesFramework/Scheduler.cpp
+    ${SRC_ROOT}/FuturesFramework/WorkItem.cpp
 )
 
 # Public header files (installed together with libraries)
@@ -54,7 +57,16 @@ set( FUTURESFRAMEWORK_PUBLIC_HEADERS
     ${INC_ROOT}/FuturesFramework/Result.hpp
     ${INC_ROOT}/FuturesFramework/ScheduleRequestStates.hpp
     ${INC_ROOT}/FuturesFramework/WorkItemStates.hpp
+    ${INC_ROOT}/FuturesFramework/IWorkItemStateMachine.hpp
     ${INC_ROOT}/FuturesFramework/IWorkItem.hpp
+    ${INC_ROOT}/FuturesFramework/IExecutable.hpp
+    ${INC_ROOT}/FuturesFramework/IScheduler.hpp
+)
+
+set( FUTURESFRAMEWORK_PRIVATE_HEADERS
+    ${INC_ROOT}/FuturesFramework/WorkItemStateMachine.hpp
+    ${INC_ROOT}/FuturesFramework/Scheduler.hpp
+    ${INC_ROOT}/FuturesFramework/WorkItem.hpp
 )
 
 # setup visual studio source groups
@@ -122,7 +134,7 @@ set( FUTURESFRAMEWORK_LIB_NAME ${PROJECT_NAME} )
 # Shared Library export header file supporte
 include( GenerateExportHeader )
 
-add_library( ${FUTURESFRAMEWORK_LIB_NAME} SHARED ${FUTURESFRAMEWORK_SRCS} ${FUTURESFRAMEWORK_PUBLIC_HEADERS} )
+add_library( ${FUTURESFRAMEWORK_LIB_NAME} SHARED ${FUTURESFRAMEWORK_SRCS} ${FUTURESFRAMEWORK_PUBLIC_HEADERS} ${FUTURESFRAMEWORK_PRIVATE_HEADERS})
 # target_link_libraries( ${FUTURESFRAMEWORK_LIB_NAME} ${FUTURESFRAMEWORK_LIBS} )
 
 set_target_properties( ${FUTURESFRAMEWORK_LIB_NAME} PROPERTIES

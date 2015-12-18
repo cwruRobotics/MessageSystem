@@ -49,24 +49,30 @@ set( FUTURESFRAMEWORK_SRCS
     ${SRC_ROOT}/FuturesFramework/WorkItemStateMachine.cpp
     ${SRC_ROOT}/FuturesFramework/Scheduler.cpp
     ${SRC_ROOT}/FuturesFramework/WorkItem.cpp
+    ${SRC_ROOT}/FuturesFramework/PromiseStates.cpp
+    ${SRC_ROOT}/FuturesFramework/PromiseWorkItem.cpp
 )
 
 # Public header files (installed together with libraries)
 set( FUTURESFRAMEWORK_PUBLIC_HEADERS
     ${INC_ROOT}/FuturesFramework/SharedLibExport.hpp
-    ${INC_ROOT}/FuturesFramework/Result.hpp
-    ${INC_ROOT}/FuturesFramework/ScheduleRequestStates.hpp
-    ${INC_ROOT}/FuturesFramework/WorkItemStates.hpp
     ${INC_ROOT}/FuturesFramework/IWorkItemStateMachine.hpp
     ${INC_ROOT}/FuturesFramework/IWorkItem.hpp
     ${INC_ROOT}/FuturesFramework/IExecutable.hpp
     ${INC_ROOT}/FuturesFramework/IScheduler.hpp
+    ${INC_ROOT}/FuturesFramework/IChainLinker.hpp
+    ${INC_ROOT}/FuturesFramework/IPromiseWorkItem.hpp
 )
 
 set( FUTURESFRAMEWORK_PRIVATE_HEADERS
+    ${INC_ROOT}/FuturesFramework/Result.hpp
+    ${INC_ROOT}/FuturesFramework/ScheduleRequestStates.hpp
+    ${INC_ROOT}/FuturesFramework/WorkItemStates.hpp
     ${INC_ROOT}/FuturesFramework/WorkItemStateMachine.hpp
     ${INC_ROOT}/FuturesFramework/Scheduler.hpp
     ${INC_ROOT}/FuturesFramework/WorkItem.hpp
+    ${INC_ROOT}/FuturesFramework/PromiseStates.hpp
+    ${INC_ROOT}/FuturesFramework/PromiseWorkItem.hpp
 )
 
 # setup visual studio source groups

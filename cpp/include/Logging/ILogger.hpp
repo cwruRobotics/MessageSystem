@@ -50,9 +50,8 @@ namespace Loggers
 						 int lineNumber, const char* pFormat, ...) = 0;
 	};
 
-    using LoggerPtr = std::unique_ptr<ILogger>;
 }
+using LoggerPtr = std::unique_ptr<Loggers::ILogger>;
 }
 
 #endif
-

@@ -16,11 +16,10 @@ namespace Logging
 namespace Factory
 {
 
-    Loggers::LoggerPtr LOGGER_API makeLogger(const char* name,
-                                             const char* outputFile=nullptr);
+    LoggerPtr LOGGER_API makeLogger(const char* name,
+                                    const char* outputFile=nullptr);
 
 }
 }
 
 #endif
-

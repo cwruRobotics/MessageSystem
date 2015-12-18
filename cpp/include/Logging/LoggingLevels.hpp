@@ -27,4 +27,3 @@ std::string LoggingLevelToString(const Messages::LoggingLevels& level);
 }
 
 #endif
-

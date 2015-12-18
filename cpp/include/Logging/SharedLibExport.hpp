@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#if defined _WIN32 || defined __CYGWIN__
+#if defined _WIN32 || defined __CYGWIN__ || _WIN64
 
 // defined by CMake when building this project as
 // a static library

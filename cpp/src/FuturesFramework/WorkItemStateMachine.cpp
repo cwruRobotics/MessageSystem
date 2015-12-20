@@ -32,6 +32,22 @@ namespace FuturesFramework
 		return newState;
 	}
 
+    States::WorkItemState WorkItemStateMachine::TriggerEvaluatingPreConditions(
+        Types::Result_t trigger)
+    {
+        States::WorkItemState newState = States::WorkItemState::RESCHEDULE;
+        if (trigger == Types::Result_t::SUCCESS)
+        {
+            newState = States::WorkItemState::EXECUTING_MAIN_FUNCTION;
+        }
+        else if (trigger != Types::Result_t::FAILURE)
+        {
+            throw std::logic_error("Weird State from Evaluation PreConditions: " +
+                                   ResultToString(trigger));
+        }
+        return newState;
+    }
+
 	States::WorkItemState WorkItemStateMachine::TriggerExecutingMain(Types::Result_t trigger)
 	{
 		States::WorkItemState newState = States::WorkItemState::DONE;
@@ -57,10 +73,10 @@ namespace FuturesFramework
 
 	States::WorkItemState WorkItemStateMachine::TriggerSchedule(Types::Result_t trigger)
 	{
-		States::WorkItemState newState = States::WorkItemState::DONE;
+		States::WorkItemState newState = States::WorkItemState::SCHEDULE;
 		if (trigger == Types::Result_t::SUCCESS)
 		{
-			newState = States::WorkItemState::EXECUTING_MAIN_FUNCTION;
+			newState = States::WorkItemState::EVALUATING_PRECONDITIONS;
 		}
 		else if(trigger != Types::Result_t::FAILURE)
 		{
@@ -71,10 +87,10 @@ namespace FuturesFramework
 
 	States::WorkItemState WorkItemStateMachine::TriggerReSchedule(Types::Result_t trigger)
 	{
-		States::WorkItemState newState = States::WorkItemState::DONE;
+		States::WorkItemState newState = States::WorkItemState::RESCHEDULE;
 		if (trigger == Types::Result_t::SUCCESS)
 		{
-			newState = States::WorkItemState::EXECUTING_MAIN_FUNCTION;
+			newState = States::WorkItemState::EVALUATING_PRECONDITIONS;
 		}
 		else if (trigger != Types::Result_t::FAILURE)
 		{
@@ -96,6 +112,10 @@ namespace FuturesFramework
 		case States::WorkItemState::IDLE:
 			newState = this->TriggerIdle(trigger);
 			break;
+
+        case States::WorkItemState::EVALUATING_PRECONDITIONS:
+            newState = this->TriggerEvaluatingPreConditions(trigger);
+            break;
 
 		case States::WorkItemState::EXECUTING_MAIN_FUNCTION:
 			newState = this->TriggerExecutingMain(trigger);
@@ -124,7 +144,8 @@ namespace FuturesFramework
 	States::WorkItemState WorkItemStateMachine::Cancel()
 	{
 		States::WorkItemState newState = States::WorkItemState::DONE;
-		if (this->GetCurrentState() != States::WorkItemState::EXECUTING_MAIN_FUNCTION &&
+		if (this->GetCurrentState() != States::WorkItemState::EVALUATING_PRECONDITIONS &&
+            this->GetCurrentState() != States::WorkItemState::EXECUTING_MAIN_FUNCTION &&
 			this->GetCurrentState() != States::WorkItemState::EXECUTING_POSTERIOR_FUNCTION
 			&& this->GetCurrentState() != States::WorkItemState::DONE)
 		{

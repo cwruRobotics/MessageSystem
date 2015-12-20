@@ -8,6 +8,8 @@ import sys
 # PYTHON PROJECT MODULES
 sys.path.append("scripts")  # now we can import modules from <currentDirectory>/scripts
 import GlobalBuildRules
+import Utilities
+import FileSystem
 
 
 class LocalBuild(GlobalBuildRules.GlobalBuild):
@@ -26,30 +28,30 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
     # CMake is handling all of our compiling and linking.
     def cmake(self):
         # make directory that CMake will dump output to
-        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config, self._project_name)
-        GlobalBuildRules.mkdir(wd)
+        wd = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)
+        Utilities.mkdir(wd)
 
         CMakeArgs = self.getCMakeArgs("", wd)
         if platform.system() == "Windows":
             CMakeArgs.extend(["-G", "\"NMake Makefiles\""])
-            GlobalBuildRules.PForkWithVisualStudio(appToExecute="cmake",
-                                                   argsForApp=CMakeArgs,
+            Utilities.PForkWithVisualStudio(appToExecute="cmake",
+                                            argsForApp=CMakeArgs,
                                                    wd=wd)
         else:
             CMakeArgs.extend(["-G", "\"Unix Makefiles\""])
-            GlobalBuildRules.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd)
+            Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd)
 
     def make(self):
         # make directory that CMake will dump all output to
-        wd = GlobalBuildRules.getDirectory(GlobalBuildRules.FileSystemDirectory.WORKING, self._config, self._project_name)
+        wd = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)
 
         makeArgs = ["all"]
         if platform.system() == "Windows":
-            GlobalBuildRules.PForkWithVisualStudio(appToExecute="nmake",
-                                                   argsForApp=makeArgs,
-                                                   wd=wd)
+            Utilities.PForkWithVisualStudio(appToExecute="nmake",
+                                            argsForApp=makeArgs,
+                                            wd=wd)
         else:
-            GlobalBuildRules.PFork(appToExecute="make", argsForApp=makeArgs, wd=wd)
+            Utilities.PFork(appToExecute="make", argsForApp=makeArgs, wd=wd)
 
     def build(self):
         print("Building project [%s]" % self._project_name)
@@ -60,5 +62,5 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
 
 if __name__ == "__main__":
     localBuild = LocalBuild()
-    customCommands = GlobalBuildRules.parseCommandLine(sys.argv[1:])
+    customCommands = Utilities.parseCommandLine(sys.argv[1:])
     localBuild.run(customCommands)

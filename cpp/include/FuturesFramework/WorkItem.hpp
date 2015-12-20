@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/IExecutable.hpp"
 #include "FuturesFramework/IWorkItem.hpp"
 #include "FuturesFramework/Scheduler.hpp"
 #include "FuturesFramework/WorkItemStateMachine.hpp"
@@ -15,70 +14,57 @@
 namespace FuturesFramework
 {
 
-	class WorkItem : public IWorkItem, public IExecutable, public WorkItemStateMachine,
-		public std::enable_shared_from_this<WorkItem>
-	{
-		friend class Scheduler;
-	private:
+    class WorkItem : public IWorkItem, public WorkItemStateMachine,
+        public std::enable_shared_from_this<WorkItem>
+    {
+        friend class Scheduler;
+    private:
 
-		uint64_t				_id;
-		std::thread::id			_threadId;
-		Types::Result_t			_executionResult;
-		ISchedulerPtr			_scheduler;
-		WorkItemFunctionPtr		_mainFunction;
-		WorkItemFunctionPtr		_posteriorFunction;
-		std::exception_ptr		_exception;
-		bool					_done;
+        uint64_t            _id;
+        ISchedulerPtr       _pScheduler;
+        WorkItemFunctionPtr _pMainFunction;
+        WorkItemFunctionPtr _pPostFunction;
+        std::exception_ptr  _pException;
 
-	private:
+    private:
 
-		void SetId(uint64_t id);
+        void SetId(uint64_t id);
+ 
+        bool IsDone();
 
-		void SetThreadId(std::thread::id threadId);
+    protected:
 
-		bool IsDone();
+        void SetException(const std::exception_ptr pException);
 
-	protected:
+        virtual Types::Result_t Execute();
 
-		void SetException(const std::exception_ptr pException);
+        void Finish();
 
-		virtual Types::Result_t Execute();
+    public:
 
-		States::WorkItemState GetInternalState();
+        WorkItem(uint64_t id=0) : WorkItemStateMachine(States::WorkItemState::IDLE),
+            _id(id), _pScheduler(nullptr), _pMainFunction(nullptr),
+            _pPostFunction(nullptr), _pException(nullptr)
+        {
+        }
 
-		Types::Result_t GetExecutionResult() override;
+        ~WorkItem()
+        {
+        }
 
-		void Finish();
+        void AttachMainFunction(WorkItemFunctionPtr pFunc) override;
 
-	public:
+        void AttachPosteriorFunction(WorkItemFunctionPtr pFunc) override;
 
-		WorkItem(uint64_t id=0) : WorkItemStateMachine(), _id(id), _threadId(),
-			_executionResult(Types::Result_t::UNKNOWN), _mainFunction(nullptr),
-			_posteriorFunction(nullptr), _exception(nullptr), _done(false)
-		{
-		}
+        virtual Types::Result_t Schedule(ISchedulerPtr pScheduler) override;
 
-		~WorkItem()
-		{
-		}
+        const uint64_t GetId() override;
 
-		void AttachMainFunction(WorkItemFunctionPtr func) override;
+        std::exception_ptr GetException() const;
 
-		void AttachPosteriorFunction(WorkItemFunctionPtr func) override;
+    };
 
-		virtual Types::Result_t Schedule(ISchedulerPtr scheduler) override;
-
-		virtual std::string GetStateString() override;
-
-		const uint64_t GetId() override;
-
-		std::exception_ptr GetException() const;
-
-		virtual std::thread::id GetThreadId() override;
-
-	};
-
-	using WorkItemPtr = std::shared_ptr<WorkItem>;
+    using WorkItemPtr = std::shared_ptr<WorkItem>;
 
 }
 

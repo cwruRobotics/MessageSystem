@@ -18,11 +18,12 @@ namespace States
 	enum class WorkItemState
 	{
 		IDLE = 0,
-		EXECUTING_MAIN_FUNCTION = 1,
-		EXECUTING_POSTERIOR_FUNCTION = 2,
-		SCHEDULE = 3,
-		RESCHEDULE = 4,
-		DONE = 5,
+        EVALUATING_PRECONDITIONS = 1,
+		EXECUTING_MAIN_FUNCTION = 2,
+		EXECUTING_POSTERIOR_FUNCTION = 3,
+		SCHEDULE = 4,
+		RESCHEDULE = 5,
+		DONE = 6,
 	};
 
 } // end of namespace States

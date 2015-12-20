@@ -4,25 +4,29 @@
 #define FUTURESFRAMEWORK_WORKITEMSTATEMACHINE_HPP
 
 // SYSTEM INCLUDES
-
+#include <map>
+#include <vector>
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/IWorkItemStateMachine.hpp"
+#include "FuturesFramework/Result.hpp"
+#include "FuturesFramework/WorkItemStates.hpp"
 
 namespace FuturesFramework
 {
 
-	class WorkItemStateMachine : public IWorkItemStateMachine
-	{
-	private:
+    class WorkItemStateMachine
+    {
+    private:
 
-		States::WorkItemState	_currentState;
+        States::WorkItemState  _currentState;
 
-		void SetState(States::WorkItemState newState);
+        void SetState(States::WorkItemState newState);
 
-	protected:
+    protected:
 
-		States::WorkItemState TriggerIdle(Types::Result_t trigger);
+        States::WorkItemState TriggerIdle(Types::Result_t trigger);
+
+        States::WorkItemState TriggerEvaluatingPreConditions(Types::Result_t trigger);
 
 		States::WorkItemState TriggerExecutingMain(Types::Result_t trigger);
 
@@ -34,22 +38,21 @@ namespace FuturesFramework
 
 		States::WorkItemState TriggerDone(Types::Result_t trigger);
 
-		virtual States::WorkItemState Trigger(Types::Result_t trigger) override;
+		virtual States::WorkItemState Trigger(Types::Result_t trigger);
 
 		virtual States::WorkItemState Cancel();
 
-	public:
+        States::WorkItemState GetCurrentState();
 
-		WorkItemStateMachine() : _currentState(States::WorkItemState::IDLE)
-		{
-		}
+    public:
 
+        WorkItemStateMachine(States::WorkItemState initState) :
+            _currentState(initState)
+        {
+        }
 
-		States::WorkItemState GetCurrentState() override;
-
-	};
+    };
 
 }
 
-
-#endif // !FUTURESFRAMEWORK_WORKITEMSTATEMACHINE_HPP
+#endif

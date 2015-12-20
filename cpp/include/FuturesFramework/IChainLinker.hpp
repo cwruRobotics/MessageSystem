@@ -7,7 +7,7 @@
 #include <memory>
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/IWorkItem.hpp"
+// #include "FuturesFramework/IWorkItem.hpp"
 #include "FuturesFramework/Result.hpp"
 
 namespace FuturesFramework

@@ -7,14 +7,14 @@
 #include <stdexcept>
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/IWorkItem.hpp"
+#include "FuturesFramework/IExecutableWorkItem.hpp"
 #include "FuturesFramework/Scheduler.hpp"
 #include "FuturesFramework/WorkItemStateMachine.hpp"
 
 namespace FuturesFramework
 {
 
-    class WorkItem : public IWorkItem, public WorkItemStateMachine,
+    class WorkItem : public IExecutableWorkItem, public WorkItemStateMachine,
         public std::enable_shared_from_this<WorkItem>
     {
         friend class Scheduler;
@@ -22,8 +22,8 @@ namespace FuturesFramework
 
         uint64_t            _id;
         ISchedulerPtr       _pScheduler;
-        WorkItemFunctionPtr _pMainFunction;
-        WorkItemFunctionPtr _pPostFunction;
+        FunctionPtr _pMainFunction;
+        FunctionPtr _pPostFunction;
         std::exception_ptr  _pException;
 
     private:
@@ -52,9 +52,9 @@ namespace FuturesFramework
         {
         }
 
-        void AttachMainFunction(WorkItemFunctionPtr pFunc) override;
+        void AttachMainFunction(FunctionPtr pFunc) override;
 
-        void AttachPosteriorFunction(WorkItemFunctionPtr pFunc) override;
+        void AttachPosteriorFunction(FunctionPtr pFunc) override;
 
         virtual Types::Result_t Schedule(ISchedulerPtr pScheduler) override;
 

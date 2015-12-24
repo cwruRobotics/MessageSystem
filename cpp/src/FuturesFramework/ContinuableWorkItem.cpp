@@ -8,6 +8,11 @@
 namespace FuturesFramework
 {
 
+    void ContinuableWorkItem::SetState(States::SettlementState newState)
+    {
+        this->_state = newState;
+    }
+
 	void ContinuableWorkItem::SetSuccess()
 	{
 		this->_state = States::SettlementState::SUCCESS;
@@ -17,6 +22,11 @@ namespace FuturesFramework
 	{
 		this->_state = States::SettlementState::FAILURE;
 	}
+
+    const States::SettlementState ContinuableWorkItem::GetState()
+    {
+        return this->_state;
+    }
 
 	bool ContinuableWorkItem::IsCurrentlyExecuting()
 	{

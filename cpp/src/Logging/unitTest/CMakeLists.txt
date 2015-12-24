@@ -91,9 +91,10 @@ if( RUN_UNIT_TESTS )
 
         add_executable( ${PROJECT_NAME} ${LOGGING_UNITTEST_SOURCES} )
 
-        set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
+        # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
+            message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
                 ${GTEST_LIBARAY_DEBUG}
                 ${GTEST_MAIN_LIBRARY_DEBUG}
@@ -101,9 +102,10 @@ if( RUN_UNIT_TESTS )
                 ${TARGET_UUID_LIB}
             )
         else()
+            message( "Linking executable for Release" )
             target_link_libraries( ${PROJECT_NAME}
-                ${GTEST_LIBRARAY}
-                ${GTEST_MAIN_LIBRARY}
+                ${GTEST_LIBRARAY_RELEASE}
+                ${GTEST_MAIN_LIBRARY_RELEASE}
                 ${TARGET_PTHREADS_LIB}
                 ${TARGET_UUID_LIB}
             )

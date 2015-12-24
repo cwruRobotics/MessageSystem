@@ -13,7 +13,7 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 
 # this points to the root of the cmake directory
 # which contains all the toolchains and modules
-get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake ABSOLUTE )
+get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../cmake ABSOLUTE )
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
@@ -24,7 +24,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # this is the project name and type
 project( MessageFramework CXX )
 
-get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../cpp ABSOLUTE )
+get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../cpp ABSOLUTE )
 
 # this is where all build intermediate files will go
 get_filename_component( OUT_ROOT ${CMAKE_CURRENT_BINARY_DIR}/out ABSOLUTE )
@@ -43,45 +43,58 @@ option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
 set(DOC_PUBLIC_INPUT_LIST )
 set(DOC_PRIVATE_INPUT_LIST )
 
-# Logger library
-add_subdirectory( ${SRC_ROOT}/src/Logging
-                  ${OUT_ROOT}/Logging )
+if( BUILD_LOGGING )
+    # Logger library
+    add_subdirectory( ${SRC_ROOT}/src/Logging
+                      ${OUT_ROOT}/Logging )
 
-# give other subprojects a chance to search for libraries and header
-# files created before the "make install"
-list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Logging" )
-list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Logging" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
+endif()
 
-# FuturesFramework library
-add_subdirectory( ${SRC_ROOT}/src/FuturesFramework
-                  ${OUT_ROOT}/FuturesFramework )
+if( BUILD_FUTURESFRAMEWORK )
+    # FuturesFramework library
+    add_subdirectory( ${SRC_ROOT}/src/FuturesFramework
+                      ${OUT_ROOT}/FuturesFramework )
 
-# give other subprojects a chance to search for libraries and header
-# files created before the "make install"
-# list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/FuturesFramework" )
-# list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/FuturesFramework" )
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/FuturesFramework" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/FuturesFramework" )
+endif()
 
-# MessageFramework library
-# add_subdirectory( ${SRC_ROOT}/src/MessageFramework
-#                   ${OUT_ROOT}/MessageFramework )
+if( BUILD_MESSAGEFRAMEWORK )
+    # MessageFramework library
+    add_subdirectory( ${SRC_ROOT}/src/MessageFramework
+                      ${OUT_ROOT}/MessageFramework )
 
-# give other subprojects a chance to search for libraries and header
-# files created before the "make install"
-# list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/MessageFramework" )
-# list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/MessageFramework" )
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/MessageFramework" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/MessageFramework" )
+endif()
 
 if( RUN_UNIT_TESTS )
-    # Logger unit tests
-    add_subdirectory( ${SRC_ROOT}/src/Logging/unitTest
-                      ${OUT_ROOT}/LoggerUnit )
 
-    # FuturesFramework unit tests
-    # add_subdirectory( ${SRC_ROOT}/src/FuturesFramework/unittest
-    #                   ${OUT_ROOT}/LoggerUnit )
+    if( BUILD_LOGGING )
+        # Logger unit tests
+        add_subdirectory( ${SRC_ROOT}/src/Logging/unitTest
+                          ${OUT_ROOT}/LoggerUnit )
+    endif()
 
-    # MessageFramework unit tests
-    # add_subdirectory( ${SRC_ROOT}/src/MessageFramework/unittest
-    #                   ${OUT_ROOT}/LoggerUnit )
+    if( BUILD_FUTURESFRAMEWORK )
+        # FuturesFramework unit tests
+        # add_subdirectory( ${SRC_ROOT}/src/FuturesFramework/unittest
+        #                   ${OUT_ROOT}/LoggerUnit )
+    endif()
+
+    if( BUILD_MESSAGEFRAMEWORK )
+        # MessageFramework unit tests
+        # add_subdirectory( ${SRC_ROOT}/src/MessageFramework/unittest
+        #                   ${OUT_ROOT}/LoggerUnit )
+    endif()
 
 endif()
 

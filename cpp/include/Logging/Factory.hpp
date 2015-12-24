@@ -16,7 +16,7 @@ namespace Logging
 namespace Factory
 {
 
-    LoggerPtr LOGGER_API makeLogger(const char* name,
+    LoggerPtr LOGGING_API makeLogger(const char* name,
                                     const char* outputFile=nullptr);
 
 }

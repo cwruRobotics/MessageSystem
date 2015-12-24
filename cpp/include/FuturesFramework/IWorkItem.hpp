@@ -35,7 +35,7 @@ namespace FuturesFramework
     using ISchedulerPtr = std::shared_ptr<IScheduler>;
 
     // another alias.
-    using WorkItemFunctionPtr = std::function<Types::Result_t()>;
+    using FunctionPtr = std::function<Types::Result_t()>;
 
     // see file LibraryExport.hpp. The tag FUTURESFRAMEWORK_API
     // is a preprocessor variable that is used to either
@@ -47,23 +47,10 @@ namespace FuturesFramework
     // executed on an IScheduler.
     class FUTURESFRAMEWORK_API IWorkItem
     {
-    protected:
-
-        // this is the method that an IScheduler calls to run this
-        // IWorkItem. The fact that this is protected is for protection.
-        // We don't want clients to have access to the Execute()
-        // functionality AND we want to force the client to
-        // make an IScheduler (either client created or built in)
-        // to be a "friend."
-        virtual Types::Result_t Execute() = 0;
 
     public:
 
         virtual ~IWorkItem() = default;
-
-        virtual void AttachMainFunction(WorkItemFunctionPtr pFunc) = 0;
-
-        virtual void AttachPosteriorFunction(WorkItemFunctionPtr pFunc) = 0;
 
         virtual Types::Result_t Schedule(ISchedulerPtr pScheduler) = 0;
 

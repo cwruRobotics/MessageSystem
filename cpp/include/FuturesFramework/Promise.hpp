@@ -37,7 +37,7 @@ namespace FuturesFramework
         bool                                    _argsGiven;
 
     public:
-        Promise() : PromiseBase(), _cachedArgs(), _unboundFunction(),
+        Promise() : PromiseBase(), _unboundFunction(),
             _argsGiven(false)
         {
         }
@@ -45,7 +45,6 @@ namespace FuturesFramework
         ~Promise()
         {
             this->_unboundFunction = nullptr;
-            this->_cachedArgs = nullptr;
             this->_argsGiven = false;
         }
 

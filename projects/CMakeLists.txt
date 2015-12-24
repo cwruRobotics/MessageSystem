@@ -43,6 +43,12 @@ option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
 set(DOC_PUBLIC_INPUT_LIST )
 set(DOC_PRIVATE_INPUT_LIST )
 
+if( BUILD_GTEST )
+    # GoogleTest framework
+    add_subdirectory( ${SRC_ROOT}/../gtest
+                      ${OUT_ROOT}/gtest )
+endif()
+
 if( BUILD_LOGGING )
     # Logger library
     add_subdirectory( ${SRC_ROOT}/src/Logging

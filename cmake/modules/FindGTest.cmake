@@ -1,0 +1,57 @@
+
+message( "GTEST_ROOT: ${GTEST_ROOT}" )
+
+find_path( GTEST_INCLUDE_DIRS gtest/gtest.h
+    HINTS
+        $ENV{GTEST_ROOT}/include
+        ${GTEST_ROOT}/include
+)
+
+find_library( GTEST_LIBRARY_DEBUG gtest.lib
+    HINTS
+        $ENV{GTEST_ROOT}/Debug
+        ${GTEST_ROOT}/Debug
+)
+
+find_library( GTEST_MAIN_LIBRARY_DEBUG gtest_main.lib
+    HINTS
+        $ENV{GTEST_ROOT}/Debug
+        ${GTEST_ROOT}/Debug
+)
+
+find_library( GTEST_LIBRARY_RELEASE gtest.lib
+    HINTS
+        $ENV{GTEST_ROOT}/Release
+        ${GTEST_ROOT}/Release
+)
+
+find_library( GTEST_MAIN_LIBRARY_RELEASE gtest_main.lib
+    HINTS
+        $ENV{GTEST_ROOT}/Release
+        ${GTEST_ROOT}/Release
+)
+
+message( "GTEST_INCLUDE_DIRS: ${GTEST_INCLUDE_DIRS}" )
+message( "GTEST_LIBRARY_DEBUG: ${GTEST_LIBRARY_DEBUG}" )
+message( "GTEST_MAIN_LIBRARY_DEBUG: ${GTEST_MAIN_LIBRARY_DEBUG}" )
+message( "GTEST_LIBRARY_RELEASE: ${GTEST_LIBRARY_RELEASE}" )
+message( "GTEST_MAIN_LIBRARY_RELEASE: ${GTEST_MAIN_LIBRARY_RELEASE}" )
+
+if( NOT GTEST_INCLUDE_DIRS )
+    message( FATAL_ERROR "GTEST_INCLUDE_DIRS was not found" )
+elseif( NOT GTEST_LIBRARY_DEBUG )
+    message( FATAL_ERROR "GTEST_LIBRARY_DEBUG was not found" )
+elseif( NOT GTEST_MAIN_LIBRARY_DEBUG )
+    message( FATAL_ERROR "GTEST_MAIN_LIBRARY_DEBUG was not found" )
+elseif( NOT GTEST_LIBRARY_RELEASE )
+    message( FATAL_ERROR "GTEST_LIBRARY_RELEASE was not found" )
+elseif( NOT GTEST_MAIN_LIBRARY_RELEASE )
+    message( FATAL_ERROR "GTEST_MAIN_LIBRARY_RELEASE was not found" )
+endif()
+set( GTEST_FOUND TRUE )
+
+set( GTEST_INCLUDE_DIRS ${GTEST_INCLUDE_DIRS} )
+set( GTEST_LIBRARY_DEBUG ${GTEST_LIBRARY_DEBUG} )
+set( GTEST_MAIN_LIBRARY_DEBUG ${GTEST_MAIN_LIBRARY_DEBUG} )
+set( GTEST_LIBRARY_RELEASE ${GTEST_LIBRARY_RELEASE} )
+set( GTEST_MAIN_LIBRARY_RELEASE ${GTEST_MAIN_LIBRARY_RELEASE} )

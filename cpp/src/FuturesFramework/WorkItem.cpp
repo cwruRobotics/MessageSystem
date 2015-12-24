@@ -28,12 +28,12 @@ namespace FuturesFramework
 		return this->GetCurrentState() == States::WorkItemState::DONE;
 	}
 
-	void WorkItem::AttachMainFunction(WorkItemFunctionPtr func)
+	void WorkItem::AttachMainFunction(FunctionPtr func)
 	{
 		this->_pMainFunction = func;
 	}
 
-	void WorkItem::AttachPosteriorFunction(WorkItemFunctionPtr func)
+	void WorkItem::AttachPosteriorFunction(FunctionPtr func)
 	{
 		this->_pPostFunction = func;
 	}

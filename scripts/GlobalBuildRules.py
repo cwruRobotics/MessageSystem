@@ -63,7 +63,7 @@ class GlobalBuild(object):
         self.generateProjectVersion()
 
     def getCMakeArgs(self, pathPrefix, workingDirectory):
-        CMakeProjectDir = "projects/%s" % self._project_name
+        CMakeProjectDir = "projects"
         relCMakeProjectDir = os.path.relpath(CMakeProjectDir,
                                              workingDirectory)
 
@@ -94,16 +94,11 @@ class GlobalBuild(object):
                                      "include")
 
         toolchainDir = os.path.relpath(FileSystem.getDirectory(FileSystem.CMAKE_TOOLCHAIN_DIR), workingDirectory)
+        gtestRoot = FileSystem.getDirectory(FileSystem.GTEST_ROOT)
         if platform.system() == "Windows":
             installRootDir = "\"%s\"" % installRootDir.replace("\\", "/")
             outIncludeDir = "\"%s\"" % outIncludeDir.replace("\\", "/")
             toolchain = "\"%s\"" % toolchainDir.replace("\\", "/")
-
-        print("installRootDir: %s" % installRootDir)
-        print("binDir: %s" % binDir)
-        print("includeDir: %s" % includeDir)
-        print("libDir: %s" % libDir)
-        print("outIncludeDir: %s" % outIncludeDir)
 
         if self._config == "release":
             cmake_config = "Release"
@@ -133,10 +128,12 @@ class GlobalBuild(object):
             "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
             "-DCMAKE_BUILD_TYPE=%s" % cmake_config,
             "-DPROCESSOR=%s" % Utilities.getProcessorInfo(),
-            "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath  # toolchain file path (relative)
+            "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
+            "-DBUILD_%s=ON" % self._project_name.upper()
+            # "-DGTEST_ROOT=%s" % gtestRoot,  # gtest root (absolute)
+            # "-DRUN_UNIT_TESTS=ON",
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
-            # "-DGTEST_ROOT=%s" %  # gtest root (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
         ]
         return CMakeArgs

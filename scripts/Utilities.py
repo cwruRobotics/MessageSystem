@@ -133,12 +133,21 @@ def parseCommandLine(commandLine):
     parsedCommandedValues = {}
     parsedCommandedMethods = []
     key = None
+    projectFlag = False
     for command in commandLine:
-        if '-' in command:
+        if command == "-projects":
             key = command.replace('-', '', 1)
+            parsedCommandedValues[key] = []
+            projectFlag = True
+        elif '-' in command:
+            key = command.replace('-', '', 1)
+            projectFlag = False
         elif key is not None:
-            parsedCommandedValues[key] = command
-            key = None
+            if projectFlag is True:
+                parsedCommandedValues[key].append(command)
+            else:
+                parsedCommandedValues[key] = command
+                key = None
         else:
             parsedCommandedMethods.append(command)
     return (parsedCommandedMethods, parsedCommandedValues)
@@ -226,14 +235,11 @@ def call(callable, args):
     # return "self" as a parameter, which we cannot provide, but will be provided by the Python
     # interpreter when executed.
 
-    try:
-        # this is known as variable unpacking. We are taking the dictionary, and unpacking
-        # it, which the interpreter treats as a parameter list in this context. It will build
-        # a final parameter list combining the default values of the method/function and the ones
-        # we have provided and call the method/function with it. This throws an error if the total
-        # parameter list does not match the callable's signature EXACTLY. This is why we needed
-        # to construct "callableArgs" in the first place, to filter out excess arguments.
-        callable(**callableArgs)
-        return True
-    except:
-        failExecution("Error: %s" % sys.exc_info()[1])
+    # this is known as variable unpacking. We are taking the dictionary, and unpacking
+    # it, which the interpreter treats as a parameter list in this context. It will build
+    # a final parameter list combining the default values of the method/function and the ones
+    # we have provided and call the method/function with it. This throws an error if the total
+    # parameter list does not match the callable's signature EXACTLY. This is why we needed
+    # to construct "callableArgs" in the first place, to filter out excess arguments.
+    callable(**callableArgs)
+    return True

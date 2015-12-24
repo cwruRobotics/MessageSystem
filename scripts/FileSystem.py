@@ -13,7 +13,7 @@ SCRIPT_ROOT = 3
 PROJECT_ROOT = 4            # the absolute path to the top level CMAKE directory of the project
 MANUAL_DIR = 5              # the absolute path to the documentation directory of the project
 CPP_SOURCE_DIR = 6          # the absolute path to the top level directory of c++ source directories
-TEST_ROOT = 7               # the absolute path to the top level directory of c++ unit test directories
+GTEST_ROOT = 7              # the absolute path to the top level directory of google test
 TEST_REPORT_DIR = 8         # the absolute path to the directory containing test reports
 CMAKE_BASE_DIR = 9          # the absolute path to the top level directory of CMAKE utilities
 
@@ -43,8 +43,8 @@ def getDirectory(directoryEnum, configuration='', projectName=''):
         return os.path.join(getDirectory(ROOT), 'manual')
     elif directoryEnum == CPP_SOURCE_DIR:
         return os.path.join(getDirectory(ROOT), 'cpp')
-    elif directoryEnum == TEST_ROOT:
-        return os.path.join(getDirectory(CPP_SOURCE_DIR), 'src', 'unitTest')
+    elif directoryEnum == GTEST_ROOT:
+        return os.path.join(getDirectory(ROOT), "staticLibs", "gtest")
     elif directoryEnum == TEST_REPORT_DIR:
         return os.path.join(getDirectory(WORKING, configuration, projectName), 'testReports')
     elif directoryEnum == CMAKE_BASE_DIR:

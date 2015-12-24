@@ -51,15 +51,19 @@ set( FUTURESFRAMEWORK_SRCS
     ${SRC_ROOT}/FuturesFramework/WorkItem.cpp
     ${SRC_ROOT}/FuturesFramework/SettlementStates.cpp
     ${SRC_ROOT}/FuturesFramework/ContinuableWorkItem.cpp
+    ${SRC_ROOT}/FuturesFramework/PromiseBase.cpp
 )
 
 # Public header files (installed together with libraries)
 set( FUTURESFRAMEWORK_PUBLIC_HEADERS
     ${INC_ROOT}/FuturesFramework/LibraryExport.hpp
     ${INC_ROOT}/FuturesFramework/IWorkItem.hpp
+    ${INC_ROOT}/FuturesFramework/IExecutableWorkItem.hpp
     ${INC_ROOT}/FuturesFramework/IScheduler.hpp
     ${INC_ROOT}/FuturesFramework/IChainLinker.hpp
     ${INC_ROOT}/FuturesFramework/IContinuableWorkItem.hpp
+    ${INC_ROOT}/FuturesFramework/PromiseBase.hpp
+    ${INC_ROOT}/FuturesFramework/Promise.hpp
 )
 
 set( FUTURESFRAMEWORK_PRIVATE_HEADERS

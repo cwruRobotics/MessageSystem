@@ -43,18 +43,6 @@ option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
 set(DOC_PUBLIC_INPUT_LIST )
 set(DOC_PRIVATE_INPUT_LIST )
 
-if( BUILD_GTEST )
-    # GoogleTest framework
-    add_subdirectory( ${SRC_ROOT}/src/gtest
-                      ${OUT_ROOT}/gtest )
-
-    if( BUILD_GMOCK )
-        # GoogleTest Mocking Framework
-        add_subdirectory( ${SRC_ROOT}/src/gmock
-                          ${OUT_ROOT}/gmock )
-    endif()
-endif()
-
 if( BUILD_TESTAPP )
 
     add_subdirectory( ${SRC_ROOT}/src/testApp

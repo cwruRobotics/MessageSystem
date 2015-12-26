@@ -24,6 +24,8 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
                              "package",
                              "uploadPackagedVersion"]  # MessageFramework specific default build steps
 
+        self._tests_to_run = ["%sUnitTests" % self._project_name]
+
     # this method will launch CMake.
     # CMake is handling all of our compiling and linking.
     def cmake(self):
@@ -39,7 +41,7 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
                                             wd=wd)
         else:
             CMakeArgs.extend(["-G", "\"Unix Makefiles\""])
-            Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd)
+            Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd, failOnError=True)
 
     def makeTarget(self, targets):
         # make directory that CMake will dump all output to
@@ -50,7 +52,7 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
                                             argsForApp=targets,
                                             wd=wd)
         else:
-            Utilities.PFork(appToExecute="make", argsForApp=targets, wd=wd)
+            Utilities.PFork(appToExecute="make", argsForApp=targets, wd=wd, failOnError=True)
 
     def makeVisualStudioProjects(self):
         wd = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)

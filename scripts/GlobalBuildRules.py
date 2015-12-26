@@ -95,7 +95,6 @@ class GlobalBuild(object):
 
         toolchainDir = os.path.relpath(FileSystem.getDirectory(FileSystem.CMAKE_TOOLCHAIN_DIR), workingDirectory)
         allBuiltOutDir = FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config)
-        gtestRoot = allBuiltOutDir
         if platform.system() == "Windows":
             installRootDir = "\"%s\"" % installRootDir.replace("\\", "/")
             outIncludeDir = "\"%s\"" % outIncludeDir.replace("\\", "/")
@@ -129,16 +128,16 @@ class GlobalBuild(object):
             # "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
             "-DCMAKE_BUILD_TYPE=%s" % cmake_config,
             "-DPROCESSOR=%s" % Utilities.getProcessorInfo(),
-            # "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
+            "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
             "-DBUILD_%s=ON" % self._project_name.upper(),
             "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
-            "-DGTEST_ROOT=%s" % gtestRoot,  # gtest root (absolute)
             "-DRUN_UNIT_TESTS=ON",
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
         ]
         return CMakeArgs
+        
 
     # this method will generate documentation
     # of the project. We are using Doxygen
@@ -153,6 +152,15 @@ class GlobalBuild(object):
 
     def runUnitTests(self):
         print("Running unit tests for project [%s]" % self._project_name)
+        installRoot = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  self._project_name)
+        for testToRun in self._tests_to_run:
+            if platform.system() == "Windows":
+                testToRun += ".exe"
+            executablePath = os.path.join(installRoot, "bin", testToRun)
+            if os.path.exists(executablePath):
+                Utilities.PFork(appToExecute=executablePath, failOnError=True)
+            else:
+                print("%s does NOT exist!" % executablePath)
 
     # executes a particular part of the build process and fails the build
     # if that build step fails.

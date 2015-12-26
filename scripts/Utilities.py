@@ -48,7 +48,9 @@ def PFork(appToExecute=None, argsForApp=[], wd=None, failOnError=False, environm
     # (like the returncode variable)
     childProcess.communicate()
 
-    if childProcess.returncode < 0 and failOnError:
+    print("RETURN CODE FOR APP %s IS: %s" % (appToExecute, childProcess.returncode))
+
+    if childProcess.returncode != 0 and failOnError:
         failExecution("PFork failed to execute [%s]" % ' '.join(app_and_args))
     return childProcess.returncode
 
@@ -210,7 +212,7 @@ def PForkWithVisualStudio(appToExecute=None, argsForApp=[], wd=None, environment
     childProcess.communicate()
 
     # fail execution if there was an error.
-    if childProcess.returncode < 0:
+    if childProcess.returncode != 0:
         failExecution('execute with visual studio failed with returncode [%s]' % childProcess.returncode)
 
 

@@ -21,16 +21,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( TestAppUnitTests CXX )
+project( testAppUnitTests CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include ABSOLUTE )
-if( DEFINED GTEST_ROOT )
-    list( APPEND CMAKE_MODULE_PATH ${GTEST_ROOT}/share/gtest/cmake/modules )
-endif()
 
 # ------------------------------------------------------------------------------
 # GTest
@@ -42,19 +39,9 @@ if( RUN_UNIT_TESTS )
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
     # include(BringInPackages)  # NOT build in
     # BringInPackages()
-    find_package( GTest REQUIRED )
+    find_package( Catch REQUIRED )
 
-    # Don't worry about this right now. This will import GTest and GMock
-    # if they aren't found.
-    if( NOT GTEST_FOUND )
-        # try and import and build the project.
-        include( ImportGTest )
-        importGTest()
-
-        find_package( GTest REQUIRED )
-    endif()
-
-    if( GTEST_FOUND )
+    if( CATCH_FOUND )
         # ---------------------------------------------------------------------
         # Libararies
         # ---------------------------------------------------------------------
@@ -73,13 +60,10 @@ if( RUN_UNIT_TESTS )
         set( INCLUDE_DIRS
             ${INC_ROOT}
             ${SRC_ROOT}/../..
-            ${GTEST_INCLUDE_DIRS}
             ${CMAKE_CURRENT_SOURCE_DIR}/..
         )
 
         if( MSVC )
-            add_definitions( /D GTEST_HAS_TR1_TUPLE=0 )
-            add_definitions( /D GTEST_USE_OWN_TR1_TUPLE=1 )
             include( GNUInstallDirs )
         elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
             include( GNUInstallDirs )
@@ -94,9 +78,6 @@ if( RUN_UNIT_TESTS )
         endif()
 
         add_definitions(-DTESTAPP_STATIC_DEFINE) # so testApp can be built as an executable
-        include(${CMAKE_LOCAL_ROOT}/modules/internal_utils.cmake)
-
-        fix_default_compiler_settings_()
 
         include_directories( ${INCLUDE_DIRS} )
 
@@ -105,27 +86,21 @@ if( RUN_UNIT_TESTS )
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
-            message( "GTEST_MAIN_LIBRARY_DEBUG: ${GTEST_MAIN_LIBRARY_DEBUG}" )
-            message( "GTEST_LIBRARY_DEBUG: ${GTEST_LIBRARY_DEBUG}" )
             message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
-                ${GTEST_LIBARAY_DEBUG}
-                ${GTEST_MAIN_LIBRARY_DEBUG}
                 ${TARGET_PTHREADS_LIB}
                 ${TARGET_UUID_LIB}
             )
         else()
             message( "Linking executable for Release" )
             target_link_libraries( ${PROJECT_NAME}
-                ${GTEST_LIBRARAY_RELEASE}
-                ${GTEST_MAIN_LIBRARY_RELEASE}
                 ${TARGET_PTHREADS_LIB}
                 ${TARGET_UUID_LIB}
             )
         endif()
 
     else()
-        message( WARNING "GTest library not found...skipping unit tests")
+        message( WARNING "Catch library not found...skipping unit tests")
     endif()
 
 endif()

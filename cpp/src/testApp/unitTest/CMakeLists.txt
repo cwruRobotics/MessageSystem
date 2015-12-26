@@ -21,7 +21,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( LoggingUnitTests CXX )
+project( TestAppUnitTests CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
@@ -42,7 +42,17 @@ if( RUN_UNIT_TESTS )
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
     # include(BringInPackages)  # NOT build in
     # BringInPackages()
-    find_package(GTest REQUIRED)
+    find_package( GTest REQUIRED )
+
+    # Don't worry about this right now. This will import GTest and GMock
+    # if they aren't found.
+    if( NOT GTEST_FOUND )
+        # try and import and build the project.
+        include( ImportGTest )
+        importGTest()
+
+        find_package( GTest REQUIRED )
+    endif()
 
     if( GTEST_FOUND )
         # ---------------------------------------------------------------------
@@ -54,11 +64,9 @@ if( RUN_UNIT_TESTS )
         # ---------------------------------------------------------------------
 
         # source files
-        set( LOGGING_UNITTEST_SOURCES
-            ${SRC_ROOT}/../LoggingLevels.cpp
-            ${SRC_ROOT}/../Logger.cpp
-            ${SRC_ROOT}/../Factory.cpp
-            ${SRC_ROOT}/Logger_unit.cpp
+        set( TESTAPP_UNITTEST_SOURCES
+            ${SRC_ROOT}/../testSource.cpp
+            ${SRC_ROOT}/test.cpp
         )
 
         # directories to search for header files
@@ -85,18 +93,20 @@ if( RUN_UNIT_TESTS )
             message(SEND_ERROR "OS [${CMAKE_SYSTEM_NAME}] not supported")
         endif()
 
-        add_definitions(-DLOGGING_STATIC_DEFINE) # so the Logging library will be imported
+        add_definitions(-DTESTAPP_STATIC_DEFINE) # so testApp can be built as an executable
         include(${CMAKE_LOCAL_ROOT}/modules/internal_utils.cmake)
 
         fix_default_compiler_settings_()
 
         include_directories( ${INCLUDE_DIRS} )
 
-        add_executable( ${PROJECT_NAME} ${LOGGING_UNITTEST_SOURCES} )
+        add_executable( ${PROJECT_NAME} ${TESTAPP_UNITTEST_SOURCES} )
 
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
+            message( "GTEST_MAIN_LIBRARY_DEBUG: ${GTEST_MAIN_LIBRARY_DEBUG}" )
+            message( "GTEST_LIBRARY_DEBUG: ${GTEST_LIBRARY_DEBUG}" )
             message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
                 ${GTEST_LIBARAY_DEBUG}

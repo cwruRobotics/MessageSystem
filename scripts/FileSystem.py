@@ -13,19 +13,18 @@ SCRIPT_ROOT = 3
 PROJECT_ROOT = 4            # the absolute path to the top level CMAKE directory of the project
 MANUAL_DIR = 5              # the absolute path to the documentation directory of the project
 CPP_SOURCE_DIR = 6          # the absolute path to the top level directory of c++ source directories
-GTEST_ROOT = 7              # the absolute path to the top level directory of google test
-TEST_REPORT_DIR = 8         # the absolute path to the directory containing test reports
-CMAKE_BASE_DIR = 9          # the absolute path to the top level directory of CMAKE utilities
+TEST_REPORT_DIR = 7         # the absolute path to the directory containing test reports
+CMAKE_BASE_DIR = 8          # the absolute path to the top level directory of CMAKE utilities
 
 # the absolute path to the CMAKE toolchain directory
 #   - toolchain files are used for certain platforms to separate
 #     CMAKE functionality
-CMAKE_TOOLCHAIN_DIR = 10
-CMAKE_MODULE_DIR = 11       # the absolute path to the CMAKE modules directory
-OUT_ROOT = 12               # the absolute path to the directory where built code goes
-INSTALL_ROOT = 13           # the absolute path to the top level directory where all built code goes
-INSTALL_DIR = 14            # the absolute path to the directory where public c++ headers go when built
-LOG_DIR = 15                # the absolute path to the directory where all log files will be written
+CMAKE_TOOLCHAIN_DIR = 9
+CMAKE_MODULE_DIR = 10       # the absolute path to the CMAKE modules directory
+OUT_ROOT = 11               # the absolute path to the directory where built code goes
+INSTALL_ROOT = 12           # the absolute path to the top level directory where all built code goes
+INSTALL_DIR = 13            # the absolute path to the directory where public c++ headers go when built
+LOG_DIR = 14                # the absolute path to the directory where all log files will be written
 
 
 # a method to get the absolute path to a directory within the project based
@@ -43,8 +42,6 @@ def getDirectory(directoryEnum, configuration='', projectName=''):
         return os.path.join(getDirectory(ROOT), 'manual')
     elif directoryEnum == CPP_SOURCE_DIR:
         return os.path.join(getDirectory(ROOT), 'cpp')
-    elif directoryEnum == GTEST_ROOT:
-        return os.path.join(getDirectory(ROOT), "staticLibs", "gtest")
     elif directoryEnum == TEST_REPORT_DIR:
         return os.path.join(getDirectory(WORKING, configuration, projectName), 'testReports')
     elif directoryEnum == CMAKE_BASE_DIR:

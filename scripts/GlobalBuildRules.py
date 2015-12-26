@@ -35,7 +35,7 @@ class GlobalBuild(object):
     # source files.
     def cleanBuildWorkspace(self):
         print("Cleaning build directory for project [%s]" % self._project_name)
-        buildDirectory = FileSystem.getDirectory(FileSystem.WORKING, self._config)
+        buildDirectory = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)
         if os.path.exists(buildDirectory):
             Utilities.rmTree(buildDirectory)
 
@@ -71,7 +71,7 @@ class GlobalBuild(object):
             FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config, self._project_name), 'dummy')
 
         # projectWorkingDir = getDirectory(FileSystemDirectory.ROOT, self._config, self._project_name)
-        installRootDir = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name)
+        installRootDir = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  self._project_name)
 
         # all of these are relative paths that are used by CMake
         # to place the appropriate build components in the correct
@@ -82,7 +82,7 @@ class GlobalBuild(object):
         )
 
         includeDir = os.path.relpath(
-            os.path.join(FileSystem.getDirectory(FileSystem.INSTALL_DIR, self._config, self._project_name), "include"),
+            os.path.join(FileSystem.getDirectory(FileSystem.INSTALL_DIR, self._config), "include"),
             dummyDir
         )
 
@@ -94,7 +94,8 @@ class GlobalBuild(object):
                                      "include")
 
         toolchainDir = os.path.relpath(FileSystem.getDirectory(FileSystem.CMAKE_TOOLCHAIN_DIR), workingDirectory)
-        gtestRoot = FileSystem.getDirectory(FileSystem.GTEST_ROOT)
+        allBuiltOutDir = FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config)
+        gtestRoot = allBuiltOutDir
         if platform.system() == "Windows":
             installRootDir = "\"%s\"" % installRootDir.replace("\\", "/")
             outIncludeDir = "\"%s\"" % outIncludeDir.replace("\\", "/")
@@ -121,17 +122,18 @@ class GlobalBuild(object):
             relCMakeProjectDir,
             # "--build \"%s\"" % (workingDirectory),
             "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, binDir),
-            "-DCMAKE_INCLUDE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, includeDir),
+            # "-DCMAKE_INCLUDE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, includeDir),
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
             "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
             "-DCMAKE_PREFIX_PATH=%s" % (installRootDir),  # absolute path
-            "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
+            # "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
             "-DCMAKE_BUILD_TYPE=%s" % cmake_config,
             "-DPROCESSOR=%s" % Utilities.getProcessorInfo(),
-            "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
-            "-DBUILD_%s=ON" % self._project_name.upper()
-            # "-DGTEST_ROOT=%s" % gtestRoot,  # gtest root (absolute)
-            # "-DRUN_UNIT_TESTS=ON",
+            # "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
+            "-DBUILD_%s=ON" % self._project_name.upper(),
+            "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
+            "-DGTEST_ROOT=%s" % gtestRoot,  # gtest root (absolute)
+            "-DRUN_UNIT_TESTS=ON",
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path

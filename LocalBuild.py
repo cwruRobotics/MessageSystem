@@ -65,6 +65,7 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
 
     def make(self):
         self.makeTarget(["all"])
+        self.makeTarget(["install"])
 
     def build(self):
         print("Building project [%s]" % self._project_name)

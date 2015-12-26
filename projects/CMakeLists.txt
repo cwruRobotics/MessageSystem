@@ -55,6 +55,16 @@ if( BUILD_GTEST )
     endif()
 endif()
 
+if( BUILD_TESTAPP )
+
+    add_subdirectory( ${SRC_ROOT}/src/testApp
+                      ${OUT_ROOT}/testApp )
+
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/testApp" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/testApp" )
+
+endif()
+
 if( BUILD_LOGGING )
     # Logger library
     add_subdirectory( ${SRC_ROOT}/src/Logging
@@ -94,6 +104,11 @@ if( RUN_UNIT_TESTS )
         # Logger unit tests
         add_subdirectory( ${SRC_ROOT}/src/Logging/unitTest
                           ${OUT_ROOT}/LoggerUnit )
+    endif()
+
+    if( BUILD_TESTAPP )
+        add_subdirectory( ${SRC_ROOT}/src/testApp/unitTest
+                          ${OUT_ROOT}/testAppUnit )
     endif()
 
     if( BUILD_FUTURESFRAMEWORK )

@@ -1,0 +1,407 @@
+([], {'configuration': 'debug', 'projects': ['gtest', 'testApp']})
+Injecting all environment variables
+Injecting static environment variables
+Injecting project specific environment variables
+For potential environment optimization, consider adding
+a file of key=value pairs. These will be injected as environment
+variables unique to this project and will only exist for the runtime
+of this project
+
+building configuration [debug]
+
+-Executing build step [build]
+Building project [gtest]
+-Executing build step [preBuild]
+Setting up workspaces for project [gtest]
+Cleaning build directory for project [gtest]
+making directory C:\Users\Andrew\Github\MessageSystem\build\out\include
+-Executing build step [cmake]
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\gtest" &&  cmake ..\..\..\projects -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=..\installRoot\bin -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=..\installRoot\lib -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=..\installRoot\lib -DCMAKE_PREFIX_PATH="C:/Users/Andrew/Github/MessageSystem/build/debug/gtest/out/installRoot" -DCMAKE_BUILD_TYPE=Debug -DPROCESSOR=amd64 -DBUILD_GTEST=ON -DCMAKE_INSTALL_PREFIX=C:\Users\Andrew\Github\MessageSystem\build\debug\out -DGTEST_ROOT=C:\Users\Andrew\Github\MessageSystem\build\debug\out -DRUN_UNIT_TESTS=ON -G "NMake Makefiles"
+-- The CXX compiler identification is MSVC 19.0.23026.0
+
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe
+
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe -- works
+
+-- Detecting CXX compiler ABI info
+
+-- Detecting CXX compiler ABI info - done
+
+-- Detecting CXX compile features
+
+-- Detecting CXX compile features - done
+
+-- The C compiler identification is MSVC 19.0.23026.0
+
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe
+
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe -- works
+
+-- Detecting C compiler ABI info
+
+-- Detecting C compiler ABI info - done
+
+-- Found PythonInterp: C:/Python27/python.exe (found version "2.7.10")
+
+-- Looking for include file pthread.h
+
+-- Looking for include file pthread.h - not found
+
+-- Found Threads: TRUE
+
+-- Configuring done
+
+-- Generating done
+
+CMake Warning:
+
+  Manually-specified variables were not used by the project:
+
+
+
+    GTEST_ROOT
+
+    PROCESSOR
+
+
+
+
+
+-- Build files have been written to: C:/Users/Andrew/Github/MessageSystem/build/debug/gtest
+
+-Executing build step [make]
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\gtest" &&  nmake all
+
+
+Microsoft (R) Program Maintenance Utility Version 14.00.23026.0
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+
+Scanning dependencies of target gtest
+
+[ 25%] Building CXX object out/gtest/CMakeFiles/gtest.dir/gtest-all.cc.obj
+
+gtest-all.cc
+
+[ 50%] Linking CXX static library ..\installRoot\lib\gtest.lib
+
+[ 50%] Built target gtest
+
+Scanning dependencies of target gtest_main
+
+[ 75%] Building CXX object out/gtest/CMakeFiles/gtest_main.dir/gtest_main.cc.obj
+
+gtest_main.cc
+
+[100%] Linking CXX static library ..\installRoot\lib\gtest_main.lib
+
+[100%] Built target gtest_main
+
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\gtest" &&  nmake install
+
+
+Microsoft (R) Program Maintenance Utility Version 14.00.23026.0
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+
+[ 50%] Built target gtest
+
+[100%] Built target gtest_main
+
+Install the project...
+
+-- Install configuration: "Debug"
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest.lib
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest_main.lib
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-death-test.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-message.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-param-test.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-param-test.h.pump
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-printers.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-spi.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-test-part.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest-typed-test.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest_pred_impl.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/gtest_prod.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/custom
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/custom/gtest-port.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/custom/gtest-printers.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/custom/gtest.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-death-test-internal.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-filepath.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-internal.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-linked_ptr.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-param-util-generated.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-param-util-generated.h.pump
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-param-util.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-port-arch.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-port.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-string.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-tuple.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-tuple.h.pump
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-type-util.h
+
+-- Installing: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include/gtest/internal/gtest-type-util.h.pump
+
+-Executing build step [runUnitTests]
+Running unit tests for project [gtest]
+-Executing build step [package]
+packaging project [gtest]
+-Executing build step [uploadPackagedVersion]
+Uploading project [gtest]
+********************
+*     COMPLETE     *
+********************
+Injecting all environment variables
+Injecting static environment variables
+Injecting project specific environment variables
+For potential environment optimization, consider adding
+a file of key=value pairs. These will be injected as environment
+variables unique to this project and will only exist for the runtime
+of this project
+
+building configuration [debug]
+
+-Executing build step [build]
+Building project [testApp]
+-Executing build step [preBuild]
+Setting up workspaces for project [testApp]
+Cleaning build directory for project [testApp]
+making directory C:\Users\Andrew\Github\MessageSystem\build\out\include
+-Executing build step [cmake]
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\testApp" &&  cmake ..\..\..\projects -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=..\installRoot\bin -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=..\installRoot\lib -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=..\installRoot\lib -DCMAKE_PREFIX_PATH="C:/Users/Andrew/Github/MessageSystem/build/debug/testApp/out/installRoot" -DCMAKE_BUILD_TYPE=Debug -DPROCESSOR=amd64 -DBUILD_TESTAPP=ON -DCMAKE_INSTALL_PREFIX=C:\Users\Andrew\Github\MessageSystem\build\debug\out -DGTEST_ROOT=C:\Users\Andrew\Github\MessageSystem\build\debug\out -DRUN_UNIT_TESTS=ON -G "NMake Makefiles"
+-- The CXX compiler identification is MSVC 19.0.23026.0
+
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe
+
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/amd64/cl.exe -- works
+
+-- Detecting CXX compiler ABI info
+
+-- Detecting CXX compiler ABI info - done
+
+-- Detecting CXX compile features
+
+-- Detecting CXX compile features - done
+
+GTEST_INCLUDE_DIRS: C:/Users/Andrew/Github/MessageSystem/build/debug/out/include
+
+GTEST_LIBRARY: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest.lib
+
+GTEST_MAIN_LIBRARY: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest_main.lib
+
+-- Found PythonInterp: C:/Python27/python.exe (found version "2.7.10")
+
+GTEST_MAIN_LIBRARY_DEBUG: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest_main.lib
+
+GTEST_LIBRARY_DEBUG: C:/Users/Andrew/Github/MessageSystem/build/debug/out/lib/gtest.lib
+
+Linking executable for Debug
+
+-- Configuring done
+
+-- Generating done
+
+CMake Warning:
+
+  Manually-specified variables were not used by the project:
+
+
+
+    PROCESSOR
+
+
+
+
+
+-- Build files have been written to: C:/Users/Andrew/Github/MessageSystem/build/debug/testApp
+
+-Executing build step [make]
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\testApp" &&  nmake all
+
+
+Microsoft (R) Program Maintenance Utility Version 14.00.23026.0
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+
+Scanning dependencies of target testApp
+
+[ 20%] Building CXX object out/testApp/CMakeFiles/testApp.dir/testSource.cpp.obj
+
+testSource.cpp
+
+[ 40%] Linking CXX shared library ..\installRoot\bin\testApp.dll
+
+[ 40%] Built target testApp
+
+Scanning dependencies of target TestAppUnitTests
+
+[ 60%] Building CXX object out/testAppUnit/CMakeFiles/TestAppUnitTests.dir/C_/Users/Andrew/Github/MessageSystem/cpp/src/testApp/testSource.cpp.obj
+
+testSource.cpp
+
+[ 80%] Building CXX object out/testAppUnit/CMakeFiles/TestAppUnitTests.dir/test.cpp.obj
+
+test.cpp
+
+[100%] Linking CXX executable ..\installRoot\bin\TestAppUnitTests.exe
+
+test.cpp.obj : error LNK2019: unresolved external symbol "bool __cdecl testing::internal::IsTrue(bool)" (?IsTrue@internal@testing@@YA_N_N@Z) referenced in function "public: void __cdecl testing::internal::scoped_ptr<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > >::reset(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > *)" (?reset@?$scoped_ptr@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@internal@testing@@QEAAXPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::Message::Message(void)" (??0Message@testing@@QEAA@XZ) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::AssertionResult __cdecl testing::internal::EqFailure(char const *,char const *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,bool)" (?EqFailure@internal@testing@@YA?AVAssertionResult@2@PEBD0AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@1_N@Z) referenced in function "class testing::AssertionResult __cdecl testing::internal::CmpHelperEQFailure<int,int>(char const *,char const *,int const &,int const &)" (??$CmpHelperEQFailure@HH@internal@testing@@YA?AVAssertionResult@1@PEBD0AEBH1@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "void const * __cdecl testing::internal::GetTestTypeId(void)" (?GetTestTypeId@internal@testing@@YAPEBXXZ) referenced in function "void __cdecl `dynamic initializer for 'private: static class testing::TestInfo * TestReturn5_Test_Test::test_info_''(void)" (??__E?test_info_@TestReturn5_Test_Test@@0QEAVTestInfo@testing@@EA@@YAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::TestInfo * __cdecl testing::internal::MakeAndRegisterTestInfo(char const *,char const *,char const *,char const *,struct testing::internal::CodeLocation,void const *,void (__cdecl*)(void),void (__cdecl*)(void),class testing::internal::TestFactoryBase *)" (?MakeAndRegisterTestInfo@internal@testing@@YAPEAVTestInfo@2@PEBD000UCodeLocation@12@PEBXP6AXXZ3PEAVTestFactoryBase@12@@Z) referenced in function "void __cdecl `dynamic initializer for 'private: static class testing::TestInfo * TestReturn5_Test_Test::test_info_''(void)" (??__E?test_info_@TestReturn5_Test_Test@@0QEAVTestInfo@testing@@EA@@YAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::AssertionResult __cdecl testing::AssertionSuccess(void)" (?AssertionSuccess@testing@@YA?AVAssertionResult@1@XZ) referenced in function "class testing::AssertionResult __cdecl testing::internal::CmpHelperEQ<int,int>(char const *,char const *,int const &,int const &)" (??$CmpHelperEQ@HH@internal@testing@@YA?AVAssertionResult@1@PEBD0AEBH1@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: virtual __cdecl testing::Test::~Test(void)" (??1Test@testing@@UEAA@XZ) referenced in function "public: virtual __cdecl TestReturn5_Test_Test::~TestReturn5_Test_Test(void)" (??1TestReturn5_Test_Test@@UEAA@XZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "protected: __cdecl testing::Test::Test(void)" (??0Test@testing@@IEAA@XZ) referenced in function "public: __cdecl TestReturn5_Test_Test::TestReturn5_Test_Test(void)" (??0TestReturn5_Test_Test@@QEAA@XZ)
+
+test.cpp.obj : error LNK2001: unresolved external symbol "protected: virtual void __cdecl testing::Test::SetUp(void)" (?SetUp@Test@testing@@MEAAXXZ)
+
+test.cpp.obj : error LNK2001: unresolved external symbol "protected: virtual void __cdecl testing::Test::TearDown(void)" (?TearDown@Test@testing@@MEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: static class testing::UnitTest * __cdecl testing::UnitTest::GetInstance(void)" (?GetInstance@UnitTest@testing@@SAPEAV12@XZ) referenced in function "int __cdecl RUN_ALL_TESTS(void)" (?RUN_ALL_TESTS@@YAHXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: int __cdecl testing::UnitTest::Run(void)" (?Run@UnitTest@testing@@QEAAHXZ) referenced in function "int __cdecl RUN_ALL_TESTS(void)" (?RUN_ALL_TESTS@@YAHXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "void __cdecl testing::InitGoogleTest(int *,char * *)" (?InitGoogleTest@testing@@YAXPEAHPEAPEAD@Z) referenced in function main
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::internal::AssertHelper::AssertHelper(enum testing::TestPartResult::Type,char const *,int,char const *)" (??0AssertHelper@internal@testing@@QEAA@W4Type@TestPartResult@2@PEBDH1@Z) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::internal::AssertHelper::~AssertHelper(void)" (??1AssertHelper@internal@testing@@QEAA@XZ) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: void __cdecl testing::internal::AssertHelper::operator=(class testing::Message const &)const " (??4AssertHelper@internal@testing@@QEBAXAEBVMessage@2@@Z) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+..\installRoot\bin\TestAppUnitTests.exe : fatal error LNK1120: 16 unresolved externals
+
+LINK Pass 1 failed. with 1120
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\CMake\bin\cmake.exe"' : return code '0xffffffff'
+
+Stop.
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\amd64\nmake.exe"' : return code '0x2'
+
+Stop.
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\amd64\nmake.exe"' : return code '0x2'
+
+Stop.
+
+("C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\Tools\..\..\VC\vcvarsall.bat" amd64>nul)&& cd "C:\Users\Andrew\Github\MessageSystem\build\debug\testApp" &&  nmake install
+
+
+Microsoft (R) Program Maintenance Utility Version 14.00.23026.0
+
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+
+[ 40%] Built target testApp
+
+[ 60%] Linking CXX executable ..\installRoot\bin\TestAppUnitTests.exe
+
+test.cpp.obj : error LNK2019: unresolved external symbol "bool __cdecl testing::internal::IsTrue(bool)" (?IsTrue@internal@testing@@YA_N_N@Z) referenced in function "public: void __cdecl testing::internal::scoped_ptr<class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > >::reset(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > *)" (?reset@?$scoped_ptr@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@internal@testing@@QEAAXPEAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::Message::Message(void)" (??0Message@testing@@QEAA@XZ) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::AssertionResult __cdecl testing::internal::EqFailure(char const *,char const *,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,bool)" (?EqFailure@internal@testing@@YA?AVAssertionResult@2@PEBD0AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@1_N@Z) referenced in function "class testing::AssertionResult __cdecl testing::internal::CmpHelperEQFailure<int,int>(char const *,char const *,int const &,int const &)" (??$CmpHelperEQFailure@HH@internal@testing@@YA?AVAssertionResult@1@PEBD0AEBH1@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "void const * __cdecl testing::internal::GetTestTypeId(void)" (?GetTestTypeId@internal@testing@@YAPEBXXZ) referenced in function "void __cdecl `dynamic initializer for 'private: static class testing::TestInfo * TestReturn5_Test_Test::test_info_''(void)" (??__E?test_info_@TestReturn5_Test_Test@@0QEAVTestInfo@testing@@EA@@YAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::TestInfo * __cdecl testing::internal::MakeAndRegisterTestInfo(char const *,char const *,char const *,char const *,struct testing::internal::CodeLocation,void const *,void (__cdecl*)(void),void (__cdecl*)(void),class testing::internal::TestFactoryBase *)" (?MakeAndRegisterTestInfo@internal@testing@@YAPEAVTestInfo@2@PEBD000UCodeLocation@12@PEBXP6AXXZ3PEAVTestFactoryBase@12@@Z) referenced in function "void __cdecl `dynamic initializer for 'private: static class testing::TestInfo * TestReturn5_Test_Test::test_info_''(void)" (??__E?test_info_@TestReturn5_Test_Test@@0QEAVTestInfo@testing@@EA@@YAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "class testing::AssertionResult __cdecl testing::AssertionSuccess(void)" (?AssertionSuccess@testing@@YA?AVAssertionResult@1@XZ) referenced in function "class testing::AssertionResult __cdecl testing::internal::CmpHelperEQ<int,int>(char const *,char const *,int const &,int const &)" (??$CmpHelperEQ@HH@internal@testing@@YA?AVAssertionResult@1@PEBD0AEBH1@Z)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: virtual __cdecl testing::Test::~Test(void)" (??1Test@testing@@UEAA@XZ) referenced in function "public: virtual __cdecl TestReturn5_Test_Test::~TestReturn5_Test_Test(void)" (??1TestReturn5_Test_Test@@UEAA@XZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "protected: __cdecl testing::Test::Test(void)" (??0Test@testing@@IEAA@XZ) referenced in function "public: __cdecl TestReturn5_Test_Test::TestReturn5_Test_Test(void)" (??0TestReturn5_Test_Test@@QEAA@XZ)
+
+test.cpp.obj : error LNK2001: unresolved external symbol "protected: virtual void __cdecl testing::Test::SetUp(void)" (?SetUp@Test@testing@@MEAAXXZ)
+
+test.cpp.obj : error LNK2001: unresolved external symbol "protected: virtual void __cdecl testing::Test::TearDown(void)" (?TearDown@Test@testing@@MEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: static class testing::UnitTest * __cdecl testing::UnitTest::GetInstance(void)" (?GetInstance@UnitTest@testing@@SAPEAV12@XZ) referenced in function "int __cdecl RUN_ALL_TESTS(void)" (?RUN_ALL_TESTS@@YAHXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: int __cdecl testing::UnitTest::Run(void)" (?Run@UnitTest@testing@@QEAAHXZ) referenced in function "int __cdecl RUN_ALL_TESTS(void)" (?RUN_ALL_TESTS@@YAHXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "void __cdecl testing::InitGoogleTest(int *,char * *)" (?InitGoogleTest@testing@@YAXPEAHPEAPEAD@Z) referenced in function main
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::internal::AssertHelper::AssertHelper(enum testing::TestPartResult::Type,char const *,int,char const *)" (??0AssertHelper@internal@testing@@QEAA@W4Type@TestPartResult@2@PEBDH1@Z) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: __cdecl testing::internal::AssertHelper::~AssertHelper(void)" (??1AssertHelper@internal@testing@@QEAA@XZ) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+test.cpp.obj : error LNK2019: unresolved external symbol "public: void __cdecl testing::internal::AssertHelper::operator=(class testing::Message const &)const " (??4AssertHelper@internal@testing@@QEBAXAEBVMessage@2@@Z) referenced in function "private: virtual void __cdecl TestReturn5_Test_Test::TestBody(void)" (?TestBody@TestReturn5_Test_Test@@EEAAXXZ)
+
+..\installRoot\bin\TestAppUnitTests.exe : fatal error LNK1120: 16 unresolved externals
+
+LINK Pass 1 failed. with 1120
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\CMake\bin\cmake.exe"' : return code '0xffffffff'
+
+Stop.
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\amd64\nmake.exe"' : return code '0x2'
+
+Stop.
+
+NMAKE : fatal error U1077: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\amd64\nmake.exe"' : return code '0x2'
+
+Stop.
+
+-Executing build step [runUnitTests]
+Running unit tests for project [testApp]
+-Executing build step [package]
+packaging project [testApp]
+-Executing build step [uploadPackagedVersion]
+Uploading project [testApp]
+********************
+*     COMPLETE     *
+********************

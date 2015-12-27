@@ -55,7 +55,6 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../LoggingLevels.cpp
             ${SRC_ROOT}/../Logger.cpp
             ${SRC_ROOT}/../Factory.cpp
-            ${SRC_ROOT}/LoggerTestHelper.cpp
             ${SRC_ROOT}/Logger_unit.cpp
         )
 

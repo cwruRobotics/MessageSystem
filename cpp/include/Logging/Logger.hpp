@@ -16,7 +16,7 @@ namespace Loggers
 {
 
 #ifndef LOG_MESSAGE_SIZE
-#define LOG_MESSAGE_SIZE 40
+#define LOG_MESSAGE_SIZE 180
 #endif
 
 	class Logger : public ILogger

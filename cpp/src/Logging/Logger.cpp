@@ -55,14 +55,14 @@ namespace Loggers
 		if (this->_outputFile && this->_fileBuffer.is_open())
 		{
 			this->_fileBuffer << "[" << this->_loggerName << " in file: " << pFileName
-				<< " at line: " << lineNumber << "]" << LoggingLevelToString(level)
-				<< localBuffer << std::endl;
+				<< " at line: " << lineNumber << "] " << LoggingLevelToString(level)
+				<< " " << localBuffer << std::endl;
 		}
 		else
 		{
 			std::cout << "[" << this->_loggerName << " in file: " << pFileName
-				<< " at line: " << lineNumber << "]" << LoggingLevelToString(level)
-				<< localBuffer << std::endl;
+				<< " at line: " << lineNumber << "] " << LoggingLevelToString(level)
+				<< " " << localBuffer << std::endl;
 		}
 		va_end(args);
 	}

@@ -12,19 +12,19 @@
 
 // MACROS
 #define LOG_DEBUG(pLogger, pFormat, ...) \
-	(pLogger)->Log(Logging::Messages::LoggingLevels::DEBUG, \
+	(pLogger)->Log(Logging::Messages::LoggingLevels::DEBUG_, \
 	__FILE__, __LINE__, (pFormat), ##__VA_ARGS__)
 
 #define LOG_INFO(pLogger, pFormat, ...) \
-	(pLogger)->Log(Logging::Messages::LoggingLevels::INFO, \
+	(pLogger)->Log(Logging::Messages::LoggingLevels::INFO_, \
 	__FILE__, __LINE__, (pFormat), ##__VA_ARGS__)
 
 #define LOG_WARNING(pLogger, pFormat, ...) \
-	(pLogger)->Log(Logging::Messages::LoggingLevels::WARNING, \
+	(pLogger)->Log(Logging::Messages::LoggingLevels::WARNING_, \
 	__FILE__, __LINE__, (pFormat), ##__VA_ARGS__)
 
 #define LOG_ERROR(pLogger, pFormat, ...) \
-	(pLogger)->Log(Logging::Messages::LoggingLevels::ERROR, \
+	(pLogger)->Log(Logging::Messages::LoggingLevels::ERROR_, \
 	__FILE__, __LINE__, (pFormat), ##__VA_ARGS__)
 
 namespace Logging

@@ -10,13 +10,13 @@ namespace Logging
 	{
 		switch (level)
 		{
-		case Messages::LoggingLevels::DEBUG:
+		case Messages::LoggingLevels::DEBUG_:
 			return "DEBUG";
-		case Messages::LoggingLevels::INFO:
+		case Messages::LoggingLevels::INFO_:
 			return "INFO";
-		case Messages::LoggingLevels::WARNING:
+		case Messages::LoggingLevels::WARNING_:
 			return "WARNING";
-		case Messages::LoggingLevels::ERROR:
+		case Messages::LoggingLevels::ERROR_:
 			return "ERROR";
 		}
 		throw std::exception("unknown logging level");

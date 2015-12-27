@@ -12,13 +12,13 @@ class LocalEnvironment(object):
         self._project_specific_static_env_vars = projectSpecificEnvVars
 
     def injectStaticEnvironmentVariables(self):
-        print("Injecting static environment variables")
+        # print("Injecting static environment variables")
         env = os.environ
         for item in self._static_environment_variables.items():
             env[item[0]] = item[1]
 
     def injectProjectSpecificEnvironmentVariables(self):
-        print("Injecting project specific environment variables")
+        # print("Injecting project specific environment variables")
         env = os.environ
         for item in self._project_specific_static_env_vars.items():
             env[item[0]] = item[1]
@@ -27,7 +27,7 @@ class LocalEnvironment(object):
         env = os.environ
         toAdd = env.get("DYNAMIC_ENV_VARS_FILE")
         if toAdd is not None and os.path.exists(toAdd):
-            print("Injecting dynamic environment variables")
+            # print("Injecting dynamic environment variables")
             with open(toAdd) as file:
                 splitLine = None
                 line = 1
@@ -46,7 +46,7 @@ class LocalEnvironment(object):
                   "of this project")
 
     def injectAllEnvironmentVariables(self):
-        print("Injecting all environment variables")
+        # print("Injecting all environment variables")
         self.injectStaticEnvironmentVariables()
         self.injectProjectSpecificEnvironmentVariables()
         self.injectDynamicEnvironmentVariables()

@@ -1,0 +1,77 @@
+
+these are the more advanced C++ topics you should know. Some I can explain well, others I will just provide
+a link to articles that explain better than I can.
+
+1) Smart Pointers
+    Smart pointers solve the problem of dangling pointers. A smart pointer is a class that "wraps" around
+    a raw pointer (a pointer variable...e.g. int*). Smart pointers have different schemes on how to handle
+    their internal raw pointer, but generally, when the pointer needs to be deleted, the memory is points to
+    is freed in the smart pointer's destructor. This is basic memory management, and means that you
+    don't have to worry about dangling pointers anymore.
+
+    We will be using smart pointers very extensively.
+
+    Please read if you are still curious:
+        http://stackoverflow.com/questions/106508/what-is-a-smart-pointer-and-when-should-i-use-one
+
+2) Move semantics
+
+Please read:
+    1) http://thbecker.net/articles/rvalue_references/section_01.html # this is a great article
+    2) http://stackoverflow.com/questions/3106110/what-are-move-semantics
+
+3) Template Programming
+    I take it back, pointers are not the most difficult aspect of C++....template programming is.
+    If you know java, you've probably heard of generic types. Well, generics came from templates.
+
+    First of all, template code is NOT actual code..it cannot be used. A template is essentially a placeholder,
+    used when you don't know the TYPE of data being operated on. When compiled, the compiler will use your template
+    code to GENERATE C++ code (using your template code as a template!) that can be used. This type of programming
+    is often called "template metaprogramming", because you are teaching the compiler HOW to write code.
+    Lets look at an example:
+
+    Lets say I want to write an "addition" function (and not overload operators). Ok, lets get started:
+
+    int add(int x, int y)
+    {
+        return x + y;
+    }
+
+    cool. What happens if I want to use doubles?
+    double add(double x, double y)
+    {
+        return x + y;
+    }
+
+    what about double and integer, floats, etc? I would have to write an "add" function for EACH DATA TYPE I WANT TO ADD.
+    Thats absurd. So, lets use template (I use all caps for template values):
+    template<typename TYPE>
+    TYPE add(TYPE x, TYPE y)
+    {
+        return x + y;
+    }
+
+    There! Now, in some other code, if we say:
+        add(2, 4)
+    then the compiler will generate a:
+        int add(int x, int y)
+        {
+            return x + y;
+        }
+    using our templated add function (and replaceing TYPE with int).
+    This is the basic idea behind template programming. You can even template classes and methods:
+        template<typename FOO>
+        class Bar
+        {
+        private:
+            FOO     my_foo;
+        };
+
+    All of this is resolved at COMPILE TIME, so it is really useful if you want to do type checking,
+    etc. This can be used to force compiler errors, and allocated tuples of different data types, among
+    other things.
+
+    template metaprogramming gets crazy REALLY REALLY fast, so if you are curious about this, please read:
+        1) https://monoinfinito.wordpress.com/series/introduction-to-c-template-metaprogramming/
+        2) http://stackoverflow.com/questions/1224306/template-metaprogramming-i-still-dont-get-it
+        3) http://matt.might.net/articles/c++-template-meta-programming-with-lambda-calculus/

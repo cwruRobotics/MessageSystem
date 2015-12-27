@@ -1,0 +1,140 @@
+
+to contribute to this project, here are a list of topics that you should know (and that we will heavily use):
+
+1) Ways to store data
+    In most programming languages, when you want to decalare a variable, you specify the data type and the
+    name of the variable, assign it and move on. In C++ and C, a little more is necessary: the WAY you store
+    data matters, and it has to do with memory. In C++ and C, there are 3 ways to store data:
+ ---    by value:
+            Storing data by value is what you were taught by every other programming language.
+            When you create a variable by value, a piece of memory is created to store the data type,
+            filled with the value, and then called your variable name.
+
+            Advantages:
+                you can use this to create a "deep copy," two variables that are independent of each other,
+                because they both have separate memory.
+            Disadvantages:
+                If datatypes are large (take up lots of memory), then copying them is expensive.
+            C/C++ syntax:
+                int x = 5; Syntax is just like any other programming language.
+ ---    by reference:
+            When you create a variable by reference, you are just adding on another name to a piece of memory.
+            Read the description for "by value." See where it says "a piece of memory is created to store the
+            data type ... and then called your variable name"? Well, creating a variable by reference is just
+            calling that same piece of memory BY A DIFFERENT NAME. Lets look at an example:
+
+            int x = 5; // creates memory unit to store (int), fills it with 5 and calls it "x."
+            int& y = x; // create variable "y." It referes to "x" by REFERENCE. This means that the memory
+                        // called "x" is ALSO called "y" now. If you change the value of "x" or "y," the other
+                        // will be affected.
+
+            Advantages:
+                cheap. You can create access large data structures without the copy overhead.
+            Disadvantages:
+                memory might not exist. In our example above, if "x" is deallocated (destroyed), then so does "y". But,
+                if the variable "y" still exists, then "y" references garbage memory. Read this stack overflow
+                if you want:
+                    http://stackoverflow.com/questions/3097593/what-happens-when-c-reference-leaves-its-scope
+            C/C++ syntax:
+                int& y = x; the "&" character goes after the DATA TYPE. Note, you can only make variables
+                            by reference to ALREADY EXISTING CHUNKS OF MEMORY. For instance:
+                                int& y = 5; doesn't work because 5 is a VALUE, IT DOES NOT EXIST IN MEMORY.
+ ---    by pointer:
+            Pointers are, in my opinion, the single most complicated part of C++. A pointer is 4 bytes, no matter what.
+            A pointer variable is ALWAYS 4 bytes, and contains the ADDRESS IN MEMORY of a some data you want to
+            manipulate. Lets take a look at an example:
+                int x = 5;      // lets assume that in memory, variable "x" is located at 0x00112.
+                if we create a pointer variable to "x," then that variable will contain the ADDRESS 0x00112.
+            Pointers "point" to the location in memory where the data is. To access the data, you must DEREFERENCE
+            the pointer, which "travels" to that location in memory, and then you can operate on the data.
+            One more thing, the address 0x0 is RESERVED in C/C++. It is reserved for "null". Null is an address,
+            so ONLY POINTERS can be null!
+
+            Advantages:
+                cheap. They can access large data structures without the copy overhead. They are also the ONLY
+                way to deal with arrays. Pointer arithmatic is useful:
+                    int* x = {1, 2, 3};
+                    x == 1;
+                    x+1 == 2; // increments the pointer!
+                    x+2 == 3;
+            Disadvantages:
+                Dangling pointers. Lets say that you store a pointer to a chunk of memory. Later, that
+                memory is deallocated (destroyed). If the pointer still exists, you are now pointing
+                at garbage memory! Pointers are VERY UNSAFE.
+            C/C++ syntax:
+                int* y = &x; you need two things here. If the "&" character comes before A PIECE OF MEMORY,
+                             then the "&" character returns the ADDRESS of that memory. the "*" character
+                             goes after the DATA TYPE. Note that the same rule applies to pointers as to
+                             references, you can only access ALREADY EXISTING CHUNKS OF MEMORY.
+                DEREFERENCING a pointer is as follows:
+                    *y will dereference the pointer "y". The result (in this case) is the value of "x".
+                    If you have a class/struct, you can use the "->" operator instead of the "." operator
+                    to access methods and member variables. Lets see an example:
+                        MyStruct x;         // lets assume MyStruct has a method foo().
+                        MyStruct* y = &x;
+
+                        // you could call foo() two ways. Both need to dereference the pointer to do so:
+                        1)  y->foo();
+                        2) (*y).foo();
+
+2) Classes, functions, methods, etc...All programming constructs (conditionals, loops, etc.)
+
+    Additional things to classes that C++/C introduce are the ideas of a "destructor" and an "initializer list". Just as a
+    constructor is used to "initialize" a class instance, a destructor provides the rules on
+    how to "destroy" a class instance (free memory, perform logic, etc.).
+    An "initializer list" is used in a constructor to set member variables. This is a subtle difference,
+    when the constructor is called, the memory is reserved for the instance, and the constructor is responsible
+    for initializing the member varibles. In an initializer list, the initialization occurs WHEN THE MEMORY IS RESERVED
+    versus AFTER. Generally, it is safer to use the initialization list. Check out the following example:
+
+        class MyClass
+        {
+        private:
+            int     my_int;
+            float   my_float;
+        public:
+            // constructor
+            MyClass() : my_int(5) // initializer list...initializes my_int WHEN MEMORY IS RESERVED FOR INSTANCE OF MYCLASS
+            {
+                // my_float is initialized AFTER MEMORY IS RESERVED FOR INSTANCE OF MYCLASS.
+                this->my_float = 10f;
+            }
+
+            // destructor
+            ~MyClass()
+            {
+            }
+        };
+
+3) Interface design.
+    An interface is generally a class that has methods but no implementation. Therefore, any classes that
+    extend from (the c++ term is "derive from") an Interface class MUST override the interface methods.
+
+    In C++, an interface looks just like a class:
+    class MyInterface
+    {
+        ...
+    };
+
+    C++ has the keyword "virtual". The "virtual" keyword tells the compiler that derived clases
+    can override an existing method. Without the "virtual" keyword, there would be no method
+    overriding (internally, Java makes ALL methods virtual).
+
+    Also, there is a term you should be familiar with for interfaces: "pure vitual methods".
+    So far we have half of the battle. We can make methods virtual so they can be overriden,
+    but we have no way of FORCING derived classes to override an interfaces methods. Well,
+    if we make a method a "pure virtual method," then a derived class MUST override. This
+    tells the compiler that this method HAS NO IMPLEMENTATION, so, when called, a derived
+    class HAS TO HAVE provided an implementation. This is done by adding "= 0;" after the
+    method signature. Here's an example:
+        class MyInterface
+        {
+        public:
+            virtual int Foo() = 0;
+        };
+    Now, any class deriving from MyInterface MUST override Foo().
+
+
+    We are using interfaces to exclusively determine the functionality of our code. All objects MUST
+    derive from an interface except for the most basic of functionality.
+

@@ -215,3 +215,19 @@ class GlobalBuild(object):
         print("********************")
         print("*     COMPLETE     *")
         print("********************")
+
+
+def help():
+    print "global commands:"
+    print "     global build steps:"
+    print "         setupWorkspace              removed previous project build files and directories."
+    print "         document                    generates documentation for all project source files."
+    print "         package                     packages up project binaries and public headers for"
+    print "                                     distribution."
+    print "         runUnitTests                runs the project unit tests."
+    print "     global custom variables:"
+    print "         configuration               the configuration of the build (debug or release)."
+    print "         projects                    the projects that will be built and the order in which"
+    print "                                     they are built."
+    print ""
+    print ""

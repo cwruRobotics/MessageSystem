@@ -1,0 +1,42 @@
+
+So, what is a "build process"?
+
+Well, a build process is a generic term used to describe the automated process of, when developing code,
+helps the developer detect defects in their code and validates its correctness.
+There are several things you (*******should*******) do when writing code:
+
+1) write legible code
+2) test your code
+3) document your code
+
+now, these are very high level ideas and sound rather obvious, but the manner in which you implement
+these ideas can actually be very complicated. Lets look at the general flow of a developer when they committ
+code and are following those three ideas:
+
+1)  developer writes code following the style guidelines determined beforehand
+    by the team.
+2)  developer checks in code
+3)  developer compiles (also known as "builds") the project
+4)  developer runs tests
+5)  developer writes documentation for successful code they have written
+
+The reaction I hope your having write now is (man thats alot of work and repetition, I don't want to do all that EVERY time
+I check in code). To solve this problem, most of those steps above have been automated to the point of:
+
+1)  developer checks in code
+2)  code is passed through a "style checker". A style checker is a program that errors out if the code it is reading
+    breaks one of the rules that it internally contains.
+3)  code is compiled automatically
+4)  tests are built as part of the compilation process, and are automatically ran
+5)  documentation is produced by another program running over the source (JavaDoc in Java, etc.)
+
+Generally, THIS is a build process, so let us redefine it:
+    A build process is an automated series of steps that turns source files into usable products.
+
+In our example above, steps 2-5 would consist of the build process, meaning that someone could take the build binaries (or
+intermediate code in the case of interpreting) and USE them as a product WHILE being confident that the code they are using
+works.
+
+build processes are VERY useful, but a little tedious to do. They require someone to write "build scripts" (scripts that actually
+DO the automation) for their project(s) so that the developer(s) can use them. However, the benefits LARGLY outweight the problems
+so I suggest that in any project you have, you use a build process.

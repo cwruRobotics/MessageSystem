@@ -28,9 +28,6 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include ABSOLUTE )
-if( DEFINED GTEST_ROOT )
-    list( APPEND CMAKE_MODULE_PATH ${GTEST_ROOT}/share/gtest/cmake/modules )
-endif()
 
 # ------------------------------------------------------------------------------
 # GTest
@@ -42,9 +39,9 @@ if( RUN_UNIT_TESTS )
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
     # include(BringInPackages)  # NOT build in
     # BringInPackages()
-    find_package(GTest REQUIRED)
+    find_package( Catch REQUIRED )
 
-    if( GTEST_FOUND )
+    if( CATCH_FOUND )
         # ---------------------------------------------------------------------
         # Libararies
         # ---------------------------------------------------------------------
@@ -58,6 +55,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../LoggingLevels.cpp
             ${SRC_ROOT}/../Logger.cpp
             ${SRC_ROOT}/../Factory.cpp
+            ${SRC_ROOT}/LoggerTestHelper.cpp
             ${SRC_ROOT}/Logger_unit.cpp
         )
 
@@ -70,8 +68,6 @@ if( RUN_UNIT_TESTS )
         )
 
         if( MSVC )
-            add_definitions( /D GTEST_HAS_TR1_TUPLE=0 )
-            add_definitions( /D GTEST_USE_OWN_TR1_TUPLE=1 )
             include( GNUInstallDirs )
         elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
             include( GNUInstallDirs )
@@ -86,9 +82,6 @@ if( RUN_UNIT_TESTS )
         endif()
 
         add_definitions(-DLOGGING_STATIC_DEFINE) # so the Logging library will be imported
-        include(${CMAKE_LOCAL_ROOT}/modules/internal_utils.cmake)
-
-        fix_default_compiler_settings_()
 
         include_directories( ${INCLUDE_DIRS} )
 
@@ -99,23 +92,19 @@ if( RUN_UNIT_TESTS )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
             message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
-                ${GTEST_LIBARAY_DEBUG}
-                ${GTEST_MAIN_LIBRARY_DEBUG}
                 ${TARGET_PTHREADS_LIB}
                 ${TARGET_UUID_LIB}
             )
         else()
             message( "Linking executable for Release" )
             target_link_libraries( ${PROJECT_NAME}
-                ${GTEST_LIBRARAY_RELEASE}
-                ${GTEST_MAIN_LIBRARY_RELEASE}
                 ${TARGET_PTHREADS_LIB}
                 ${TARGET_UUID_LIB}
             )
         endif()
 
     else()
-        message( WARNING "GTest library not found...skipping unit tests")
+        message( WARNING "Catch library not found...skipping unit tests")
     endif()
 
 endif()

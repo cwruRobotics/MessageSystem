@@ -1,0 +1,92 @@
+
+so now that we have an idea of what a build process is, lets talk about the one WE are using.
+
+============SYSTEM REQUIREMENTS=================
+let me get this out of the way, there are programs you NEED to have installed on your machine
+to be able to use our build process. Those currently are:
+
+    Python (I use 2.7.10, but I'm not sure it matters. Keyword is "sure" so email me if you notice anything)
+    CMake (you NEED version 3.3 AT LEAST. The build scripts will error out if you have anything less that 3.3)
+    A C++ compiler (I've only tested on GCC and Microsoft Visual Studio Compiler, so let me know if others don't work.)
+
+so far, I think thats it.
+
+============BUILD STEPS========================
+currently, our build process looks like this:
+
+1) run style check (only on python files at the moment)
+2) compile source
+3) compile unit tests
+4) run unit tests
+
+in the future this is what I would like to add (indexes are relative to where
+they will fall in to the current build process listed above):
+
+1) run style check on ALL source files
+5) run code coverage on our unit tests
+6) package up all binaries and public headers for distribution
+7) upload them to a website so that clients can grab them when they want
+
+===============HOW TO RUN OUR BUILD PROCESS==================
+our build process is mostly a combination of Python and CMake.
+The build scripts are written in Python, and uses CMake scripts to build
+C++ code.
+
+to run, navigate to the top level directory of this project IN THE COMMAND LINE
+and type:
+                python LocalBuild.py
+
+this command will try and build EVERYTHING
+
+the build scripts allow you to specify custom build steps and give the build process
+specific variables to use. To do this, add your custom arguments AFTER the "python LocalBuild.py"
+command. Custom variables are specified with the "-" character beforehand, and the value following
+after the custom variable. An example is:
+                python LocalBuild.py -configuration debug
+This will try and build all subprojects using the "debug" configuration. We gave the build process
+a variable called "configuration" with the value "debug."
+
+To pass on custom commands, a value is given with NO MATCHING "-<custom-variable>" beforehand. An example is:
+                python LocalBuild.py runUnitTests
+The build scripts will execute ONLY executing the runUnitTests() method.
+
+There is an exception to this rule, the "-projects" variable assumes that ALL VALUES after it (but not after
+and following "-<custom_variable>" argument) are projects you want to build. An example:
+                python LocalBuild.py -projects Logging FuturesFramework
+This tells the build scripts that you want to build the Logging the FuturesFramework subprojects. For this reason,
+I would recomment adding the "-projects" argument LAST, but its up to you.
+
+See what these commands mean:
+
+                python LocalBuild.py -configuration debug runUnitTests -projects Logging
+
+        ANSWER: Build project Logging for configuration "debug" running ONLY the runUnitTests() method.
+
+                python LocalBuild.py build runUnitTests -configuration release
+
+        ANSWER: Build all projects for the "release" configuration running ONLY build() and runUnitTests() methods.
+
+for more info, type:
+                python LocalBuild.py help
+
+=========================BUILD PROCESS DIRECTORY STRUCTURE==============================
+Our build process uses lots of different files to help comparamentalize its functionality.
+
+The build scripts are broken down into several files (the order given is how I would read them):
+    1) scripts/Utilties.py          - this file contains useful functions that our build process needs.
+    2) scripts/FileSystem.py        - this file enapsulates "well known" locations in out project. These locations are
+                                      necessary so that we can place files in specific directories, locate files, etc.
+    3) scripts/LocalEnvironment.py  - this file allows developers to create environment variables to be used in a build.
+    4) scripts/GlobalBuildRules.py  - this file is the part of the build process that is shared across all builds. It is
+                                      the static functionality that all builds will need.
+    5) LocalBuild.py                - this file is the interface of the build process and the developer. It is the file
+                                      that is unique to each project and directs the flow of the build process.
+
+    6) projects/CMakeLists.txt      - this is the top level CMake file. It is what the python build scripts call to
+                                      generate build files for each project. It controls the flow of CMake.
+    7) cmake/modules/*.cmake        - these files are used to provide utilities to CMake when it runs. An example is
+                                      finding libraries and headers.
+    8) cmake/toolchains/*.cmake     - these are used to specify CMake functionality. These provide compiler flags,
+                                      locations of compilers to use, etc.
+
+All of these files contribute to building the "cpp" directory, which contains all C++ code.

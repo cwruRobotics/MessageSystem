@@ -76,13 +76,32 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
     def uploadPackagedVersion(self):
         print("Uploading project [%s]" % self._project_name)
 
+    def help(self):
+        print "command specific to project [%s]" % self._project_name
+        print "     [%s] specific build steps" % self._project_name
+        print "         cmake                       generates build files for all C++ source and tests."
+        print "         make                        makes all binaries."
+        print "         build                       runs cmake and make to build all binaries."
+        print "         makeVisualStudioProjects    generates visual studio projects."
+        print "         uploadPackagedVersion       uploads built and tested binaries for distribution."
+        print "     [%s] specific custom variables" % self._project_name
+        print ""
+
+
 if __name__ == "__main__":
     localBuild = None
     customCommands = Utilities.parseCommandLine(sys.argv[1:])
     print(customCommands)
     if "projects" not in customCommands[1]:
-        customCommands[1]["projects"] = ["gtest", "Logging", "FuturesFramework", "MessageFramework"]
+        customCommands[1]["projects"] = ["Logging", "FuturesFramework", "MessageFramework"]
 
+    help = False
     for projectName in customCommands[1]["projects"]:
         localBuild = LocalBuild(projectName)
-        localBuild.run(customCommands)
+        if "help" in customCommands[0]:
+            localBuild.help()
+            help = True
+        else:
+            localBuild.run(customCommands)
+    if help:
+        GlobalBuildRules.help()

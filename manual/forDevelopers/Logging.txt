@@ -1,0 +1,46 @@
+
+we are using a Logging system to write messages.
+A logger is more or less a glorified print statement for debugging/whatever reason you
+have to log messages.
+
+Our logger is used to log different levels of messages, and can be configured to log
+messages to files OR to log to the console. Loggers are specified with distinct names,
+and they provide distinct macros so that you can log different types of messages.
+
+There are four types of messages:
+    INFO, DEBUG, WARNING, ERROR.
+each type refers to a different way loggers are used to log messages.
+
+A Logger instance logs messages according to this syntax:
+
+    [<logger_name> in file: <file_path> at line: <line_number>] <message_type> <message>
+
+The Logging library is broken down into the following heirarchy:
+    ILogger -> Logger
+
+There is a factory method that produces a Smart Pointer for a Logger (LoggerPtr = std::shared_ptr<Logger>),
+this is the only way that a logger instance can be created.
+
+The way to use a logger is as follows:
+
+    LoggerPtr logger = Factory::makeLogger(<logger_name>, <output_file>);
+    LOG_INFO(logger, <format_message>, <message_args>, ...)
+    LOG_DEBUG(...);
+    LOG_WARNING(...);
+    LOG_ERROR(...);
+
+A Logger takes a format string and arguments and will fill the format string with the arguments
+and then log that as the message. This is very typical to fprintf() or printf() or any of that
+family of functions. It will be used as a debugging tool to log functionality of other
+projects and eventually will be turned off for production.
+
+Eventually, I would like to be able to filter out logger messages, so that you can only
+actually log messages that are greater than some message type...for instance filter out
+any messages that aren't as high a priority as WARNING messages (so WARNING and ERROR) messages
+will still show up.
+
+These are the exported files:
+    ILogger.hpp
+    Factory.hpp
+
+So you HAVE to use a LOG_<> macro to log messages (you don't have access to the message types).

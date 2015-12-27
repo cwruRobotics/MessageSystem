@@ -16,10 +16,10 @@ namespace Messages
 
 	enum class LoggingLevels
 	{
-		DEBUG = 0,
-		INFO = 1,
-		WARNING = 2,
-		ERROR = 3,
+		DEBUG_ = 0,
+		INFO_ = 1,
+		WARNING_ = 2,
+		ERROR_ = 3,
 	};
 
 }

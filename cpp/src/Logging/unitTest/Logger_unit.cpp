@@ -4,7 +4,8 @@
 #include <string>
 
 // C++ PROJECT INCLUDES
-#include "gtest/gtest.h"
+#include "Logging/unitTest/catchPort.hpp"
+#include "Logging/unitTest/LoggerTestHelper.hpp"
 #include "Logging/ILogger.hpp"
 #include "Logging/Factory.hpp"
 
@@ -12,70 +13,43 @@ namespace Logging
 {
 namespace Tests
 {
-    class LoggingTests : public ::testing::Test
+
+    TEST_CASE("GetName should reflect logger name set in constructor", "[Logger_unit]")
     {
-    public:
-        virtual void SetUp() override
-        {
-        }
-        
-        virtual void TearDown()
-        {
-        }
+        std::string testLoggerName = "My.Test.Name";
+        LoggerPtr testLogger = Factory::makeLogger(testLoggerName->c_str());
 
-        std::string getCurrentDirectory(const char* const pCurrentFile, std::string fileName)
-        {
-            // travel backwards through the string and find the first occurance
-            // of a '/'. Return the substring.
-            std::string wrappedCurrentFile = pCurrentFile;
-            int indexOfLastDir = -1;
-            for(int index = wrappedCurrentFile.length() - 1; index > -1 && indexOfLastDir == -1; --index)
-            {
-                if(wrappedCurrentFile[index] == '/' || wrappedCurrentFile[index] == '\'')
-                {
-                    indexOfLastDir = index;
-                }
-            }
-            if(indexOfLastDir != -1)
-            {
-                return wrappedCurrentFile.substr(0, indexOfLastDir) + fileName; 
-            }
-            return "";
-        }
-
-    };
-
-    TEST_F(LoggingTests, TestConstructorAndGetName)
-    {
-        const char* testLoggerName = "My.Test.Name";
-        LoggerPtr testLogger = Factory::makeLogger(testLoggerName);
-        EXPECT_EQ(strcmp(testLogger->GetName(), testLoggerName), 0)
-            << "Logger has wrong name, expected: " << testLoggerName
-            << " but was: " << testLogger->GetName();
+        std::string setName = testLogger->GetName();
+        REQUIRE( testLoggerName == setName );
     }
 
-    TEST_F(LoggingTests, TestConstructorAndGetOutputFile)
+    TEST_CASE("GetOutputFile should reflect output file set in constructor", "[Logger_unit]")
     {
-        const char* testLoggerName = "My.Test.Name";
-        const char* testOutputFile = "C:/MyOutputFile/test.txt";
+        std::string testLoggerName = "My.Test.Name";
+        std::string testOutputFile = "C:/MyOutputFile/test.txt";
+        std::string unspecifiedOutputFile = "std::cout";
 
         // test providing an output file to write to
         LoggerPtr testLogger = Factory::makeLogger(testLoggerName, testOutputFile);
-        EXPECT_EQ(strcmp(testLogger->GetOutputFile(), testOutputFile), 0)
-            << "Logger has wrong output file, expected: " << testOutputFile
-            << " but was: " << testLogger->GetOutputFile();
+
+        std::string setOutputFile = testLogger->GetOutputFile();
+        REQUIRE( testOutputFile == setOutputFile );
 
         // test writing to standard out if no output file is provided
         testLogger = Factory::makeLogger(testLoggerName);
-        EXPECT_EQ(strcmp(testLogger->GetOutputFile(), "std::cout"), 0)
-            << "Logger has wrong output file, expected: std::cout"
-            << " but was: " << testLogger->GetOutputFile();
+        setOutputFile = testLogger->GetOutputFile();
+        
+        REQUIRE( setOutputFile == unspecifiedOutputFile );
     }
 
-    TEST_F(LoggingTests, TestLoggingToFile)
+    /**
+    TEST_CASE("Logging has a specific signature", "[Logger_unit]")
     {
-        const char* testLoggerName = "My.Test.Name";
-        std::string testOutputFile = this->getCurrentDirectory(__FILE__, "testLog.txt");
+        std::string testLoggerName = "My.Test.Name";
+        std::string expectedMessage = "[] test message!";
+
+        LoggingTestHelper() helper;
+        std::string testOutputFile = helper.GetCurrentDirectory(__FILE__, "testLog.txt");
         LoggerPtr testLogger = Factory::makeLogger(testLoggerName, testOutputFile.c_str());
         LOG_INFO(testLogger, "test message!");
         std::ifstream testFile(testOutputFile.c_str());
@@ -83,12 +57,11 @@ namespace Tests
         testFileContents.assign((std::istreambuf_iterator<char>(testFile)),
                                 (std::istreambuf_iterator<char>()));
 
-        EXPECT_EQ(testFileContents.compare("test message!"), 0)
-            << "Logger has not logged correctly, expected: test message!"
-            << " but was: " << testFileContents.c_str();
+        REQUIRE( expectedMessage == testFileContents );
 
         testFile.close();
     }
+    */
 }
 }
 

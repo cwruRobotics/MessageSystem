@@ -1,0 +1,111 @@
+
+I should start by saying that asynchronous programming is supported by every language
+and every programming language has some built in way to program asynchronously.
+
+So lets dive into it, what is asynchronous programming?
+
+Asynchronous programming is commonly known as "event driven programming."
+This means that code depends on "events" occuring, and the appropriate code is executed
+only when its "event" has occured.
+
+More importantly, asynchronous programming is a style of thought regarding FUNCTIONS, or generally;
+callable code. Asynchronous programming treats callable code like objects, with each having a well
+defined state machine:
+
+                        call -> process -> return value
+                                               OR
+                                        -> throw error
+
+If we think about callable code in this manner, we can begin to manipulate them to get a significant performace
+boost.
+
+Asynchronous programming is a way to execute code concurrently while minimizing the wait times for specific threads
+and eliminating the need for individual concurrency models. It is essentially a "safe" way to do concurrency.
+
+Lets say that we have several functions that are expensive to run (they take lots of time to execute).
+With synchronous programming, only one can be executed at a time, and, if the calls are nested, the execution
+of one is paused until the execution of the nested call finishes. This can be rather tedious and inefficient,
+which is why concurrency was developed. However, straight concurrency is dangerous, it requires lots of thought
+and synchronization to do correctly. What if we could determine the order of execution in such a way that sequential
+calls would execute, with safe calls being executed in parallel, all organized by the "event" that they are called for?
+
+This is how an asynchronous programmer thinks, and its all based around the idea of a "Promise."
+
+Lets say that we have a function that is expensive to run. Rather than return the results of its execution, what if
+this function returns a Promise data structure, which represents the "Promise" that the function is making to eventually
+return the results or raise an error. This Promise itself contains a function object to the code that the called function will
+run, so the called function itself returns quickly. This Promise, is then run on another thread at some point in time,
+and is "fulfilled" when its internal function object finishes execution, and the Promise contains either the results
+of its internal function or the error that occured. Think of this like "delegation."
+
+Here is an example:
+
+suppose we have a function foo() which executes some really expensive logic.
+
+int foo()
+{
+    return someExpensiveOperation();
+}
+
+rather than block the execution of whatever is calling foo(), lets have foo() run asynchronously:
+
+std::shared_ptr<Promise<int> > foo()
+{
+    std::shared_ptr<Promise<int> > p = std::make_shared<Promise<int> >();
+    p->SetFunctionToExecute(someExpensiveOperation());
+    return p;
+}
+
+Now, foo() doesn't block execution for very long...just long enough to make the Promise instance, and then return it.
+Eventually, thie promise is executed, meaning someExpensiveOperation() is run and returns, but this is ok because it happens
+on some OTHER thread than the one we care about (say a worker thread whose sole job is to execute promises). The thread that
+called foo() can continue executing, and eventually that promise that was made will be fulfilled. If the calling function
+DEPENDS on the results of foo(), than, thinking synchronously, it would have to wait for the Promise to be fulfilled.
+
+Thinking asynchronously, rather than have the calling thread WAIT for the promise to be fulfilled, what if we could give
+the Promise code to execute when it is fulfilled? Then, we could be confident that the logic is fulfilled, and occurs in
+the sequential order that we want, but prevents ANY thread from being blocked...more appropriatley:
+
+Promise<double> bar()
+{
+    Promise<int> p = foo(); // remember foo will compute someExpensiveOperation()
+    std::shared_ptr<Promise<double> > after = p->Then(convertIntToDouble(p->GetResult())); // do stuff with the results
+    return after;
+}
+
+This is the style of asynchronous programming....you are organizing code in the sequential manner in which your logic requires,
+while being confident that nothing is being blocked, and that the appropriate code is only executed when its "event" occurs.
+You can almost use the word "preconditions" instead of events: "This foo() should run after bar()...or bar() is a precondition
+to running foo()."
+
+It is important to note the chaining ability of the Then() method....the method where you can create "child" Promises. It is important
+that the Then() method returns a new Promise instance, so that the appropriate chaining can occur. Otherwise, you would have to
+nest this type of functionality, which is fondly referred to as "callback hell" and looks like:
+
+p->SetFunctionToExecute([]()
+{
+    someOperation();
+    Promise<int> p1 = someAsynchronousOperation();
+    p1->SetFunctionToExecute([]()
+    {
+        Promise<double> p2 = someOtherAsynchronousOperation();
+        p2->SetFunctionToExecute([]()
+        {
+            ...
+        });
+    });
+});
+
+Looks terrible, and is worse to debug/maintain. With the Then() method, we can turn this into...
+
+p->SetFunctionToExecute(someOperation());
+Promise<int> next = p->Then(someAsynchronousOperation());
+Promise<int> nextNext = next->Then(someOtherAsynchronousOperation());
+
+or even nicely:
+p->SetFunctionToExecute(someOperation())->Then(someAsynchronousOperation())->Then(someOtherAsynchronousOperation());
+
+This is what we will be implementing with FuturesFramework. If you think I did a poor job of explaining, then please read these
+articles:
+    1) http://www.i-programmer.info/programming/theory/6040-what-is-asynchronous-programming.html
+    2) http://cs.brown.edu/courses/cs168/s12/handouts/async.pdf

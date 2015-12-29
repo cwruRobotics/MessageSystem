@@ -1,0 +1,74 @@
+
+Our asynchronous framework is going to be called FuturesFramework in the abscence of a
+better name.
+
+First of all, I should explain the difference between a framework and a library.
+A library is code that clients call into, a framework calls into
+client code.
+
+Our framework is more or less divided into two major components:
+
+    1) Promise Code
+    2) Scheduler Code
+
+Following an Interface Design, most separate classes have their own Interface that they derive
+from. This is to allow flexibility in client created code, clients can create their own classes
+that are accepted by the framework.
+
+Lets talk about Promise code. Promises are the external facing data structure that
+represent the "promise" asynchronous code makes to eventually return the results
+of execution or the error that was raised.
+
+The Promise code is actually the top most level of the Promise code, so we will start
+from the bottom in order to get a grand picture of things.
+
+To allow clients to write their own Promise code, I abstracted away a good chunk of
+what a Promise actually is into a heirarchy. The heirarchy is (from bottom to top):
+    WorkItem
+    ContinuableWorkItem
+    PromiseBase
+    Promise
+
+A WorkItem (derives from IWorkItem and IExecutableWorkItem interfaces) represents just a general
+piece of code that will be executed asynchronously. Internally, it contains the function object
+(std::function) that will be executed. To prevent this code from being templated, executable
+code at this level takes no arguments and returns a custom enum Result_t (a function object looks
+like std::function<Result_t()>). This is very advantageous as it generalizes how client code
+must look at this level, and also allows for WorkItem to be a concrete class (no templates). This
+will reduce compile time.
+
+The next client derivable piece of code in the heirarchy is ContinuableWorkItem (derives from IContinuableWorkItem).
+A ContinuableWorkItem represents a WorkItem that can create successor IContinuableWorkItems to be executed
+after the completion of the current ContinuableWorkItem. This is setting up the beginning of the Then()
+method (and others like Catch() for chaining on error, etc.). This is controlled by internally having a bridge
+between parent and successor IContinuableWorkItems called IChainLinker. The reason for this will present itself
+when we get to the Promise section. 
+
+The next object in the heirarchy is PromiseBase. This is essentially all Promise code that is not template
+specific, and can be moved outside of the Promise class to reduce compile time. It really serves no other purpose
+beyond that. I should note here that the heirarchy mentioned isn't really a strong heirarchy, as in PromiseBase
+does NOT derive from ContinuableWorkItem, but instead HAS A ContinuableWorkItem as a member variable. This
+is used to cut off public WorkItem and ContinuableWorkItem methods from client use, so we can restrict
+the functionality to only being Promise and PromiseBase methods. This limits the possiblity of clients
+calling unexpected methods and gives ContinuableWorkItem and WorkItem freedom to implement whatever methods
+they want without risk of exposure.
+
+Finally, we get to the Promise. A Promise is templated just like the std::function object that it represents,
+aka. Promise<RESULT_TYPE(ARGS...)>. This means that Promises can wrap around any std::function, and I'm pretty
+sure C++11 will autobox function pointers into std::function objects if necessary (that would be sweet).
+However, this leads to complicated code. For instance, there needs to be a way to supply arguments to a Promise,
+which essentially binds the function object to the arguments given, and allows the Promise to be executed asynchronously.
+Currently continuations are not supported yet.
+
+Now on to Scheduler code. A Scheduler is a data structure that only exists to execute IExecutableWorkItems.
+It internally contains a thread pool (that can be configured at compiletime via priorities, size, etc via an xml file),
+the appropriate concurrency model necessary to govern its thread pool, queues for execution etc. Schedulers are
+arranged into a B+Tree (they are what leaf nodes point to) so any entry point into the system will delegate
+Promises to their appropriate Schedulers quickly.
+
+I should note that as of now, there is no heirarchy for Schedulers, but there can be if necessary. Clients
+can write their own Scheduler classes and submit them into the framework for usage with their own
+custom WorkItems, ContinuableWorkItems, Promises, etc as well as integration with the built in
+Promise heirarchy.
+
+Note that this document is just a general guideline, I left out plenty of stuff from this explanation.

@@ -1,0 +1,26 @@
+
+The MessageFramework is a package that wraps around FuturesFramework, and actually has an OS
+like feel to it. The idea is that the MessageFramework treats client code (called
+COMPONENTS or NODES) as callable objects that "subscribe" to message topics, and produce
+messages themselves. When a message is available, the MessageFramework will look up
+(it internally has a database that keeps track of all living components) all components
+that subscribe to the message topic of the message produced, and will then invoke
+that component with the appropriate message. It should be noted that messages
+are constant, and are treated as read only.
+
+For this to work, components NEED to have a "wrapper class" that defines standard behavior
+so that the MessageFramework can actually use the component. This "wrapper class" allows
+components to write their own "callback" methods that will be run when the appropriate
+Message becomes available.
+
+The MessageFramework relies upon FuturesFramework to function. All components will be
+executed Asynchronously, and when their "Promise" is fulfilled, it is assumed that a message
+was produced. At the end of a Promise execution is where the dependent components will be
+submitted for asynchronous execution.
+
+So, this system seems flawed, how will the whole process start? If all components are
+executed asynchronously as continuation of others, what is the first job? Well, this
+is where the sensor drivers come to play. Sensor drivers are components within the system,
+they just are a special type that do NOT rely on other components to run. They produce messages
+at the frequency of their sensor, so they kick start the whole process. This makes sense, as why
+would there be actually anything occurring without sensors?

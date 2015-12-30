@@ -1,0 +1,52 @@
+
+Now that you've read all this literature, how can you contribute?
+
+===========CONTRIBUTING TO AN EXISTING PROJECT================
+if you are adding onto an already existing project, then you are
+likely adding C++ files. The directory structure of the cpp
+directory is very similar to how C++ projects are organized.
+cpp/ breaks down into include/ and src/, both of which have
+folders containing the header and source files for each project.
+
+Add your header files to the include/ directory, and the source
+files to the src/ directory. That alone is not enough for your
+code to be built. You must edit the src/<project_name>/CMakeLists.txt
+file. Somewhere in that file, the variables <PROJECT_NAME>_PUBLIC_HEADERS,
+<PROJECT_NAME>_PRIVATE_HEADERS, and <PROJECT_NAME>_SRCS are set. Add
+your source files to the <PROJECT_NAME>_SRCS variable, add your header
+files to the _PUBLIC_HEADERS and _PRIVATE_HEADERS variables. A Public
+header is a header file that is exposed to a client, everything else
+is a Private header. Now, your source will build.
+
+If you are writing unit tests, add your files to the src/<project_name>/unitTest
+directory, and modify the CMakeLists.txt file in that directory. Adding to the
+/unitTest/CMakeLists.txt is very similar, except there are no _PRIVATE_HEADERS
+and _PUBLIC_HEADERS variables, as why should there be? There is nothing
+being exposed to the client.
+
+
+
+===========CREATING A NEW PROJECT==============
+If you add a project, you need to split the C++ source into the cpp/ directory.
+The cpp/ directory is broken into include/ and src/ directories. These reflect
+where the header and source files will go. You will need to create a directory
+in both the include/ and src/ directories with the name of your project. Be careful
+with this as the names of the directories you create MUST match, and that name
+will be the name you built the project with when running the build scripts.
+
+Second, the src/<your_project_name>/ directory MUST have a CMakeLists.txt file that
+actually builds your project code. See other project's CMakeLists.txt files for good
+templates on how they should look.
+
+Third, if you will run unit tests, you MUST create the directory src/<your_project_name>/unitTest.
+This must have a CMakeLists.txt file (look at other project's unitTest/CMakeLists.txt files
+for good templates), as well as ALL the unit test code in a flat file structure (no subfolders).
+
+Finally, you must modify projects/CMakeLists.txt to call your project's CMakeLists.txt file
+when your project is being built. You can do this by looking at the current format of
+projects/CMakeLists.txt.
+
+
+
+That should be it, happy contributing! Feel free to reach out to me if you need anything!
+-Andrew Wood (aew61@case.edu)

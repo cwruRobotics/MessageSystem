@@ -1,0 +1,35 @@
+
+Information Dependent Execution/Modeling is a rather simple idea.
+Lets say that you're writing code that depends on OTHER code to run.
+Lets also assume that you are writing in C++.
+
+Naturally, the files that YOUR file depends on needs to have
+#include ...
+in them to include the necessary files. Well, what do you do if you want
+to include files that can be changed? For instance, if I want to use
+the functionality of two separate classes, then I could make those
+classes derive from a common parent (an interface for Interface Driven Design)
+and then only include the parent right?
+
+Basically, if I want my code to work with Classes A and B, if they derive
+from class C, then all I need to do is:
+#include "C.hpp"
+and then use instances of C to hide the fact that they are really A and B instances.
+
+This is what I call "component dependent execution," in other words you depend
+on COMPONENTS to exist for your code to work.
+
+But what if the code I am writing doesn't need to make calls into another component,
+so I don't really care about WHAT the component is, how its structured, etc. but rather
+I care about the RESULTS that it produces. This is "information dependent execution."
+
+More formally, all I need is the information that an instance of Components A or B produce,
+I don't really care that they EXIST at all! just as long as the information exists!
+Well this generalizes to allowing generic components to exist, there's no #include COMPONENTS,
+but rather, if we make the information its own data type, we just have to #include the TYPE.
+
+This gives HUGE amounts of freedom to the programmers, who can add/maintain/delete components
+whenever they want, and don't break the flow of information throughout the system. What is more
+difficult however, is the semantics of HOW information data types (lets call them MESSAGES) actually
+GET to the components that need them. Just because a component PRODUCES a message doesn't guarentee
+that the message GETS to components that depend on them. That is what the MessageFramework solves.

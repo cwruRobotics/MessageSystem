@@ -11,16 +11,22 @@
 #include <thread>
 
 // C++ PROJECT INCLUDES
+#include "FuturesFramework/LibraryExport.hpp"
 #include "FuturesFramework/IWorkItem.hpp"
 
-
+// project namespace
 namespace FuturesFramework
 {
 
+    // FORWARD DECLARATION
 	class IScheduler;
 	using ISchedulerPtr = std::shared_ptr<IScheduler>;
 
-	class IScheduler
+    // inteface for a Scheduler. A Scheduler will actually
+    // execute IExecutableWorkItems. Currently, it accepts
+    // IWorkItems, but this will change, as IExecutableWorkItems
+    // actually have the Execute() method.
+	class FUTURESFRAMEWORK_API IScheduler
 	{
 	private:
 
@@ -42,6 +48,6 @@ namespace FuturesFramework
 
 	};
 
-}
+} // end of namespace FuturesFramework
 
-#endif
+#endif // end of header guard

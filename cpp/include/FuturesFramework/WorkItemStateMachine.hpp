@@ -11,9 +11,15 @@
 #include "FuturesFramework/Result.hpp"
 #include "FuturesFramework/WorkItemStates.hpp"
 
+// project namespace
 namespace FuturesFramework
 {
 
+    // the state machine that all built in WorkItems implement.
+    // in the future, a WorkItem will CONTAIN an IWorkItemStateMachine,
+    // rather than derive from it. This will allow clients to have
+    // their own asynchronous data structures be able to exercise
+    // client written state machines.
     class WorkItemStateMachine
     {
     private:
@@ -53,6 +59,6 @@ namespace FuturesFramework
 
     };
 
-}
+} // end of namespace FuturesFramework
 
-#endif
+#endif // end of header guard

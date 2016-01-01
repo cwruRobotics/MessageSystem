@@ -11,9 +11,12 @@
 #include "FuturesFramework/Scheduler.hpp"
 #include "FuturesFramework/WorkItemStateMachine.hpp"
 
+// project namespace
 namespace FuturesFramework
 {
 
+    // Executable code. This is the base implementation
+    // of the Promise heirarchy (excluding interfaces).
     class WorkItem : public IExecutableWorkItem, public WorkItemStateMachine,
         public std::enable_shared_from_this<WorkItem>
     {
@@ -64,9 +67,9 @@ namespace FuturesFramework
 
     };
 
+    // alias for shared pointer to a WorkItem instance.
     using WorkItemPtr = std::shared_ptr<WorkItem>;
 
-}
+} // end of namespace FuturesFramework
 
-
-#endif
+#endif // end of header guard

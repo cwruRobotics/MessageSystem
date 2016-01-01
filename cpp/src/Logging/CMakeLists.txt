@@ -15,6 +15,9 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 # which contains all the toolchains and modules
 get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake ABSOLUTE )
 
+# add our custom module path to the CMAKE_MODULE_PATH
+# this allows us to say include( <module_name> )
+# if <module_name> is located in ${CMAKE_LOCAL_ROOT}/modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
 # ===============================================================================
@@ -51,10 +54,15 @@ set( LOGGING_SRCS
 
 # Public header files (installed together with libraries)
 set( LOGGING_PUBLIC_HEADERS
-    ${INC_ROOT}/Logging/LoggingLevels.hpp
+    ${INC_ROOT}/Logging/LibraryExport.hpp
     ${INC_ROOT}/Logging/ILogger.hpp
-    ${INC_ROOT}/Logging/Logger.hpp
     ${INC_ROOT}/Logging/Factory.hpp
+)
+
+# header files that are not exported to clients.
+set( LOGGING_PRIVATE_HEADERS
+    ${INC_ROOT}/Logging/LoggingLevels.hpp
+    ${INC_ROOT}/Logging/Logger.hpp
 )
 
 # setup visual studio source groups
@@ -122,7 +130,7 @@ set( LOGGING_LIB_NAME ${PROJECT_NAME} )
 # Shared Library export header file supporte
 include( GenerateExportHeader )
 
-add_library( ${LOGGING_LIB_NAME} SHARED ${LOGGING_SRCS} ${LOGGING_PUBLIC_HEADERS} )
+add_library( ${LOGGING_LIB_NAME} SHARED ${LOGGING_SRCS} ${LOGGING_PUBLIC_HEADERS} ${LOGGING_PRIVATE_HEADERS} )
 # target_link_libraries( ${LOGGING_LIB_NAME} ${LOGGING_LIBS} )
 
 set_target_properties( ${LOGGING_LIB_NAME} PROPERTIES

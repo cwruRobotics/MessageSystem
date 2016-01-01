@@ -7,13 +7,19 @@
 
 
 // C++ PROJECT INCLUDES
+#include "FuturesFramework/LibraryExport.hpp"
 #include "FuturesFramework/IWorkItem.hpp"
 
+// project namespace
 namespace FuturesFramework
 {
-    class IExecutableWorkItem : public IWorkItem
+
+    // interface to allow IWorkItems to be executable by Schedulers.
+    // This interface is exported to clients.
+    class FUTURESFRAMEWORK_API IExecutableWorkItem : public IWorkItem
     {
     protected:
+
         // this is the method that an IScheduler calls to run this
         // IWorkItem. The fact that this is protected is for protection.
         // We don't want clients to have access to the Execute()
@@ -24,13 +30,21 @@ namespace FuturesFramework
 
     public:
 
+        // attach a function to be executed. This function is used to
+        // resolve this IExecutableWorkItem
         virtual void AttachMainFunction(FunctionPtr pFunc) = 0;
 
+        // when the main function is done, the client can provide
+        // a "cleanup" function to be run immediatley following the
+        // main function. This function is intended to be quick,
+        // and should execute small follow up logic, or cleanup logic.
         virtual void AttachPosteriorFunction(FunctionPtr pFunc) = 0;
+
     };
 
+    // alias for shared pointer to an IExecutableWorkItem instance
     using IExecutableWorkItemPtr = std::shared_ptr<IExecutableWorkItem>;
-}
 
+} // end of namespace FuturesFramework
 
-#endif
+#endif // end of header guard

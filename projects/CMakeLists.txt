@@ -15,6 +15,9 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 # which contains all the toolchains and modules
 get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../cmake ABSOLUTE )
 
+# add our custom module path to the CMAKE_MODULE_PATH
+# this allows us to say include( <module_name> )
+# if <module_name> is located in ${CMAKE_LOCAL_ROOT}/modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
 # ===============================================================================
@@ -40,9 +43,12 @@ option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
 # PROJECT SUBMODULES
 # ===============================================================================
 
+# documentation variables...ignore for now
 set(DOC_PUBLIC_INPUT_LIST )
 set(DOC_PRIVATE_INPUT_LIST )
 
+# these variables are set through the python build scripts.
+# they are what controls the project build flow.
 if( BUILD_LOGGING )
     # Logger library
     add_subdirectory( ${SRC_ROOT}/src/Logging
@@ -76,6 +82,7 @@ if( BUILD_MESSAGEFRAMEWORK )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/MessageFramework" )
 endif()
 
+# this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 
     if( BUILD_LOGGING )
@@ -107,11 +114,11 @@ endif()
 #               # add windows.cfg (set ( CPPCHECK_LIBRARY_USE "--library=windows.cfg"))
 #          # use linux version
 #
-#     add_custom_target(TARGET
-#          # cppcheck target name
-#          PRE_BUILD
-#          COMMAND ${CMAKE_COMMAND} -E make_directory # output directory
-#     )
+#        add_custom_target(TARGET
+#            # cppcheck target name
+#            PRE_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E make_directory # output directory
+#        )
 #     else()
 #         message(ERROR "CppCheck not found")
 #     endif()

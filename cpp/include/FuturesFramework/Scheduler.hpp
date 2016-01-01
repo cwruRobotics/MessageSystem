@@ -10,12 +10,18 @@
 #include "FuturesFramework/IScheduler.hpp"
 #include "FuturesFramework/WorkItem.hpp"
 
+// project namespace
 namespace FuturesFramework
 {
+
+    // FORWARD DECLARATION
 	class Scheduler;
 	using SchedulerPtr = std::shared_ptr<Scheduler>;
 
-	class Scheduler : public IScheduler, public virtual std::enable_shared_from_this<Scheduler>
+    // a Scheduler. An instance of this will execute IExecutableWorkItems
+    // (for now IWorkItems).
+	class Scheduler : public IScheduler,
+        public virtual std::enable_shared_from_this<Scheduler>
 	{
 	private:
 
@@ -53,6 +59,7 @@ namespace FuturesFramework
 		bool ExecuteWorkItem(const uint64_t id);
 
 	};
-}
 
-#endif
+} // end of namespace FuturesFramework
+
+#endif // end of header guard

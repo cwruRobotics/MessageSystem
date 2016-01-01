@@ -11,16 +11,24 @@
 #include "FuturesFramework/ContinuableWorkItem.hpp"
 #include "FuturesFramework/LibraryExport.hpp"
 
+// project namespace
 namespace FuturesFramework
 {
 
+    // a PromiseBase is all code that a Promise contains, that is
+    // not template dependent. This reduces compile time.
     class FUTURESFRAMEWORK_API PromiseBase : public IWorkItem,
         public std::enable_shared_from_this<PromiseBase>
     {
     protected:
+
+        // this is protection. It separates the public methods
+        // of the internal representation from the external methods
+        // available to clients.
         ContinuableWorkItemPtr _internalWorkItem;
 
     protected:
+
         void AddSuccessor(IChainLinkerPtr successorGenerator);
 
     public:
@@ -34,6 +42,10 @@ namespace FuturesFramework
 
         const States::SettlementState GetState();
 
+        // built in Promise code relies on this method. When a Scheduler
+        // tries to execute a Promise, that Promise's preconditions MUST
+        // be met, or the Promise will be rescheduled until cancelled, or
+        // the preconditions are met.
         virtual bool PreconditionsMet();
 
         Types::Result_t Schedule(ISchedulerPtr scheduler) override;
@@ -42,6 +54,6 @@ namespace FuturesFramework
         
     };
 
-}
+} // end of namespace FuturesFramework
 
-#endif
+#endif // end of header guard

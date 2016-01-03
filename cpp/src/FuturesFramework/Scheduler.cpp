@@ -18,6 +18,18 @@ namespace FuturesFramework
 		return this->_threadMap;
 	}
 
+    bool Scheduler::ExecuteWorkItem(const uint64_t id)
+    {
+        auto index = this->GetWorkItemMap().find(id);
+		if (index == this->GetWorkItemMap().end())
+		{
+			return false;
+		}
+		WorkItemPtr toExecute = std::dynamic_pointer_cast<WorkItem>(index->second);
+		Types::Result_t result = toExecute->Execute();
+		return true;
+    }
+
 	bool Scheduler::DetachWorkItem(uint64_t id)
 	{
 		auto index = this->GetWorkItemMap().find(id);
@@ -53,16 +65,9 @@ namespace FuturesFramework
 		return;
 	}
 
-	bool Scheduler::ExecuteWorkItem(const uint64_t id)
-	{
-		auto index = this->GetWorkItemMap().find(id);
-		if (index == this->GetWorkItemMap().end())
-		{
-			return false;
-		}
-		WorkItemPtr toExecute = std::dynamic_pointer_cast<WorkItem>(index->second);
-		Types::Result_t result = toExecute->Execute();
-		return true;
-	}
+    const uint64_t Scheduler::GetCurrentWorkItemId()
+    {
+        return this->_currentWorkItemId;
+    }
 
 }

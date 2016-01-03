@@ -4,7 +4,7 @@
 #define FUTURESFRAMEWORK_SCHEDULER_HPP
 
 // SYSTEM INCLUDES
-
+#include <queue>
 
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/IScheduler.hpp"
@@ -42,6 +42,8 @@ namespace FuturesFramework
 
 		bool DetachWorkItem(uint64_t id) override;
 
+        bool ExecuteWorkItem(const uint64_t id);
+
 	public:
 
 		Scheduler() : _attachedWorkItems(), _mutex(), _currentWorkItemId(0)
@@ -56,7 +58,7 @@ namespace FuturesFramework
 
 		void Run() override;
 
-		bool ExecuteWorkItem(const uint64_t id);
+        const uint64_t GetCurrentWorkItemId();
 
 	};
 

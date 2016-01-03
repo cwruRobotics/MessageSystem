@@ -31,7 +31,8 @@ namespace FuturesFramework
         // how did the ContinuableWorkItem resolve? This is dependent
         // upon which successors will be executed.
         States::SettlementState         _state;
-        std::vector<IChainLinkerPtr>    _successors;
+        std::vector<IChainLinkerPtr>    _successSuccessors;
+        std::vector<IChainLinkerPtr>    _failureSuccessors;
 
     private:
 
@@ -48,8 +49,8 @@ namespace FuturesFramework
     public:
 
         // default constructor
-        ContinuableWorkItem() : WorkItem(), _successors(),
-            _state(States::SettlementState::PENDING)
+        ContinuableWorkItem() : WorkItem(), _successSuccessors(),
+            _failureSuccessors(), _state(States::SettlementState::PENDING)
         {
         }
 
@@ -72,7 +73,8 @@ namespace FuturesFramework
         bool IsCurrentlyExecuting() override;
 
         // add a successor to this ContinuableWorkItem.
-        void AddContinuation(IChainLinkerPtr pContinuation) override;
+        void AddContinuation(IChainLinkerPtr pContinuation,
+            bool onSuccess=true) override;
 
     };
 

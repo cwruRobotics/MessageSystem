@@ -56,7 +56,7 @@ namespace FuturesFramework
 			}
 			catch (...)
 			{
-				this->_pException = std::current_exception();
+				this->SetException(std::current_exception());
 			}
 		}
 		else

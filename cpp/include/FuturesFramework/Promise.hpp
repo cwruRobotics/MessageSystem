@@ -6,7 +6,7 @@
 // SYSTEM INCLUDES
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/ChainLinker.hpp"
+// #include "FuturesFramework/ChainLinker.hpp"
 #include "FuturesFramework/IPromise.hpp"
 #include "FuturesFramework/LibraryExport.hpp"
 #include "FuturesFramework/PromiseBase.hpp"
@@ -14,16 +14,16 @@
 namespace FuturesFramework
 {
     
-    template<typename PROMISERESULT>
+    template<typename PROMISE_RESULT>
     class Promise;
     
-    template<typename PROMISERESULT>
-    using PromisePtr = std::shared_ptr<Promise<PROMISERESULT> >;
+    template<typename PROMISE_RESULT, typename... ARGS>
+    using PromisePtr = std::shared_ptr<Promise<PROMISE_RESULT(ARGS...)> >;
     
-    template<typename PROMISERESULT>
-    class Promise
-    {
-    };
+    //template<typename PROMISERESULT>
+    //class Promise
+    //{ 
+    //};
     
     template<typename PROMISE_RESULT, typename ... ARGS>
     class Promise<PROMISE_RESULT(ARGS...)> : public IPromise<PROMISE_RESULT>,
@@ -52,7 +52,6 @@ namespace FuturesFramework
         {
             this->_internalWorkItem->SetSuccess();
             this->_result = result;
-            this->SetState(States::SettlementState::SUCCESS);
         }
 
         PROMISE_RESULT GetResult() override
@@ -66,7 +65,7 @@ namespace FuturesFramework
                 }
                 else
                 {
-                    throw std::exception("No failure but also no error?");
+                    throw std::exception("Promise not settled yet");
                 }
             }
             return this->_result;
@@ -86,7 +85,9 @@ namespace FuturesFramework
         {
             if (!this->_argsGiven)
             {
-                if (this->GetState() == States::SettlementState::SUCCESS)
+                if (this->GetState() == States::SettlementState::SUCCESS
+                    || this->GetState() == States::SettlementState::FAILURE
+                    || !this->_unboundFunction)
                 {
                     return;
                 }
@@ -101,7 +102,7 @@ namespace FuturesFramework
 
                 auto boundFunction = std::bind(this->_unboundFunction,
                     std::forward<ARGS>(args)...);
-                std::dynamic_pointer_cast<IWorkItem>(this->_internalWorkItem)
+                std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
                     ->AttachMainFunction([this, boundFunction]() ->Types::Result_t
                 {
                     if (this->PreconditionsMet())
@@ -117,6 +118,11 @@ namespace FuturesFramework
         void AttachMainFunction(std::function<PROMISE_RESULT(ARGS...)> pFunc)
         {
             this->_unboundFunction = std::move(pFunc);
+            std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
+                ->AttachMainFunction([]() -> Types::Result_t
+            {
+                return Types::Result_t::FAILURE;
+            });
         }
 
     };

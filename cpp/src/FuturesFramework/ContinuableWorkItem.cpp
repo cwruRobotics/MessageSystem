@@ -42,11 +42,15 @@ namespace FuturesFramework
 		if (result == Types::Result_t::FAILURE)
 		{
 			// do OnError callback here if it exists.
+            for (IChainLinkerPtr& successor : this->_failureSuccessors)
+            {
+                successor->Chain();
+            }
 		}
 		else if (result == Types::Result_t::SUCCESS)
 		{
 			// do Then callback here if it exists.
-			for (IChainLinkerPtr& successor : this->_successors)
+			for (IChainLinkerPtr& successor : this->_successSuccessors)
 			{
 				successor->Chain();
 			}
@@ -58,9 +62,17 @@ namespace FuturesFramework
 		return result;
 	}
 
-	void ContinuableWorkItem::AddContinuation(IChainLinkerPtr ptr)
+	void ContinuableWorkItem::AddContinuation(IChainLinkerPtr ptr,
+        bool onSuccess)
 	{
-		this->_successors.push_back(ptr);
+        if (onSuccess)
+        {
+            this->_successSuccessors.push_back(ptr);
+        }
+        else
+        {
+            this->_failureSuccessors.push_back(ptr);
+        }
 	}
 
 }

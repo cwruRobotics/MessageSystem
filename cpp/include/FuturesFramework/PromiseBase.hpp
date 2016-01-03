@@ -29,7 +29,7 @@ namespace FuturesFramework
 
     protected:
 
-        void AddSuccessor(IChainLinkerPtr successorGenerator);
+        void AddSuccessor(IChainLinkerPtr successorGenerator, bool onSuccess=true);
 
     public:
         PromiseBase() : _internalWorkItem(std::make_shared<ContinuableWorkItem>())

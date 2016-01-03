@@ -93,8 +93,8 @@ if( RUN_UNIT_TESTS )
 
     if( BUILD_FUTURESFRAMEWORK )
         # FuturesFramework unit tests
-        # add_subdirectory( ${SRC_ROOT}/src/FuturesFramework/unittest
-        #                   ${OUT_ROOT}/LoggerUnit )
+        add_subdirectory( ${SRC_ROOT}/src/FuturesFramework/unittest
+                          ${OUT_ROOT}/LoggerUnit )
     endif()
 
     if( BUILD_MESSAGEFRAMEWORK )

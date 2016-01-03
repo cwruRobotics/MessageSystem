@@ -26,8 +26,6 @@ namespace FuturesFramework
 
         States::WorkItemState  _currentState;
 
-        void SetState(States::WorkItemState newState);
-
     protected:
 
         States::WorkItemState TriggerIdle(Types::Result_t trigger);
@@ -49,6 +47,8 @@ namespace FuturesFramework
 		virtual States::WorkItemState Cancel();
 
         States::WorkItemState GetCurrentState();
+
+        void SetState(States::WorkItemState newState);
 
     public:
 

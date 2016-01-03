@@ -12,7 +12,7 @@ extern "C" {
 
 // defined by CMake when building this project as
 // a static library
-#ifdef FUTURESFRAMEWORK_STATIC_LIB_BUILD
+#ifdef FUTURESFRAMEWORK_STATIC_DEFINE
 #   define FUTURESFRAMEWORK_API
 #   define FUTURESFRAMEWORK_API_LOCAL
 

@@ -30,6 +30,8 @@ namespace FuturesFramework
 
     public:
 
+        virtual ~IExecutableWorkItem() = default;
+
         // attach a function to be executed. This function is used to
         // resolve this IExecutableWorkItem
         virtual void AttachMainFunction(FunctionPtr pFunc) = 0;

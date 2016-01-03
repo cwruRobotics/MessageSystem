@@ -6,9 +6,10 @@
 
 namespace FuturesFramework
 {
-    void PromiseBase::AddSuccessor(IChainLinkerPtr successorGenerator)
+    void PromiseBase::AddSuccessor(IChainLinkerPtr successorGenerator,
+        bool onSuccess)
     {
-        this->_internalWorkItem->AddContinuation(successorGenerator);
+        this->_internalWorkItem->AddContinuation(successorGenerator, onSuccess);
     }
 
     const States::SettlementState PromiseBase::GetState()

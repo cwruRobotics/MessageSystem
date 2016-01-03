@@ -38,7 +38,8 @@ namespace FuturesFramework
 
         // add a successor to this IContinuableWorkItem. A successor
         // will be constructed when this IContinuableWorkItem is resolved.
-        virtual void AddContinuation(IChainLinkerPtr pContinuation) = 0;
+        virtual void AddContinuation(IChainLinkerPtr pContinuation,
+            bool onSuccess=true) = 0;
 
     };
 

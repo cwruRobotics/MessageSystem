@@ -41,6 +41,10 @@ namespace FuturesFramework
 		Types::Result_t result = this->WorkItem::Execute();
 		if (result == Types::Result_t::FAILURE)
 		{
+            if (this->GetException())
+            {
+                this->SetFailure();
+            }
 			// do OnError callback here if it exists.
             for (IChainLinkerPtr& successor : this->_failureSuccessors)
             {

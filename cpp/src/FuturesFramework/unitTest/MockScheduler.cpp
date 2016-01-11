@@ -10,13 +10,13 @@ namespace FuturesFramework
 namespace Tests
 {
 
-    std::map<uint64_t, IWorkItemPtr>& 
+    std::map<uint64_t, IExecutableWorkItemPtr>& 
         MockScheduler::GetWorkItemMap()
     {
         return this->Scheduler::GetWorkItemMap();
     }
 
-    std::map<std::thread::id, std::thread>& 
+    std::map<std::thread::id, Concurrency::IThreadPtr>& 
         MockScheduler::GetThreadMap()
     {
         return this->Scheduler::GetThreadMap();

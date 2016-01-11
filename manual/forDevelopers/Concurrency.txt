@@ -1,0 +1,349 @@
+
+So...concurrency.
+
+
+The back end of our FuturesFramework (not exported for clients), is grouped by two
+properties:
+
+1)  Separating execution threads by Node type.
+    Let's assume that you have different "types" of jobs that
+    you want to run in parallel. These are referred to as
+    "Nodes," and each "Node" will have its own set of execution threads.
+    The data structure corresponding to these are known as Schedulers
+
+2)  Separating execution threads by Priority.
+    Let's assume that within you "Node," you have different
+    types of "Node jobs" that you want to execute differently,
+    aka have different priorities. Each "Node" will have
+    a set of worker threads that will execute jobs concurrently,
+    with each worker thread corresponding to a different "Node job priority."
+    The data structure corresponding to these are known as WorkerThreads.
+
+A Scheduler will have the following (shared data):
+    - std::map<uint64_t, IExecutableWorkItemPtr>
+        This is a map of where ALL submitted WorkItems will be stored.
+        This is not indicitive of the execution order, but instead keeps
+        track of all WorkItems during their lifetimes.
+        Therefore, since this data is shared with the WorkerThreads,
+        it will have a mutex protecting it.
+
+A WorkerThread will have the following (shared data):
+    It is important to note that a WorkerThread internally spawns a thread
+    that will run concurrently. This thread will call the WorkerThread::Run()
+    method. All shared data here is shared with the concurrent thread.
+
+    - std::queue<IExecutableWorkItemPtr>
+        This is the execution queue for the WorkerThread. It determines
+        the order in which WorkItems are executed. This is protected
+        by a mutex.
+
+    - std::thread
+        This is the concurrent thread. It has its own mutex (and a condition variable
+        to allow it to sleep when there is nothing in the queue). This needs
+        a mutex for the condition variable to work, although I only see it
+        being owned by the thread itself.
+
+
+    here is the pseudo-algorithm that the concurrent thread will run:
+
+    while( not shutdown ):
+        aquire thread lock;
+        while( the queue is not empty AND not shutdown ):
+            set state of WorkerThread to BUSY;
+
+            aquire lock on queue;
+            WorkItem w = queue.dequeue();
+            release the lock on the queue;
+
+            w.Execute();
+
+            if( the workItem needs to be rescheduled ):
+                aquire lock on queue;
+                queue.push(w);
+                release lock on queue;
+            endif;
+        endwhile;
+
+        set state of WorkerThread to IDLE:
+        put the thread to sleep until woken;
+    endwhile;
+
+    what do you think?
+    The shutdown variable and the state of the WorkerThread are (bool, States::ConcurrencyState).
+    Should they be protected by synchronization constructs? I can have the shutdown boolean
+    given a mutex and try to prevent the case where the WorkerThread is told to shutdown WHILE
+    the second while loop condition is being evaluating (was paused) in such a way that shutdown
+    was ALREADY stored locally (was not told to shutdown yet), and then resumed. The worst case is
+    that only 1 more work item at max would be executed. AND, if i were to put a lock around that,
+    how would I release that lock? I don't want to hold it for the duration of the entire loop, and
+    I don't want to put a "break" line in there.
+
+
+Random thing:
+Shutdown calls
+        this->_threadCV.notify_all();
+        this->Join();
+and Join() is:
+        this->_threadCV.notify_all();
+        this->_thread.join();
+Is it intentional to repeat this->_threadCV.notify_all()?
+
+One other question that might be stupid:
+	Can a thread call the shutdown function for another thread? Because if it can't (or you could prohibit it)
+	You wouldn't have to worry about undefined behavior when multiple functions act on the same thread
+
+I know you changed to actual variable to it, but I don't really see what shifting if from the right side of &&
+to the left side does in terms of benifits. I am aware of the behavior (if the first part is false, it doesn't evaluate the second)
+But wouldn't it cause the same issue if the boolean was changed while it was evaluating the second condition in the &&
+You could probably avoid this issue though by doing something like
+while(!_shutdown && !this->.isQueueEmpty() && !_shutdown)
+{
+...
+}
+as long as the compiler didn't optimize that out
+
+if you don't want the shutdown function to run while the loop condition is getting checked, you could do something like
+
+int i = 0;
+while(condition)
+{
+bool can_shutdown = true;
+if(i != 0)
+{
+whatever you want to do
+}
+i = 1;
+bool can_shutdown = false;
+}
+
+For me at least, I think a bigger issue would be if the _shutdown was true but the shutdown function hadn't notified stuff
+with the this->_threadCV.notify_all(); yet
+
+I'm not super familiar with mutex's, so there might be a better way to do them with those, but if you wanted the shutdown function
+and a part of the loop to be mutually exclusive, you could do something like  
+
+while(condition)
+{
+	this->can_shutdown = true
+	
+	if(this->attempting_shutdown) 	 //to avoid race condition between evaluating while loop condition and setting is_shutting_down to true
+	{
+		brief pause		 //pause for race condition, same deal as above
+		while(this->is_shutting_down)
+		{
+		empty loop
+		}
+		...
+	this->can_shutdown = false
+	} 
+}
+
+void WokerThread::Shutdown()
+{
+	this->attempting_shutdown = true
+	while(!this->can_shutdown)
+	{
+	empty loop
+	}
+	this->is_shutting_down = true
+	...
+	this->is_shutting_down = false
+	this->attempting_shutdown = false
+}
+
+if you wanted to avoid wasting cpu cycles on infinite loops, you could add a (probably very) small pause between each loop execution
+but I think the whole thing will be very brief anyways so this won't be a big deal
+
+this would blow up if something like this happened though. It will almost certainly be avoided though
+
+can_shutdown = false
+...
+shutdown
+...
+can_shutdown = true
+
+I hope this is helpful in some way. Sorry if I sound like an idiot :)
+If you have anything else you want me to check out in particular, let me know.
+
+
+===============================COMMENTS 1/6/2016=====================================
+
+ANDREW (3:21 PM) --------------------------------------------------
+
+So, loops in general are really bad because they waste CPU cycles. Even adding a pause in the loop
+still leads to too many wasted CPU cycles in the case where the state of the loop doesn't change
+for long periods of time.
+
+Mutexes are a type of concurrency object known as a "semaphore". A semaphore is a variable that all operations
+on are atomic...meaning that all operations take at most one CPU cycle, OR that the CPU cannot do any
+context switching DURING the operation. Semaphores are integer variables, and programs either "wait()" or
+"signal()" them. The idea is that the "wait()" operation DECREMENTS the semaphore, and if the value is <= 0
+AFTER decrementing, the calling thread is put to sleep and stored in a queue internal to the semaphore.
+When "signal()" is called, the semaphore value is INCREMENTED, and if the value is > 0 AFTER incrementing, the
+first sleeping thread in the semaphore's queue is woken up and resumes execution.
+
+Mutex is a BINARY semaphore, so it can only have the states 0 and 1, and is used for mutal exclusion. Anyone
+trying to take ownership of a std::mutex in C++ has to call (in our case: std::lock_guard or std::unique_lock).
+Both of these instances call "lock()" (which is effectively "wait()" for semaphores), and when destructed,
+call "unlock()" (which is "signal()"). The difference is that std::unique_lock exposes "unlock()" and "lock()"
+while std::lock_guard does not (it assumes you WANT to possess ownership of the lockable object (in our case
+std::mutex) UNTIL the destruction of the std::lock_guard). C++ does not have built in semaphores, which is good
+because they suck and are hard to coordinate.
+
+We have currently the following relevant code for our concurrency:
+
+bool WorkerThread::IsQueueEmpty()
+{
+    std::lock_guard<std::mutex> queueLock(this->_queueMutex);
+    return this->_queue.empty();
+}
+
+void WorkerThread::Shutdown()
+{
+    // is this racey? Can checking this in WorkerThread::Run()
+    // be paused mid check? I'm not sure if checking _shutdown
+    // can be "paused" and then this to be "set," or the reverse
+    // from happening.
+    this->_shutdown = true;
+
+    {
+        // synchronization! This prevents a algorithmic hole in
+        // the second while loop in WorkerThread::Run
+        std::lock_guard<std::mutex> threadLock(this->_threadMutex);
+
+        // really is notifying this->_thread if it is asleep
+        // but .notify_all() is safer than calling notify_one()
+        // in this context
+        this->_threadCV.notify_all();
+    }
+    this->Join();
+}
+
+void WorkerThread::Join()
+{
+    {
+        // synchronization! This prevents a algorithmic hole in
+        // the second while loop in WorkerThread::Run
+        std::lock_guard<std::mutex> threadLock(this->_threadMutex);
+        this->_threadCV.notify_all();
+    }
+    this->_thread.join();
+}
+
+// this is the method that the concurrent thread (this->_thread) will run.
+// it will try and get workItems from the queue when there are stuff
+// to be had, otherwise it will go to sleep to be woken when the
+// queue is populated.
+void WorkerThread::Run()
+{
+    // the work item we will be executing
+    IExecutableWorkItemPtr workItem = nullptr;
+
+    while (!this->_shutdown)
+    {
+        // lock on this thread
+        std::unique_lock<std::mutex> threadLock(this->_threadMutex);
+
+        // !this->_shutdown is here in case we want to terminate
+        // execution while items are in the queue.
+        while (!this->_shutdown && !this->IsQueueEmpty())
+        {
+
+            // this is atomic
+            this->_state = States::ConcurrencyState::BUSY;
+
+            // lock the queue and retrieve the WorkItem.
+            // this is in its own code block because the lock
+            // is released only when the object destructs.
+            {
+                std::lock_guard<std::mutex> queueLock(this->_queueMutex);
+                std::cout << "Getting WorkItem to execute" << std::endl;
+                workItem = this->_queue.front();
+                this->_queue.pop();
+            }
+            threadLock.unlock();
+
+            // execute the WorkItem
+            // DON'T BLOCK HERE....THIS COULD BE VERY EXPENSIVE
+            // BOTH RUNTIME AND RESOURCE WISE
+            workItem->Execute();
+
+            threadLock.lock();
+            // reschedule if necessary
+            if (!workItem->IsDone())
+            {
+                std::lock_guard<std::mutex> queueLock(this->_queueMutex);
+                this->_queue.push(workItem);
+            }
+        }
+        this->_state = States::ConcurrencyState::IDLE;
+
+        // put the concurrent thread to sleep until it is woken up by
+        // a WorkItem being queued.
+        this->_threadCV.wait(threadLock);
+    }
+    this->_state = States::ConcurrencyState::DONE;
+    std::cout << "Exiting WorkerThread::Run()" << std::endl;
+}
+
+
+The tricky part is this:
+	At any point during the execution of WorkerThread::Run() which is executed
+	ON ANOTHER THREAD running concurrently, the CPU could pause its execution,
+	and begin executing another thread WHICH MIGHT BE CALLING WorkerThread::Shutdown(),
+	WorkerThread::Join() and WorkerThread::IsQueueEmpty() (for now, we will have
+	WorkerThread::Queue() and WorkerThread::Abort() soon).
+
+The design is that WorkerThread::Run() is responsible for actually executing the
+WorkItems while the other threads in existence are responsible for GIVING a WorkerThread
+WorkItems to execute, and for STARTING and SHUTTING DOWN WorkerThreads. Other than that,
+the WorkerThread does its thing and does not interact with any other threads.
+
+I should mention that I changed _shutdown to be std::atomic<bool>.
+This means that setting or reading from _shutdown is an atomic operation.
+
+The usage of the condition variable is to put the thread which WorkerThread::Run()
+executes on to sleep while there are no WorkItems for it to execute. We could make
+our own clunky semaphore classes using a std::mutex, and integer, and a condition variable
+if we wanted, but that wouldn't be worth our time.
+
+The ordering of the second while loop is important was important
+because I was not taking ownership of the queue mutex when calling std::queue.empty().
+This meant that the CPU COULD pause execution of WorkerThread::Run() WHEN THE
+QUEUE WAS EMPTY AND WHEN WorkerThread::Run() WAS EXECUTING std::queue.empty().
+When the CPU resumed execution of another thread, that thread COULD be adding a WorkItem
+to the Queue, and it was possible for that Queue() method to succeed. Then, when
+WorkerThread::Run() was resumed, it would be possible for std::queue.empty() to be TRUE
+AND THERE TO BE SOMETHING IN THE QUEUE! WorkerThread::Run() would go to sleep AND WOULD
+NOT BE WOKEN because the Queue() method could have finished executing and already
+have called std::condition_variable.notify_one(). That means that the WorkerThread::Run()
+thread would be asleep UNTIL a call to shutdown was made, or ANOTHER WorkItem was Queued.
+However, I believe that I have fixed this issue.
+
+In the above scenario, now, WorkerThread::IsQueueEmpty() is used to replace std::queue.empty().
+In WorkerThread::IsQueueEmpty(), the calling thread tries to take ownership of the Queue
+mutex. If it has it, then great, the Queue CANNOT BE MODIFIED by other thread UNTIL
+the mutex is released. Additionally, the thread sleeping synchronization I think
+is fixed too: now the std::condition_variable.notify_one() is protected by trying
+to take ownership of the thread mutex. In the scenario above, it was not, so now if
+this->IsQueueEmpty() returns TRUE BUT a WorkItem is added JUST AFTER WorkerThread::IsQueueEmpty()
+finished (when the lock is released), the thread still will go to sleep BEFORE the call
+to std::condition_variable.notify_one() is made because WorkerThread::Run() has ownership
+of the thread mutex, and releases it ONLY WHEN GOING TO SLEEP. Then, std::condition_variable.notify_one()
+is made and the thread is woken up and reevaluates the loop.
+
+Can you try and find any cases in which the algorithm above breaks? The cases
+where it would break usually are around where the locks are created and released
+if they exist. The thought process is generally "if this part of the code is executed, and then
+paused, and ANOTHER thread comes in and does THIS, what happens?"
+
+Also, in WorkerThread::Shutdown() and WorkerThread::Join(), the redundant call
+to std::condition_variable.notify_all() is necessary because BOTH methods
+are exposed as public (can be called by outside code). Fortunatley, if there are no threads
+waiting on the condition variable, the notify_all() call does nothing.
+
+
+------------------------------------------------------------
+
+
+============================================================================================

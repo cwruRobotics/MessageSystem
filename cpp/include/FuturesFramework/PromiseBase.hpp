@@ -7,7 +7,7 @@
 
 
 // C++ PROJECT INCLUDES
-#include "FuturesFramework/IWorkItem.hpp"
+#include "FuturesFramework/IExecutableWorkItem.hpp"
 #include "FuturesFramework/ContinuableWorkItem.hpp"
 #include "FuturesFramework/LibraryExport.hpp"
 

@@ -25,15 +25,15 @@ namespace FuturesFramework
 
         uint64_t            _id;
         ISchedulerPtr       _pScheduler;
-        FunctionPtr _pMainFunction;
-        FunctionPtr _pPostFunction;
+        FunctionPtr         _pMainFunction;
+        FunctionPtr         _pPostFunction;
         std::exception_ptr  _pException;
 
     private:
 
         void SetId(uint64_t id);
  
-        bool IsDone();
+        bool IsDone() override;
 
     protected:
 
@@ -64,6 +64,8 @@ namespace FuturesFramework
         const uint64_t GetId() override;
 
         std::exception_ptr GetException() const;
+
+        const std::string GetStateAsString();
 
     };
 

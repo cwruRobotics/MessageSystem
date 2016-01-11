@@ -37,8 +37,7 @@ if( RUN_UNIT_TESTS )
     enable_testing()
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
-    # include(BringInPackages)  # NOT build in
-    # BringInPackages()
+
     find_package( Catch REQUIRED )
 
     if( CATCH_FOUND )
@@ -61,6 +60,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../SettlementStates.cpp
             ${SRC_ROOT}/../ContinuableWorkItem.cpp
             ${SRC_ROOT}/../PromiseBase.cpp
+            ${SRC_ROOT}/../WorkerThread.cpp
 
             # FuturesFrameworkUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
@@ -71,23 +71,12 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/WorkItemAndScheduler_unit.cpp
             ${SRC_ROOT}/ContinuableWorkItem_unit.cpp
             ${SRC_ROOT}/Promise_unit.cpp
+            ${SRC_ROOT}/WorkerThread_unit.cpp
         )
 
         set( FUTURESFRAMEWORK_UNITTEST_HEADERS
-            # FuturesFramework headers
-            ${INC_ROOT}/Result.hpp
-            ${INC_ROOT}/WorkItemStates.hpp
-            ${INC_ROOT}/WorkItemStateMachine.hpp
-            ${INC_ROOT}/IWorkItem.hpp
-            ${INC_ROOT}/IExecutableWorkItem.hpp
-            ${INC_ROOT}/IScheduler.hpp
-            ${INC_ROOT}/Scheduler.hpp
-            ${INC_ROOT}/WorkItem.hpp
-            ${INC_ROOT}/SettlementStates.hpp
-            ${INC_ROOT}/ContinuableWorkItem.hpp
-            ${INC_ROOT}/PromiseBase.hpp
-            ${INC_ROOT}/IPromise.hpp
-            ${INC_ROOT}/Promise.hpp
+            # apparently we don't need to include FuturesFramework headers.
+            # I assume its because we are not exporting them.
 
             # FuturesFrameworkUnitTests headers
             ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp

@@ -35,9 +35,11 @@ namespace Tests
         REQUIRE( p.GetState() == States::SettlementState::PENDING );
     }
 
-    TEST_CASE("Testing Promise Execution on Schedulers", "[Promise_unit]")
+    TEST_CASE("Testing Promise Execution on Schedulers",
+        "[Promise_unit]")
     {
-        PromisePtr<int, int> pPromise = std::make_shared<Promise<int(int)> >();
+        PromisePtr<int, int> pPromise =
+            std::make_shared<Promise<int(int)> >();
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
 
@@ -50,14 +52,57 @@ namespace Tests
 
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pPromise->GetId()) );
-        REQUIRE( pPromise->GetState() == States::SettlementState::PENDING );
+        REQUIRE( pPromise->GetState() ==
+            States::SettlementState::PENDING );
 
         pPromise->GiveArgs(5);
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pPromise->GetId()) );
-        REQUIRE( pPromise->GetState() == States::SettlementState::SUCCESS );
+        REQUIRE( pPromise->GetState() ==
+            States::SettlementState::SUCCESS );
 
         REQUIRE( pPromise->GetResult() == 10 );
+    }
+
+    TEST_CASE("Testing Promise Execution on Schedulers that Throw",
+        "[Promise_unit]")
+    {
+        PromisePtr<int, int> pPromise =
+            std::make_shared<Promise<int(int)> >();
+        MockSchedulerPtr pMockScheduler =
+            std::make_shared<MockScheduler>();
+
+        pPromise->AttachMainFunction([](int a) -> int
+        {
+            throw std::exception("Blah");
+        });
+
+        pPromise->Schedule(pMockScheduler);
+
+        REQUIRE( pMockScheduler->
+            ExecuteWorkItem(pPromise->GetId()) );
+        REQUIRE( pPromise->GetState() ==
+            States::SettlementState::PENDING );
+
+        pPromise->GiveArgs(5);
+        REQUIRE( pMockScheduler->
+            ExecuteWorkItem(pPromise->GetId()) );
+        REQUIRE( pPromise->GetState() ==
+            States::SettlementState::FAILURE );
+
+        REQUIRE( pPromise->GetError() != nullptr );
+
+        try
+        {
+            pPromise->GetResult();
+
+            // this line should not be executed.
+            REQUIRE( false );
+        }
+        catch(...)
+        {
+            REQUIRE( true );
+        }
     }
 
 } // end of namespace Tests

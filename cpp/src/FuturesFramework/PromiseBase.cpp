@@ -25,7 +25,7 @@ namespace FuturesFramework
     Types::Result_t PromiseBase::Schedule(ISchedulerPtr scheduler)
     {
         if (scheduler->ScheduleWorkItem(
-            std::dynamic_pointer_cast<IWorkItem>(this->_internalWorkItem)))
+            std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)))
         {
             return Types::Result_t::SUCCESS;
         }

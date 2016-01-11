@@ -176,26 +176,32 @@ namespace Tests
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pDoubleThrowWorkItem->GetId()) );
         REQUIRE( pDoubleThrowWorkItem->GetException() != nullptr );
+        REQUIRE( pDoubleThrowWorkItem->GetStateAsString().compare("Done") == 0 );
     
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pThrowMainWorkItem->GetId()) );
         REQUIRE( pThrowMainWorkItem->GetException() != nullptr );
+        REQUIRE( pThrowMainWorkItem->GetStateAsString().compare("Done") == 0 );
 
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pThrowPostWorkItem->GetId()) );
         REQUIRE( pThrowPostWorkItem->GetException() == nullptr );
+        REQUIRE( pThrowPostWorkItem->GetStateAsString().compare("Done") == 0 );
 
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pDoubleFailWorkItem->GetId()) );
         REQUIRE( pDoubleFailWorkItem->GetException() == nullptr );
+        REQUIRE( pDoubleFailWorkItem->GetStateAsString().compare("Reschedule") == 0 );
 
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pFailMainWorkItem->GetId()) );
         REQUIRE( pFailMainWorkItem->GetException() == nullptr );
+        REQUIRE( pFailMainWorkItem->GetStateAsString().compare("Reschedule") == 0 );
 
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pFailPostWorkItem->GetId()) );
         REQUIRE( pFailPostWorkItem->GetException() == nullptr );
+        REQUIRE( pFailPostWorkItem->GetStateAsString().compare("Done") == 0 );
         // ----------------------------------------------------
 
         for (unsigned int i = 0; i < idVector.size(); ++i)

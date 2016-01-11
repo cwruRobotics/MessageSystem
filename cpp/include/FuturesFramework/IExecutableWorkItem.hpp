@@ -9,15 +9,24 @@
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/LibraryExport.hpp"
 #include "FuturesFramework/IWorkItem.hpp"
+// #include "FuturesFramework/WorkerThread.hpp"
 
 // project namespace
 namespace FuturesFramework
 {
-
+namespace Concurrency
+{
+    class WorkerThread;
+}
     // interface to allow IWorkItems to be executable by Schedulers.
     // This interface is exported to clients.
     class FUTURESFRAMEWORK_API IExecutableWorkItem : public IWorkItem
     {
+        friend class Concurrency::WorkerThread;
+    private:
+
+        virtual bool IsDone() = 0;
+
     protected:
 
         // this is the method that an IScheduler calls to run this

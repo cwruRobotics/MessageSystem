@@ -8,15 +8,20 @@
 namespace FuturesFramework
 {
 
-	std::map<uint64_t, IWorkItemPtr>& Scheduler::GetWorkItemMap()
+	std::map<uint64_t, IExecutableWorkItemPtr>& Scheduler::GetWorkItemMap()
 	{
 		return this->_attachedWorkItems;
 	}
 
-	std::map<std::thread::id, std::thread>& Scheduler::GetThreadMap()
+	std::map<std::thread::id, Concurrency::IThreadPtr>& Scheduler::GetThreadMap()
 	{
 		return this->_threadMap;
 	}
+
+    // std::queue<IExecutableWorkItemPtr>& Scheduler::GetQueue()
+    // {
+    //     return this->_queue;
+    // }
 
     bool Scheduler::ExecuteWorkItem(const uint64_t id)
     {
@@ -37,24 +42,29 @@ namespace FuturesFramework
 		{
 			return false;
 		}
-		IWorkItemPtr workItem = index->second;
+		IExecutableWorkItemPtr workItem = index->second;
 		// set this WorkItem's SchedulerPtr to null;
 		
 		this->GetWorkItemMap().erase(index);
 		return true;
 	}
 
-	bool Scheduler::ScheduleWorkItem(IWorkItemPtr workItem)
+	bool Scheduler::ScheduleWorkItem(IExecutableWorkItemPtr workItem)
 	{
+        std::lock_guard<std::mutex>(this->_mutex);
 		if (workItem)
 		{
 			WorkItemPtr castedWorkItem = std::dynamic_pointer_cast<WorkItem>(workItem);
 			castedWorkItem->SetId(++this->_currentWorkItemId);
 
-			this->GetWorkItemMap().insert(std::pair<uint64_t, IWorkItemPtr>(this->_currentWorkItemId, workItem));
+			this->GetWorkItemMap().insert(std::pair<uint64_t, IExecutableWorkItemPtr>(this->_currentWorkItemId, workItem));
+
+            // this will actually allow WorkerThreads to execute WorkItems!
+            // they are concurrently protected, but the condition variable
+            // is not yet so be careful!
+            // this->_tempWorkerThread->Queue(workItem);
 
 			castedWorkItem->Trigger(Types::Result_t::SUCCESS);
-			// this->_executionQueue.push(workItem);
 			return true;
 		}
 		return false;
@@ -64,6 +74,22 @@ namespace FuturesFramework
 	{
 		return;
 	}
+
+    void Scheduler::Shutdown()
+    {
+        if (this->_running)
+        {
+            this->_running = false;
+            // for now
+            // this->_tempWorkerThread->Shutdown();
+
+            // in the future
+            // for (auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
+            // {
+            //     it->second->Shutdown();
+            // }
+        }
+    }
 
     const uint64_t Scheduler::GetCurrentWorkItemId()
     {

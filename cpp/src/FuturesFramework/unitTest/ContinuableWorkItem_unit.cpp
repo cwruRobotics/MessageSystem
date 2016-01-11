@@ -78,6 +78,9 @@ namespace Tests
         REQUIRE( pMockScheduler->
             ExecuteWorkItem(pFailWorkItem->GetId()) );
 
+        REQUIRE( pSuccessWorkItem->GetStateAsString().compare("Done") == 0 );
+        REQUIRE( pFailWorkItem->GetStateAsString().compare("Reschedule") == 0 );
+
         REQUIRE( pMockScheduler->
             DetachWorkItem(pSuccessWorkItem->GetId()) );
         REQUIRE( pMockScheduler->

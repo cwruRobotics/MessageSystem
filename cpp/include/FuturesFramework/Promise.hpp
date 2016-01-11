@@ -117,12 +117,15 @@ namespace FuturesFramework
 
         void AttachMainFunction(std::function<PROMISE_RESULT(ARGS...)> pFunc)
         {
-            this->_unboundFunction = std::move(pFunc);
-            std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                ->AttachMainFunction([]() -> Types::Result_t
+            if (!this->_unboundFunction)
             {
-                return Types::Result_t::FAILURE;
-            });
+                std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
+                    ->AttachMainFunction([]() -> Types::Result_t
+                {
+                    return Types::Result_t::FAILURE;
+                });
+                this->_unboundFunction = std::move(pFunc);
+            }
         }
 
     };

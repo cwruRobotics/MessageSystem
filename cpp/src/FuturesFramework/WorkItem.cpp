@@ -53,9 +53,11 @@ namespace FuturesFramework
 			try
 			{
 				result = this->_pMainFunction();
+                this->Trigger(result);
 			}
 			catch (...)
 			{
+                this->Trigger(Types::Result_t::SUCCESS);
 				this->SetException(std::current_exception());
 			}
 		}
@@ -98,4 +100,9 @@ namespace FuturesFramework
 		// std::cout << "Exiting WorkItem::Schedule() with state: " << this->WorkItem::GetStateString() << std::endl;
 		return result;
 	}
+
+    const std::string WorkItem::GetStateAsString()
+    {
+        return GetWorkItemStateString(this->GetCurrentState());
+    }
 }

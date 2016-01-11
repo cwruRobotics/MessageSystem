@@ -4,15 +4,14 @@
 #define FUTURESFRAMEWORK_ISCHEDULER_HPP
 
 // SYSTEM INCLUDES
-#include <queue>
 #include <map>
 #include <memory>
-#include <mutex>
 #include <thread>
 
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/LibraryExport.hpp"
-#include "FuturesFramework/IWorkItem.hpp"
+#include "FuturesFramework/IExecutableWorkItem.hpp"
+#include "FuturesFramework/IThread.hpp"
 
 // project namespace
 namespace FuturesFramework
@@ -32,9 +31,9 @@ namespace FuturesFramework
 
 	protected:
 
-		virtual std::map<uint64_t, IWorkItemPtr>& GetWorkItemMap() = 0;
+		virtual std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap() = 0;
 
-		virtual std::map<std::thread::id, std::thread>& GetThreadMap() = 0;
+		virtual std::map<std::thread::id, Concurrency::IThreadPtr>& GetThreadMap() = 0;
 
 		virtual bool DetachWorkItem(uint64_t id) = 0;
 
@@ -42,9 +41,11 @@ namespace FuturesFramework
 
 		virtual ~IScheduler() = default;
 
-		virtual bool ScheduleWorkItem(IWorkItemPtr workItem) = 0;
+		virtual bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) = 0;
 
 		virtual void Run() = 0;
+
+        virtual void Shutdown() = 0;
 
 	};
 

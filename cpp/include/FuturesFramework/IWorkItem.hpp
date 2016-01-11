@@ -47,7 +47,6 @@ namespace FuturesFramework
     // executed on an IScheduler.
     class FUTURESFRAMEWORK_API IWorkItem
     {
-
     public:
 
         virtual ~IWorkItem() = default;

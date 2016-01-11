@@ -52,6 +52,7 @@ set( FUTURESFRAMEWORK_SRCS
     ${SRC_ROOT}/FuturesFramework/SettlementStates.cpp
     ${SRC_ROOT}/FuturesFramework/ContinuableWorkItem.cpp
     ${SRC_ROOT}/FuturesFramework/PromiseBase.cpp
+    ${SRC_ROOT}/FuturesFramework/WorkerThread.cpp
 )
 
 # Public header files (installed together with libraries)
@@ -74,6 +75,8 @@ set( FUTURESFRAMEWORK_PRIVATE_HEADERS
     ${INC_ROOT}/FuturesFramework/WorkItem.hpp
     ${INC_ROOT}/FuturesFramework/SettlementStates.hpp
     ${INC_ROOT}/FuturesFramework/ContinuableWorkItem.hpp
+    ${INC_ROOT}/FuturesFramework/IThread.hpp
+    ${INC_ROOT}/FuturesFramework/WorkerThread.hpp
 )
 
 # setup visual studio source groups

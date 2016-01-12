@@ -1,5 +1,7 @@
 
 // SYSTEM INCLUDES
+#include <chrono>
+#include <iostream>
 #include <vector>
 
 // C++ PROJECT INCLUDES
@@ -19,7 +21,7 @@ namespace Tests
 
         REQUIRE( scheduler.GetCurrentWorkItemId() == 0 );
         REQUIRE( scheduler.GetWorkItemMap().size() == 0 );
-        REQUIRE( scheduler.GetThreadMap().size() == 0 );
+        REQUIRE( scheduler.GetThreadMap().size() == 3 );
 
     }
 
@@ -37,6 +39,10 @@ namespace Tests
         {
             WorkItemPtr pWorkItem =
                 std::make_shared<WorkItem>();
+            pWorkItem->AttachMainFunction([]() -> Types::Result_t
+            {
+                return Types::Result_t::SUCCESS;
+            });
         
             Types::Result_t result = pWorkItem->Schedule(pMockScheduler);
             REQUIRE( result == Types::Result_t::SUCCESS );
@@ -84,7 +90,9 @@ namespace Tests
         REQUIRE( pWorkItem->Schedule(pMockScheduler) ==
             Types::Result_t::SUCCESS );
 
-        REQUIRE( pMockScheduler->ExecuteWorkItem(pWorkItem->GetId()) );
+        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        REQUIRE( pWorkItem->GetStateAsString().compare("Done") == 0 );
         //-------------------------------------------
 
         // Execute workItem with Main Function AND Posterior Function
@@ -94,7 +102,10 @@ namespace Tests
 
         REQUIRE( pWorkItem->Schedule(pMockScheduler) ==
             Types::Result_t::SUCCESS );
-        REQUIRE( pMockScheduler->ExecuteWorkItem(pWorkItem->GetId()) ) ;
+
+        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        REQUIRE( pWorkItem->GetStateAsString().compare("Done") == 0 );
         //-------------------------------------------
     }
 
@@ -105,15 +116,11 @@ namespace Tests
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
 
-        std::vector<uint64_t> idVector;
+        std::vector<WorkItemPtr> workVector;
 
         auto pThrowingFunction = []() -> Types::Result_t
         {
             throw std::exception("Dummy exception");
-        };
-        auto pUnsuccessfulFunction = []() -> Types::Result_t
-        {
-            return Types::Result_t::FAILURE;
         };
         auto pSuccessfulFunction = []() -> Types::Result_t
         {
@@ -126,12 +133,6 @@ namespace Tests
             std::make_shared<WorkItem>();
         WorkItemPtr pThrowPostWorkItem =
             std::make_shared<WorkItem>();
-        WorkItemPtr pDoubleFailWorkItem =
-            std::make_shared<WorkItem>();
-        WorkItemPtr pFailMainWorkItem =
-            std::make_shared<WorkItem>();
-        WorkItemPtr pFailPostWorkItem =
-            std::make_shared<WorkItem>();
 
         pDoubleThrowWorkItem->AttachMainFunction(pThrowingFunction);
         pDoubleThrowWorkItem->AttachPosteriorFunction(pThrowingFunction);
@@ -142,71 +143,28 @@ namespace Tests
         pThrowPostWorkItem->AttachMainFunction(pSuccessfulFunction);
         pThrowPostWorkItem->AttachPosteriorFunction(pThrowingFunction);
 
-        pDoubleFailWorkItem->AttachMainFunction(pUnsuccessfulFunction);
-        pDoubleFailWorkItem->AttachPosteriorFunction(pUnsuccessfulFunction);
-
-        pFailMainWorkItem->AttachMainFunction(pUnsuccessfulFunction);
-        pFailMainWorkItem->AttachPosteriorFunction(pSuccessfulFunction);
-
-        pFailPostWorkItem->AttachMainFunction(pSuccessfulFunction);
-        pFailPostWorkItem->AttachPosteriorFunction(pUnsuccessfulFunction);
         // ---------------------------------------------------
 
         // ----------------schedule work items----------------
         pDoubleThrowWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pDoubleThrowWorkItem->GetId());
+        workVector.push_back(pDoubleThrowWorkItem);
 
         pThrowMainWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pThrowMainWorkItem->GetId());
+        workVector.push_back(pThrowMainWorkItem);
 
         pThrowPostWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pThrowPostWorkItem->GetId());
-
-        pDoubleFailWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pDoubleFailWorkItem->GetId());
-
-        pFailMainWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pFailMainWorkItem->GetId());
-
-        pFailPostWorkItem->Schedule(pMockScheduler);
-        idVector.push_back(pFailPostWorkItem->GetId());
+        workVector.push_back(pThrowPostWorkItem);
         // ----------------------------------------------------
 
         // -----------------execute work items-----------------
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pDoubleThrowWorkItem->GetId()) );
-        REQUIRE( pDoubleThrowWorkItem->GetException() != nullptr );
-        REQUIRE( pDoubleThrowWorkItem->GetStateAsString().compare("Done") == 0 );
-    
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pThrowMainWorkItem->GetId()) );
-        REQUIRE( pThrowMainWorkItem->GetException() != nullptr );
-        REQUIRE( pThrowMainWorkItem->GetStateAsString().compare("Done") == 0 );
-
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pThrowPostWorkItem->GetId()) );
-        REQUIRE( pThrowPostWorkItem->GetException() == nullptr );
-        REQUIRE( pThrowPostWorkItem->GetStateAsString().compare("Done") == 0 );
-
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pDoubleFailWorkItem->GetId()) );
-        REQUIRE( pDoubleFailWorkItem->GetException() == nullptr );
-        REQUIRE( pDoubleFailWorkItem->GetStateAsString().compare("Reschedule") == 0 );
-
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pFailMainWorkItem->GetId()) );
-        REQUIRE( pFailMainWorkItem->GetException() == nullptr );
-        REQUIRE( pFailMainWorkItem->GetStateAsString().compare("Reschedule") == 0 );
-
-        REQUIRE( pMockScheduler->
-            ExecuteWorkItem(pFailPostWorkItem->GetId()) );
-        REQUIRE( pFailPostWorkItem->GetException() == nullptr );
-        REQUIRE( pFailPostWorkItem->GetStateAsString().compare("Done") == 0 );
+        std::cout << "Sleeping for 5 seconds to allow execution" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         // ----------------------------------------------------
 
-        for (unsigned int i = 0; i < idVector.size(); ++i)
+        for (unsigned int i = 0; i < workVector.size(); ++i)
         {
-            REQUIRE( pMockScheduler->DetachWorkItem(idVector[i]) );
+            REQUIRE( workVector[i]->GetStateAsString().compare("Done") == 0 );
+            REQUIRE( pMockScheduler->DetachWorkItem(workVector[i]->GetId()) );
         }
     }
 

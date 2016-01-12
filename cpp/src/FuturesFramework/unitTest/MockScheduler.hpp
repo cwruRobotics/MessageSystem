@@ -27,11 +27,9 @@ namespace Tests
 
         std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap();
 
-        std::map<std::thread::id, Concurrency::IThreadPtr>& GetThreadMap();
+        std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap();
 
         bool DetachWorkItem(uint64_t id);
-
-        bool ExecuteWorkItem(const uint64_t id);
     };
 
 } // end of namespace Tests

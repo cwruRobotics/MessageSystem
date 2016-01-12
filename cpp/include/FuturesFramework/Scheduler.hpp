@@ -4,6 +4,7 @@
 #define FUTURESFRAMEWORK_SCHEDULER_HPP
 
 // SYSTEM INCLUDES
+#include <atomic>
 #include <mutex>
 #include <string>
 
@@ -11,12 +12,6 @@
 #include "FuturesFramework/IExecutableWorkItem.hpp"
 #include "FuturesFramework/IScheduler.hpp"
 #include "FuturesFramework/WorkerThread.hpp"
-
-
-// thread max
-#ifndef THREAD_POOL_MAX
-#define THREAD_POOL_MAX 1
-#endif
 
 
 // project namespace
@@ -39,48 +34,44 @@ namespace FuturesFramework
 		std::mutex								                _mutex;
 
 		// thread pool variables
-		std::map<std::thread::id, Concurrency::IThreadPtr>      _threadMap;
+		std::map<Types::JobPriority, Concurrency::IThreadPtr>      _threadMap;
 
 		uint64_t								                _currentWorkItemId;
-        // Concurrency::IThreadPtr                                 _tempWorkerThread;
-        bool                                                    _running;
+        std::atomic<bool>                                       _running;
 
 	protected:
 
 		std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap() override;
 
-		std::map<std::thread::id, Concurrency::IThreadPtr>& GetThreadMap() override;
+		std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() override;
 
 		bool DetachWorkItem(uint64_t id) override;
-
-        // std::queue<IExecutableWorkItemPtr>& GetQueue();
-
-        bool ExecuteWorkItem(const uint64_t id);
 
 	public:
 
 		Scheduler() : _attachedWorkItems(), _mutex(),
-            _threadMap(), _currentWorkItemId(0), _running(false) // ,
-            // _tempWorkerThread(std::make_shared<Concurrency::WorkerThread>())
+            _threadMap(), _currentWorkItemId(0), _running(true)
 		{
-            // std::lock_guard<std::mutex>(this->_mutex);
-            // Concurrency::IThreadPtr pWorkerThread = nullptr;
-            // for (int i = 0; i < THREAD_POOL_MAX; ++i)
-            // {
-            //     pWorkerThread = std::make_shared<Concurrency::WorkerThread>();
-            //     this->_threadMap.insert(std::pair<std::thread::id,
-            //         Concurrency::IThreadPtr>(pWorkerThread->GetId(), pWorkerThread));
-            // }
+            this->_threadMap.insert(std::pair<Types::JobPriority,
+                Concurrency::IThreadPtr>(Types::JobPriority::IMMEDIATE,
+                std::make_unique<Concurrency::WorkerThread>()));
+            this->_threadMap.insert(std::pair<Types::JobPriority,
+                Concurrency::IThreadPtr>(Types::JobPriority::RELAXED,
+                std::make_unique<Concurrency::WorkerThread>()));
+            this->_threadMap.insert(std::pair<Types::JobPriority,
+                Concurrency::IThreadPtr>(Types::JobPriority::OTHER,
+                std::make_unique<Concurrency::WorkerThread>()));
 		}
 
 		virtual ~Scheduler()
 		{
-            this->Shutdown();
+            if (this->_running)
+            {
+                this->Shutdown();
+            }
 		}
 
 		bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) override;
-
-		void Run() override;
 
         void Shutdown() override;
 

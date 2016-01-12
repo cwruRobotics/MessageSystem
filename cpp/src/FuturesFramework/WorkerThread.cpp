@@ -24,8 +24,6 @@ namespace Concurrency
 
     States::ConcurrencyState WorkerThread::GetState()
     {
-        // std::cout << "Entering WorkerThread[" << this->_id << "]::GetState()" << std::endl;
-        // std::cout << "Exiting WorkerThread[" << this->_id << "]::GetState()" << std::endl;
         return this->_state;
     }
 
@@ -78,7 +76,6 @@ namespace Concurrency
     // queue is populated.
     void WorkerThread::Run()
     {
-        std::cout << "Entering WorkerThread[" << this->_id << "]::Run()" << std::endl;
         // the work item we will be executing
         IExecutableWorkItemPtr workItem = nullptr;
 
@@ -94,12 +91,10 @@ namespace Concurrency
                 // lock the queue and retrieve the WorkItem.
                 // this is in its own code block because the lock
                 // is released only when the object destructs.
-                std::cout << "WorkerThread[" << this->_id << "] Getting WorkItem to execute" << std::endl;
                 workItem = this->_queue.front();
                 this->_queue.pop();
                 queueLock.unlock();
 
-                std::cout << "WorkerThread[" << this->_id << "] Executing WorkItem" << std::endl;
                 // execute the WorkItem
                 // DON'T BLOCK HERE....THIS COULD BE VERY EXPENSIVE
                 // BOTH RUNTIME AND RESOURCE WISE
@@ -109,21 +104,17 @@ namespace Concurrency
                 // reschedule if necessary
                 if (!workItem->IsDone())
                 {
-                    std::cout << "Rescheduling WorkItem" << std::endl;
                     this->_queue.push(workItem);
                 }
             }
             this->_state = States::ConcurrencyState::IDLE;
 
-            std::cout << "WorkerThread[" << this->_id << "] going to sleep" << std::endl;
 
             // lock on this thread
             // put the concurrent thread to sleep until it is woken up by
             // a WorkItem being queued.
             this->_threadCV.wait(queueLock);
-            std::cout << "WorkerThread[" << this->_id << "] awoken, ready to do work" << std::endl;
         }
-        std::cout << "Exiting WorkerThread[" << this->_id << "]::Run()" << std::endl;
     }
 
 } // end of namespace Concurrency

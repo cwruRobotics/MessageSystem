@@ -4,7 +4,7 @@
 #define FUTURESFRAMEWORK_PROMISEBASE_HPP
 
 // SYSTEM INCLUDES
-
+#include <mutex>
 
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/IExecutableWorkItem.hpp"
@@ -26,6 +26,7 @@ namespace FuturesFramework
         // of the internal representation from the external methods
         // available to clients.
         ContinuableWorkItemPtr _internalWorkItem;
+        std::mutex             _executionMutex; // protects GiveArgs() from Execute()
 
     protected:
 

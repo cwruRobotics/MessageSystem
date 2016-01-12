@@ -7,6 +7,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "FuturesFramework/JobPriorities.hpp"
 #include "FuturesFramework/ConcurrencyStates.hpp"
 #include "FuturesFramework/WorkerThread.hpp"
 #include "FuturesFramework/Scheduler.hpp"
@@ -29,7 +30,7 @@ namespace Tests
         "[WorkerThread_unit]")
     {
         // construct an object
-        Concurrency::WorkerThread wThread(0);
+        Concurrency::WorkerThread wThread;
 
         // nothing has been executed...so inner thread should be IDLE.
         REQUIRE( wThread.GetState() == States::ConcurrencyState::IDLE );
@@ -44,7 +45,7 @@ namespace Tests
         try
         {
             // construct an object
-            Concurrency::WorkerThread wThread(1);
+            Concurrency::WorkerThread wThread;
 
             // nothing has been executed...so inner thread should be IDLE
             REQUIRE( wThread.GetState() == States::ConcurrencyState::IDLE );
@@ -61,19 +62,17 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_shared<Concurrency::WorkerThread>(2);
-        ISchedulerPtr pScheduler = std::make_shared<Scheduler>();
+            std::make_unique<Concurrency::WorkerThread>();
 
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            std::cout << "\tExecuting with State: " << pWorkItem->GetStateAsString().c_str() << std::endl;
             REQUIRE( pWorkerThread->GetState() == States::ConcurrencyState::BUSY );
             return Types::Result_t::SUCCESS;
         });
-        REQUIRE( pWorkItem->Schedule(pScheduler) == Types::Result_t::SUCCESS );
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
+        std::cout << "Sleeping for 3 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
         REQUIRE( pWorkItem->GetException() == nullptr );
@@ -89,21 +88,18 @@ namespace Tests
             std::make_shared<ContinuableWorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_shared<Concurrency::WorkerThread>(3);
-        ISchedulerPtr pScheduler = std::make_shared<Scheduler>();
+            std::make_unique<Concurrency::WorkerThread>();
 
         pContinuableWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            std::cout << "\tExecuting with State: " <<
-                pContinuableWorkItem->GetStateAsString().c_str() << std::endl;
             REQUIRE( pWorkerThread->GetState() == States::ConcurrencyState::BUSY );
             REQUIRE( pContinuableWorkItem->GetState() == States::SettlementState::PENDING );
             return Types::Result_t::SUCCESS;
         });
-        REQUIRE( pContinuableWorkItem->Schedule(pScheduler) == Types::Result_t::SUCCESS );
 
         REQUIRE( pWorkerThread->Queue(pContinuableWorkItem) == Types::Result_t::SUCCESS );
 
+        std::cout << "Sleeping for 3 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
         REQUIRE( pContinuableWorkItem->GetException() == nullptr );
@@ -118,18 +114,16 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_shared<Concurrency::WorkerThread>(4);
-        ISchedulerPtr pScheduler = std::make_shared<Scheduler>();
+            std::make_unique<Concurrency::WorkerThread>();
 
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            std::cout << "State: " << pWorkItem->GetStateAsString().c_str() << std::endl;
             throw std::exception("blah");
         });
-        REQUIRE( pWorkItem->Schedule(pScheduler) == Types::Result_t::SUCCESS );
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
+        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pWorkItem->GetException() != nullptr );
@@ -143,8 +137,7 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_shared<Concurrency::WorkerThread>(5);
-        ISchedulerPtr pScheduler = std::make_shared<Scheduler>();
+            std::make_unique<Concurrency::WorkerThread>();
 
         // attach function that will Queue 4 more WorkItems for execution
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
@@ -176,33 +169,29 @@ namespace Tests
                             return Types::Result_t::SUCCESS;
                         });
 
-                        REQUIRE( pWorkItem5->Schedule(pScheduler) == Types::Result_t::SUCCESS );
                         REQUIRE( pWorkerThread->Queue(pWorkItem5) == Types::Result_t::SUCCESS );
 
                         return Types::Result_t::SUCCESS;
                        
                     });
 
-                    REQUIRE( pWorkItem4->Schedule(pScheduler) == Types::Result_t::SUCCESS );
                     REQUIRE( pWorkerThread->Queue(pWorkItem4) == Types::Result_t::SUCCESS );
 
                     return Types::Result_t::SUCCESS;
                 });
-                REQUIRE( pWorkItem3->Schedule(pScheduler) == Types::Result_t::SUCCESS );
                 REQUIRE( pWorkerThread->Queue(pWorkItem3) == Types::Result_t::SUCCESS );
 
                 return Types::Result_t::SUCCESS;
 
             });
-            REQUIRE( pWorkItem2->Schedule(pScheduler) == Types::Result_t::SUCCESS );
             REQUIRE( pWorkerThread->Queue(pWorkItem2) == Types::Result_t::SUCCESS );
 
             return Types::Result_t::SUCCESS;
         });
-        REQUIRE( pWorkItem->Schedule(pScheduler) == Types::Result_t::SUCCESS );
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
+        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pWorkerThread->GetState() == States::ConcurrencyState::IDLE );
@@ -213,10 +202,8 @@ namespace Tests
         int stressLimit = 100;
         std::vector<WorkItemPtr> queuedWorkItems;
 
-        ISchedulerPtr pScheduler = std::make_shared<Scheduler>();
-
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_shared<Concurrency::WorkerThread>(6);
+            std::make_unique<Concurrency::WorkerThread>();
 
         for(int i = 0; i < stressLimit; ++i)
         {
@@ -227,11 +214,10 @@ namespace Tests
             });
 
             queuedWorkItems.push_back(pWorkItem);
-
-            REQUIRE( pWorkItem->Schedule(pScheduler) == Types::Result_t::SUCCESS );
             REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
         }
 
+        std::cout << "Sleeping for 4 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(4));
 
         for(int i = 0; i < stressLimit; ++i)

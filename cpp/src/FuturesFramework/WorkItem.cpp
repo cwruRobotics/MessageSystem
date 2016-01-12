@@ -105,4 +105,9 @@ namespace FuturesFramework
     {
         return GetWorkItemStateString(this->GetCurrentState());
     }
+
+    const Types::JobPriority WorkItem::GetPriority()
+    {
+        return this->_jobPriority;
+    }
 }

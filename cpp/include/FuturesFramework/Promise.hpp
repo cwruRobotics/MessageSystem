@@ -4,6 +4,7 @@
 #define FUTURESFRAMEWORK_PROMISE_HPP
 
 // SYSTEM INCLUDES
+#include <atomic>
 
 // C++ PROJECT INCLUDES
 // #include "FuturesFramework/ChainLinker.hpp"
@@ -34,7 +35,7 @@ namespace FuturesFramework
 
         PROMISE_RESULT                          _result;
         std::function<PROMISE_RESULT(ARGS...)>  _unboundFunction;
-        bool                                    _argsGiven;
+        std::atomic<bool>                       _argsGiven;
 
     public:
         Promise() : PromiseBase(), _unboundFunction(),
@@ -100,11 +101,13 @@ namespace FuturesFramework
                 // bindType boundFunction = std::bind(this->_unboundFunction,
                 //     std::forward<ARGS>(args)...);
 
+                std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                 auto boundFunction = std::bind(this->_unboundFunction,
                     std::forward<ARGS>(args)...);
                 std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
                     ->AttachMainFunction([this, boundFunction]() ->Types::Result_t
                 {
+                    std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                     if (this->PreconditionsMet())
                     {
                         this->Fulfill(boundFunction());
@@ -120,8 +123,9 @@ namespace FuturesFramework
             if (!this->_unboundFunction)
             {
                 std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                    ->AttachMainFunction([]() -> Types::Result_t
+                    ->AttachMainFunction([this]() -> Types::Result_t
                 {
+                    std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                     return Types::Result_t::FAILURE;
                 });
                 this->_unboundFunction = std::move(pFunc);

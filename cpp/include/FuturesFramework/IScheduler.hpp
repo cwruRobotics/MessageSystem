@@ -12,6 +12,7 @@
 #include "FuturesFramework/LibraryExport.hpp"
 #include "FuturesFramework/IExecutableWorkItem.hpp"
 #include "FuturesFramework/IThread.hpp"
+#include "FuturesFramework/JobPriorities.hpp"
 
 // project namespace
 namespace FuturesFramework
@@ -33,7 +34,7 @@ namespace FuturesFramework
 
 		virtual std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap() = 0;
 
-		virtual std::map<std::thread::id, Concurrency::IThreadPtr>& GetThreadMap() = 0;
+		virtual std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() = 0;
 
 		virtual bool DetachWorkItem(uint64_t id) = 0;
 
@@ -42,8 +43,6 @@ namespace FuturesFramework
 		virtual ~IScheduler() = default;
 
 		virtual bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) = 0;
-
-		virtual void Run() = 0;
 
         virtual void Shutdown() = 0;
 

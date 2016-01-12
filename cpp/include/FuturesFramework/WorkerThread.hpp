@@ -13,6 +13,7 @@
 
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/IThread.hpp"
+#include "FuturesFramework/JobPriorities.hpp"
 
 namespace FuturesFramework
 {
@@ -36,7 +37,6 @@ namespace Concurrency
 
         std::mutex                              _queueMutex; // protects queue
         std::queue<IExecutableWorkItemPtr>      _queue; // execution queue
-        uint64_t                                _id;
 
     private:
 
@@ -44,7 +44,8 @@ namespace Concurrency
 
     public:
 
-        WorkerThread(uint64_t id) : _id(id), _state(States::ConcurrencyState::IDLE),
+        WorkerThread() :
+            _state(States::ConcurrencyState::IDLE),
             _queueMutex(), _queue(), _run(true), _threadCV()
         {
             this->_thread = std::thread(&WorkerThread::Run, this);
@@ -73,7 +74,7 @@ namespace Concurrency
 
     };
 
-    using WorkerThreadPtr = std::shared_ptr<WorkerThread>;
+    using WorkerThreadPtr = std::unique_ptr<WorkerThread>;
 } // end of namespace Concurrency
 } // end of namespace FuturesFramework
 

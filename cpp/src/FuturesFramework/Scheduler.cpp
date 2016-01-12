@@ -13,30 +13,14 @@ namespace FuturesFramework
 		return this->_attachedWorkItems;
 	}
 
-	std::map<std::thread::id, Concurrency::IThreadPtr>& Scheduler::GetThreadMap()
+	std::map<Types::JobPriority, Concurrency::IThreadPtr>& Scheduler::GetThreadMap()
 	{
 		return this->_threadMap;
 	}
 
-    // std::queue<IExecutableWorkItemPtr>& Scheduler::GetQueue()
-    // {
-    //     return this->_queue;
-    // }
-
-    bool Scheduler::ExecuteWorkItem(const uint64_t id)
-    {
-        auto index = this->GetWorkItemMap().find(id);
-		if (index == this->GetWorkItemMap().end())
-		{
-			return false;
-		}
-		WorkItemPtr toExecute = std::dynamic_pointer_cast<WorkItem>(index->second);
-		Types::Result_t result = toExecute->Execute();
-		return true;
-    }
-
 	bool Scheduler::DetachWorkItem(uint64_t id)
 	{
+        std::lock_guard<std::mutex> lock(this->_mutex);
 		auto index = this->GetWorkItemMap().find(id);
 		if (index == this->GetWorkItemMap().end())
 		{
@@ -51,7 +35,7 @@ namespace FuturesFramework
 
 	bool Scheduler::ScheduleWorkItem(IExecutableWorkItemPtr workItem)
 	{
-        std::lock_guard<std::mutex>(this->_mutex);
+        std::lock_guard<std::mutex> lock(this->_mutex);
 		if (workItem)
 		{
 			WorkItemPtr castedWorkItem = std::dynamic_pointer_cast<WorkItem>(workItem);
@@ -62,32 +46,29 @@ namespace FuturesFramework
             // this will actually allow WorkerThreads to execute WorkItems!
             // they are concurrently protected, but the condition variable
             // is not yet so be careful!
-            // this->_tempWorkerThread->Queue(workItem);
+            auto index = this->GetThreadMap().find(castedWorkItem->GetPriority());
+            if (index == this->GetThreadMap().end())
+            {
+                return false;
+            }
 
+            Types::Result_t result = index->second->Queue(workItem);
 			castedWorkItem->Trigger(Types::Result_t::SUCCESS);
-			return true;
+			return result == Types::Result_t::SUCCESS;
 		}
 		return false;
 	}
 
-	void Scheduler::Run()
-	{
-		return;
-	}
-
     void Scheduler::Shutdown()
     {
+        std::lock_guard<std::mutex> lock(this->_mutex);
         if (this->_running)
         {
             this->_running = false;
-            // for now
-            // this->_tempWorkerThread->Shutdown();
-
-            // in the future
-            // for (auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
-            // {
-            //     it->second->Shutdown();
-            // }
+            for (auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
+            {
+                it->second->Join();
+            }
         }
     }
 

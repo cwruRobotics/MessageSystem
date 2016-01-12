@@ -8,6 +8,7 @@
 
 // C++ PROJECT INCLUDES
 #include "FuturesFramework/IExecutableWorkItem.hpp"
+#include "FuturesFramework/JobPriorities.hpp"
 #include "FuturesFramework/Scheduler.hpp"
 #include "FuturesFramework/WorkItemStateMachine.hpp"
 
@@ -28,6 +29,7 @@ namespace FuturesFramework
         FunctionPtr         _pMainFunction;
         FunctionPtr         _pPostFunction;
         std::exception_ptr  _pException;
+        Types::JobPriority  _jobPriority;
 
     private:
 
@@ -45,8 +47,9 @@ namespace FuturesFramework
 
     public:
 
-        WorkItem(uint64_t id=0) : WorkItemStateMachine(States::WorkItemState::IDLE),
-            _id(id), _pScheduler(nullptr), _pMainFunction(nullptr),
+        WorkItem(uint64_t id=0, Types::JobPriority priority=Types::JobPriority::OTHER) :
+            WorkItemStateMachine(States::WorkItemState::IDLE), _id(id),
+            _jobPriority(priority), _pScheduler(nullptr), _pMainFunction(nullptr),
             _pPostFunction(nullptr), _pException(nullptr)
         {
         }
@@ -66,6 +69,8 @@ namespace FuturesFramework
         std::exception_ptr GetException() const;
 
         const std::string GetStateAsString();
+
+        const Types::JobPriority GetPriority();
 
     };
 

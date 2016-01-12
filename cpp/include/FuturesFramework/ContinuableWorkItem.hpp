@@ -4,6 +4,7 @@
 #define FUTURESFRAMEWORK_CONTINUABLEWORKITEM_HPP
 
 // SYSTEM INCLUDES
+#include <atomic>
 #include <vector>
 
 // C++ PROJECT INCLUDES
@@ -30,9 +31,9 @@ namespace FuturesFramework
 
         // how did the ContinuableWorkItem resolve? This is dependent
         // upon which successors will be executed.
-        States::SettlementState         _state;
-        std::vector<IChainLinkerPtr>    _successSuccessors;
-        std::vector<IChainLinkerPtr>    _failureSuccessors;
+        std::atomic<States::SettlementState>    _state;
+        std::vector<IChainLinkerPtr>            _successSuccessors;
+        std::vector<IChainLinkerPtr>            _failureSuccessors;
 
     private:
 

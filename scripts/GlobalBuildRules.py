@@ -108,12 +108,8 @@ class GlobalBuild(object):
         fullToolchainPath = None
         if platform.system() == "Windows":
             fullToolchainPath = os.path.join(toolchainDir, "toolchain_windows_%s.cmake" % Utilities.getMachineBits())
-        elif platform.system() == "Linux":
-            fullToolchainPath = os.path.join(toolchainDir, "toolchain_linux_%s.cmake" % Utilities.getMachineBits())
-        elif platform.system() == "OSX":
-            fullToolchainPath = os.path.join(toolchainDir, "toolchain_osx_%s.cmake" % Utilities.getMachineBits())
         else:
-            Utilities.failExecution("Unsupported OS: %s" % platform.system())
+            fullToolchainPath = os.path.join(toolchainDir, "toolchain_unix_%s.cmake" % Utilities.getMachineBits())
 
         # remember CMake paths need to be relative to the top level
         # directory that CMake is called (in this case projects/<project_name>)

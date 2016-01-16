@@ -25,7 +25,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # this is the project name and type
-project( MessageFramework CXX )
+project( Robos CXX )
 
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../cpp ABSOLUTE )
 
@@ -60,26 +60,26 @@ if( BUILD_LOGGING )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
 endif()
 
-if( BUILD_FUTURESFRAMEWORK )
-    # FuturesFramework library
-    add_subdirectory( ${SRC_ROOT}/src/FuturesFramework
-                      ${OUT_ROOT}/FuturesFramework )
+if( BUILD_ASYNC )
+    # Async library
+    add_subdirectory( ${SRC_ROOT}/src/Async
+                      ${OUT_ROOT}/Async )
 
     # give other subprojects a chance to search for libraries and header
     # files created before the "make install"
-    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/FuturesFramework" )
-    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/FuturesFramework" )
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Async" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Async" )
 endif()
 
-if( BUILD_MESSAGEFRAMEWORK )
-    # MessageFramework library
-    add_subdirectory( ${SRC_ROOT}/src/MessageFramework
-                      ${OUT_ROOT}/MessageFramework )
+if( BUILD_ROBOS )
+    # Robos library
+    add_subdirectory( ${SRC_ROOT}/src/Robos
+                      ${OUT_ROOT}/Robos )
 
     # give other subprojects a chance to search for libraries and header
     # files created before the "make install"
-    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/MessageFramework" )
-    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/MessageFramework" )
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Robos" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos" )
 endif()
 
 # this variable is also set through the python build scripts.
@@ -91,15 +91,15 @@ if( RUN_UNIT_TESTS )
                           ${OUT_ROOT}/LoggerUnit )
     endif()
 
-    if( BUILD_FUTURESFRAMEWORK )
-        # FuturesFramework unit tests
-        add_subdirectory( ${SRC_ROOT}/src/FuturesFramework/unittest
-                          ${OUT_ROOT}/LoggerUnit )
+    if( BUILD_ASYNC )
+        # Async unit tests
+        add_subdirectory( ${SRC_ROOT}/src/Async/unittest
+                          ${OUT_ROOT}/AsyncUnit )
     endif()
 
-    if( BUILD_MESSAGEFRAMEWORK )
-        # MessageFramework unit tests
-        # add_subdirectory( ${SRC_ROOT}/src/MessageFramework/unittest
+    if( BUILD_ROBOS )
+        # Robos unit tests
+        # add_subdirectory( ${SRC_ROOT}/src/Robos/unittest
         #                   ${OUT_ROOT}/LoggerUnit )
     endif()
 

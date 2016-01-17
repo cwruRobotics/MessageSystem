@@ -15,7 +15,7 @@ namespace Async
                 return "SUCCESS";
             case States::SettlementState::FAILURE:
                 return "FAILURE";
-            throw std::exception("Unknown State");
+            throw std::logic_error("Unknown State");
         }
         return "";
     }

@@ -19,7 +19,7 @@ namespace Logging
 		case Messages::LoggingLevels::ERROR_:
 			return "ERROR";
 		}
-		throw std::exception("unknown logging level");
+		throw std::logic_error("unknown logging level");
 	}
 
 }

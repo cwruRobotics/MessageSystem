@@ -17,7 +17,7 @@ namespace Async
                 return "BUSY";
             case States::ConcurrencyState::DONE:
                 return "DONE";
-            throw std::exception("Unknown State");
+            throw std::logic_error("Unknown State");
         }
         return "";
     }

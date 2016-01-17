@@ -74,7 +74,7 @@ namespace Concurrency
 
     };
 
-    using WorkerThreadPtr = std::unique_ptr<WorkerThread>;
+    using WorkerThreadPtr = std::shared_ptr<WorkerThread>;
 } // end of namespace Concurrency
 } // end of namespace Async
 

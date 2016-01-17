@@ -93,13 +93,13 @@ if( RUN_UNIT_TESTS )
 
     if( BUILD_ASYNC )
         # Async unit tests
-        add_subdirectory( ${SRC_ROOT}/src/Async/unittest
+        add_subdirectory( ${SRC_ROOT}/src/Async/unitTest
                           ${OUT_ROOT}/AsyncUnit )
     endif()
 
     if( BUILD_ROBOS )
         # Robos unit tests
-        # add_subdirectory( ${SRC_ROOT}/src/Robos/unittest
+        # add_subdirectory( ${SRC_ROOT}/src/Robos/unitTest
         #                   ${OUT_ROOT}/LoggerUnit )
     endif()
 

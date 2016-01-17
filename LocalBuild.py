@@ -40,7 +40,7 @@ class LocalBuild(GlobalBuildRules.GlobalBuild):
                                             argsForApp=CMakeArgs,
                                             wd=wd)
         else:
-            CMakeArgs.extend(["-G", "\"Unix Makefiles\""])
+            CMakeArgs.extend(["-G", "Unix Makefiles"])
             Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd, failOnError=True)
 
     def makeTarget(self, targets):
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     customCommands = Utilities.parseCommandLine(sys.argv[1:])
     print(customCommands)
     if "projects" not in customCommands[1]:
-        customCommands[1]["projects"] = ["Logging", "FuturesFramework", "MessageFramework"]
+        customCommands[1]["projects"] = ["Logging", "Async", "Robos"]
 
     help = False
     for projectName in customCommands[1]["projects"]:

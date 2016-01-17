@@ -92,13 +92,13 @@ if( RUN_UNIT_TESTS )
             message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
-                ${TARGET_UUID_LIB}
+                # ${TARGET_UUID_LIB}
             )
         else()
             message( "Linking executable for Release" )
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
-                ${TARGET_UUID_LIB}
+                # ${TARGET_UUID_LIB}
             )
         endif()
 

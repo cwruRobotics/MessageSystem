@@ -36,7 +36,7 @@ namespace Concurrency
         virtual void Run() = 0;
     };
 
-    using IThreadPtr = std::unique_ptr<IThread>;
+    using IThreadPtr = std::shared_ptr<IThread>;
 
 } // end of namespace Concurrency
 } // end of namespace Async

@@ -68,7 +68,7 @@ namespace Tests
 
         pPromise->AttachMainFunction([]() -> int
         {
-            throw std::exception("Blah");
+            throw std::exception();
         });
 
         pPromise->Schedule(pMockScheduler);

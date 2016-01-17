@@ -5,6 +5,7 @@
 
 // SYSTEM INCLUDES
 #include <atomic>
+#include <stdexcept>
 
 // C++ PROJECT INCLUDES
 #include "Async/SimpleChainLinker.hpp"
@@ -54,7 +55,7 @@ namespace Async
                 }
                 else
                 {
-                    throw std::exception("Promise not settled yet");
+                    throw std::logic_error("Promise not settled yet");
                 }
             }
             return this->_result;
@@ -143,7 +144,7 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
                 }
                 else
                 {
-                    throw std::exception("Promise not settled yet");
+                    throw std::logic_error("Promise not settled yet");
                 }
             }
             return this->_result;

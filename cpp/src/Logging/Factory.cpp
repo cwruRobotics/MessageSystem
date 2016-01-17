@@ -11,7 +11,7 @@ namespace Factory
     LoggerPtr makeLogger(const char* name,
                          const char* outputFile=nullptr)
     {
-        return std::make_unique<Loggers::Logger>(name, outputFile);
+        return std::make_shared<Loggers::Logger>(name, outputFile);
     }
 }
 }

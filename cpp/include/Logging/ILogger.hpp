@@ -76,7 +76,7 @@ namespace Loggers
 
 // alias. This is outside of the component namespace so that clients have no knowledge
 // of the component namespace.
-using LoggerPtr = std::unique_ptr<Loggers::ILogger>;
+using LoggerPtr = std::shared_ptr<Loggers::ILogger>;
 
 } // end of namespace Logging
 

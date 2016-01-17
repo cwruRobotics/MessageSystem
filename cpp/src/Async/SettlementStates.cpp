@@ -1,4 +1,5 @@
 // SYSTEM INCLUDES
+#include <stdexcept>
 
 // C++ PROJECT INCLUDES
 #include "Async/SettlementStates.hpp"

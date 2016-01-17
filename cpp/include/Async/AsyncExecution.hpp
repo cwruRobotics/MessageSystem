@@ -13,6 +13,8 @@
 namespace Async
 {
 
+    EntryPoint::IEnginePtr GetEngine();
+
     template<typename PROMISE_RESULT> 
     PromisePtr<PROMISE_RESULT> Execute(std::function<PROMISE_RESULT()> pFunc,
                                        std::string& schedulerId)
@@ -34,8 +36,6 @@ namespace Async
         pPromise->Schedule(pScheduler);
         return pPromise;
     }
-
-    EntryPoint::IEnginePtr GetEngine();
 
 } // end of namespace Async
 

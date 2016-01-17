@@ -59,7 +59,7 @@ namespace Tests
         auto pFailFunction = [&]() -> Types::Result_t
         {
             REQUIRE( pFailWorkItem->IsCurrentlyExecuting() );
-            throw std::exception("blah");
+            throw std::exception();
         };
 
         pSuccessWorkItem->AttachMainFunction(pSuccessFunction);

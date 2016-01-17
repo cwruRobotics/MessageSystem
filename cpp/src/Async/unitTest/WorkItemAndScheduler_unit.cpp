@@ -120,7 +120,7 @@ namespace Tests
 
         auto pThrowingFunction = []() -> Types::Result_t
         {
-            throw std::exception("Dummy exception");
+            throw std::exception();
         };
         auto pSuccessfulFunction = []() -> Types::Result_t
         {

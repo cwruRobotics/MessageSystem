@@ -118,7 +118,7 @@ namespace Tests
 
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            throw std::exception("blah");
+            throw std::exception();
         });
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );

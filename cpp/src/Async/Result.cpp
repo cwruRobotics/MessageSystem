@@ -17,7 +17,7 @@ namespace Async
 		case Types::Result_t::UNKNOWN:
 			return "UNKNOWN";
 		default:
-			throw std::exception("Unknown Result type");
+			throw std::logic_error("Unknown Result type");
 		}
 	}
 }

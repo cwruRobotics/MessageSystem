@@ -54,13 +54,13 @@ namespace Async
 		{
             this->_threadMap.insert(std::pair<Types::JobPriority,
                 Concurrency::IThreadPtr>(Types::JobPriority::IMMEDIATE,
-                std::make_unique<Concurrency::WorkerThread>()));
+                std::make_shared<Concurrency::WorkerThread>()));
             this->_threadMap.insert(std::pair<Types::JobPriority,
                 Concurrency::IThreadPtr>(Types::JobPriority::RELAXED,
-                std::make_unique<Concurrency::WorkerThread>()));
+                std::make_shared<Concurrency::WorkerThread>()));
             this->_threadMap.insert(std::pair<Types::JobPriority,
                 Concurrency::IThreadPtr>(Types::JobPriority::OTHER,
-                std::make_unique<Concurrency::WorkerThread>()));
+                std::make_shared<Concurrency::WorkerThread>()));
 		}
 
 		virtual ~Scheduler()

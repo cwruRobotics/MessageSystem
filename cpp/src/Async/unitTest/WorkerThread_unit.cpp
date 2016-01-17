@@ -62,7 +62,7 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_unique<Concurrency::WorkerThread>();
+            std::make_shared<Concurrency::WorkerThread>();
 
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
@@ -88,7 +88,7 @@ namespace Tests
             std::make_shared<ContinuableWorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_unique<Concurrency::WorkerThread>();
+            std::make_shared<Concurrency::WorkerThread>();
 
         pContinuableWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
@@ -114,7 +114,7 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_unique<Concurrency::WorkerThread>();
+            std::make_shared<Concurrency::WorkerThread>();
 
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
@@ -137,7 +137,7 @@ namespace Tests
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_unique<Concurrency::WorkerThread>();
+            std::make_shared<Concurrency::WorkerThread>();
 
         // attach function that will Queue 4 more WorkItems for execution
         pWorkItem->AttachMainFunction([&]() -> Types::Result_t
@@ -203,7 +203,7 @@ namespace Tests
         std::vector<WorkItemPtr> queuedWorkItems;
 
         Concurrency::WorkerThreadPtr pWorkerThread =
-            std::make_unique<Concurrency::WorkerThread>();
+            std::make_shared<Concurrency::WorkerThread>();
 
         for(int i = 0; i < stressLimit; ++i)
         {

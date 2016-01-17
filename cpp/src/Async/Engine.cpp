@@ -49,7 +49,7 @@ namespace EntryPoint
         if (this->_running)
         {
             std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
-            ISchedulerPtr& pScheduler = this->FindScheduler(schedulerId);
+            ISchedulerPtr pScheduler = this->FindScheduler(schedulerId);
             if (pScheduler)
             {
                 pScheduler->Shutdown();

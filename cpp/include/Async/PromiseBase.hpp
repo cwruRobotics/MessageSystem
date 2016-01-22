@@ -26,7 +26,6 @@ namespace Async
         // of the internal representation from the external methods
         // available to clients.
         ContinuableWorkItemPtr _internalWorkItem;
-        std::mutex             _executionMutex; // protects GiveArgs() from Execute()
 
     protected:
 
@@ -52,7 +51,9 @@ namespace Async
         Types::Result_t Schedule(ISchedulerPtr scheduler) override;
 
         const uint64_t GetId() override;
-        
+
+        std::mutex& GetExecutionMutex();
+
     };
 
 } // end of namespace Async

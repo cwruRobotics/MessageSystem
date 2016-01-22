@@ -38,4 +38,9 @@ namespace Async
             this->_internalWorkItem)->GetId();
     }
 
+    std::mutex& PromiseBase::GetExecutionMutex()
+    {
+        return this->_internalWorkItem->GetExecutionMutex();
+    }
+
 }

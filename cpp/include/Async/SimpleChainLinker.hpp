@@ -7,6 +7,7 @@
 
 // C++ PROJECT INCLUDES
 #include "Async/IChainLinker.hpp"
+#include "Async/IEngine.hpp"
 
 namespace Async
 {
@@ -50,7 +51,6 @@ namespace Async
     using SimpleChainLinkerPtr = std::shared_ptr<SimpleChainLinker<PARENT_TYPE, CHILD_TYPE> >;
 
 #include "Async/Promise.hpp"
-// #include "Async/AsyncExecution.hpp"
 
     template<typename PARENT_TYPE, typename CHILD_TYPE>
     Types::Result_t SimpleChainLinker<PARENT_TYPE, CHILD_TYPE>::ApplyFunctionToChild()
@@ -61,11 +61,11 @@ namespace Async
         {
             return pFunc(value);
         });
-        //if (!GetEngine()->GetScheduler(this->_childSchedulerId))
-        //{
-        //    GetEngine()->StartScheduler(this->_childSchedulerId);
-        //}
-        //this->_pChild->Schedule(GetEngine()->GetScheduler(this->_childSchedulerId));
+        if (!GetStaticEngine()->GetScheduler(this->_childSchedulerId))
+        {
+            GetStaticEngine()->StartScheduler(this->_childSchedulerId);
+        }
+        this->_pChild->Schedule(GetStaticEngine()->GetScheduler(this->_childSchedulerId));
         this->_pParent = nullptr;
         return Types::Result_t::SUCCESS;
     }

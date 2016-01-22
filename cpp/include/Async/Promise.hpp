@@ -179,13 +179,11 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
                 // bindType boundFunction = std::bind(this->_unboundFunction,
                 //     std::forward<ARGS>(args)...);
 
-                std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                 auto boundFunction = std::bind(this->_unboundFunction, arg1,
                     std::forward<ARGS>(args)...);
                 std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                    ->AttachMainFunction([this, boundFunction]() ->Types::Result_t
+                    ->AttachMainFunction([this, boundFunction]() -> Types::Result_t
                 {
-                    std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                     if (this->PreconditionsMet())
                     {
                         this->Fulfill(boundFunction());
@@ -203,7 +201,6 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
                 std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
                     ->AttachMainFunction([this]() -> Types::Result_t
                 {
-                    std::lock_guard<std::mutex> executionLock(this->_executionMutex);
                     return Types::Result_t::FAILURE;
                 });
                 this->_unboundFunction = std::move(pFunc);

@@ -28,15 +28,9 @@ namespace Async
     // actually have the Execute() method.
 	class ASYNC_API IScheduler
 	{
-	private:
-
 	protected:
 
-		virtual std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap() = 0;
-
 		virtual std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() = 0;
-
-		virtual bool DetachWorkItem(uint64_t id) = 0;
 
 	public:
 

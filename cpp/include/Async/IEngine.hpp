@@ -8,6 +8,7 @@
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
+#include "Async/IScheduler.hpp"
 #include "Async/Promise.hpp"
 
 namespace Async
@@ -18,7 +19,7 @@ namespace EntryPoint
     class IEngine;
     using IEnginePtr = std::shared_ptr<IEngine>;
 
-    class ASYNC_API IEngine
+    class IEngine
     {
     public:
 
@@ -37,6 +38,9 @@ namespace EntryPoint
     };
 
 } // end of namespace EntryPoint
+
+    ASYNC_API EntryPoint::IEnginePtr GetStaticEngine();
+
 } // end of namespace Async
 
 #endif

@@ -146,17 +146,21 @@ class GlobalBuild(object):
     def package(self):
         print("packaging project [%s]" % self._project_name)
 
-    def runUnitTests(self):
+    def runUnitTests(self, numTimesToRun=1):
         print("Running unit tests for project [%s]" % self._project_name)
         installRoot = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  self._project_name)
-        for testToRun in self._tests_to_run:
-            if platform.system() == "Windows":
-                testToRun += ".exe"
-            executablePath = os.path.join(installRoot, "bin", testToRun)
-            if os.path.exists(executablePath):
-                Utilities.PFork(appToExecute=executablePath, failOnError=True)
-            else:
-                print("%s does NOT exist!" % executablePath)
+        for iteration in range(0, int(numTimesToRun)):
+            print("Running unit tests [%s/%s]" % (iteration + 1, numTimesToRun))
+            for testToRun in self._tests_to_run:
+                if platform.system() == "Windows":
+                    testToRun += ".exe"
+                executablePath = os.path.join(installRoot, "bin", testToRun)
+                if os.path.exists(executablePath):
+                    Utilities.PFork(appToExecute=executablePath, failOnError=True)
+                else:
+                    print("%s does NOT exist!" % executablePath)
+            if numTimesToRun > 1:
+                print("\n\n")
 
     # executes a particular part of the build process and fails the build
     # if that build step fails.
@@ -222,8 +226,10 @@ def help():
     print "                                     distribution."
     print "         runUnitTests                runs the project unit tests."
     print "     global custom variables:"
-    print "         configuration               the configuration of the build (debug or release)."
-    print "         projects                    the projects that will be built and the order in which"
+    print "         -configuration <project>    the configuration of the build (debug or release)."
+    print "         -projects  <projects...>    the projects that will be built and the order in which"
     print "                                     they are built."
+    print "         -numTimesToRun <num>        the number of times that unit tests will be run as part"
+    print "                                     or the build process."
     print ""
     print ""

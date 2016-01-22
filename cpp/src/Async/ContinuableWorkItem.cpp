@@ -38,6 +38,7 @@ namespace Async
 
 	Types::Result_t ContinuableWorkItem::Execute()
 	{
+        std::lock_guard<std::mutex> executionLock(this->GetExecutionMutex());
 		Types::Result_t result = this->WorkItem::Execute();
 		if (result == Types::Result_t::FAILURE)
 		{
@@ -69,6 +70,7 @@ namespace Async
 	void ContinuableWorkItem::AddContinuation(IChainLinkerPtr ptr,
         bool onSuccess)
 	{
+        std::lock_guard<std::mutex> executionLock(this->GetExecutionMutex());
         if (onSuccess)
         {
             this->_successSuccessors.push_back(ptr);

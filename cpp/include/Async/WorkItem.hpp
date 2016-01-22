@@ -5,6 +5,7 @@
 
 // SYSTEM INCLUDES
 #include <stdexcept>
+#include <mutex>
 
 // C++ PROJECT INCLUDES
 #include "Async/IExecutableWorkItem.hpp"
@@ -30,6 +31,7 @@ namespace Async
         FunctionPtr         _pPostFunction;
         std::exception_ptr  _pException;
         Types::JobPriority  _jobPriority;
+        std::mutex          _executionMutex;
 
     private:
 
@@ -50,7 +52,7 @@ namespace Async
         WorkItem(uint64_t id=0, Types::JobPriority priority=Types::JobPriority::OTHER) :
             WorkItemStateMachine(States::WorkItemState::IDLE), _id(id),
             _jobPriority(priority), _pScheduler(nullptr), _pMainFunction(nullptr),
-            _pPostFunction(nullptr), _pException(nullptr)
+            _pPostFunction(nullptr), _pException(nullptr), _executionMutex()
         {
         }
 
@@ -71,6 +73,8 @@ namespace Async
         const std::string GetStateAsString();
 
         const Types::JobPriority GetPriority();
+
+        std::mutex& GetExecutionMutex();
 
     };
 

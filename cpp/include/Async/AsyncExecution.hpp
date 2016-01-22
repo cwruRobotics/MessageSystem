@@ -13,13 +13,12 @@
 namespace Async
 {
 
-    EntryPoint::IEnginePtr GetEngine();
 
     template<typename PROMISE_RESULT> 
     PromisePtr<PROMISE_RESULT> Execute(std::function<PROMISE_RESULT()> pFunc,
                                        std::string& schedulerId)
     {
-        EntryPoint::IEnginePtr pEngine = GetEngine();
+        EntryPoint::IEnginePtr pEngine = GetStaticEngine();
         ISchedulerPtr pScheduler = pEngine->GetScheduler(schedulerId);
         Types::Result_t result = Types::Result_t::SUCCESS;
         if (!pScheduler)

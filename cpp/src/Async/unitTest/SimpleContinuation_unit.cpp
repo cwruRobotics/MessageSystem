@@ -32,8 +32,8 @@ namespace Tests
         REQUIRE( pPromise->GetState() == States::SettlementState::SUCCESS );
         REQUIRE( pPromise->GetResult() == 10 );
 
-        // REQUIRE( pSuccessor->GetState() == States::SettlementState::SUCCESS );
-        // REQUIRE( pSuccessor->GetResult() == 15 );
+        REQUIRE( pSuccessor->GetState() == States::SettlementState::SUCCESS );
+        REQUIRE( pSuccessor->GetResult() == 15 );
     }
 
 } // end of namespace Tests

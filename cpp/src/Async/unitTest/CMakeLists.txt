@@ -62,7 +62,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../PromiseBase.cpp
             ${SRC_ROOT}/../WorkerThread.cpp
             ${SRC_ROOT}/../Engine.cpp
-            ${SRC_ROOT}/../AsyncExecution.cpp
+            ${SRC_ROOT}/../Factories/EngineFactory.cpp
 
             # AsyncUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp

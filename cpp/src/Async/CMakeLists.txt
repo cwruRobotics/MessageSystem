@@ -54,7 +54,9 @@ set( ASYNC_SRCS
     ${SRC_ROOT}/Async/PromiseBase.cpp
     ${SRC_ROOT}/Async/WorkerThread.cpp
     ${SRC_ROOT}/Async/Engine.cpp
-    ${SRC_ROOT}/Async/AsyncExecution.cpp
+
+    # factories
+    ${SRC_ROOT}/Async/Factories/EngineFactory.cpp
 )
 
 # Public header files (installed together with libraries)

@@ -34,6 +34,7 @@ namespace EntryPoint
     {
         if (this->_running)
         {
+            std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
             auto index = this->GetSchedulerMap().find(schedulerId);
             if (index == this->GetSchedulerMap().end())
             {
@@ -75,8 +76,9 @@ namespace EntryPoint
 
     Types::Result_t Engine::Shutdown()
     {
-        this->_running = false;
         std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
+
+        this->_running = false;
         for (auto it = this->GetSchedulerMap().begin(); it != this->GetSchedulerMap().end(); ++it)
         {
             it->second->Shutdown();

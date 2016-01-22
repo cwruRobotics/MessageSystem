@@ -26,11 +26,7 @@ namespace Async
 	class Scheduler : public IScheduler,
         public std::enable_shared_from_this<Scheduler>
 	{
-	private: 
-
-		// global variables
-		std::map<uint64_t, IExecutableWorkItemPtr>	            _attachedWorkItems;
-		std::mutex								                _mutex;
+	private:
 
 		// thread pool variables
 		std::map<Types::JobPriority, Concurrency::IThreadPtr>   _threadMap;
@@ -41,16 +37,12 @@ namespace Async
 
 	protected:
 
-		std::map<uint64_t, IExecutableWorkItemPtr>& GetWorkItemMap() override;
-
 		std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() override;
-
-		bool DetachWorkItem(uint64_t id) override;
 
 	public:
 
-		Scheduler(std::string id="") : _id(std::move(id)), _attachedWorkItems(),
-            _mutex(), _threadMap(), _currentWorkItemId(0), _running(true)
+		Scheduler(std::string id="") : _id(std::move(id)),
+            _threadMap(), _currentWorkItemId(0), _running(true)
 		{
             this->_threadMap.insert(std::pair<Types::JobPriority,
                 Concurrency::IThreadPtr>(Types::JobPriority::IMMEDIATE,

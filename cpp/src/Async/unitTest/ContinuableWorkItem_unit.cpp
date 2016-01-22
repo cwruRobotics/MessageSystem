@@ -76,10 +76,6 @@ namespace Tests
         REQUIRE( pSuccessWorkItem->GetStateAsString().compare("Done") == 0 );
         REQUIRE( pFailWorkItem->GetStateAsString().compare("Done") == 0 );
 
-        REQUIRE( pMockScheduler->
-            DetachWorkItem(pSuccessWorkItem->GetId()) );
-        REQUIRE( pMockScheduler->
-            DetachWorkItem(pFailWorkItem->GetId()) );
     }
 
 } // end of namespace Tests

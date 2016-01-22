@@ -20,13 +20,11 @@ namespace Tests
         MockScheduler scheduler;
 
         REQUIRE( scheduler.GetCurrentWorkItemId() == 0 );
-        REQUIRE( scheduler.GetWorkItemMap().size() == 0 );
         REQUIRE( scheduler.GetThreadMap().size() == 3 );
 
     }
 
-    TEST_CASE("Testing Scheduling and Detaching Work Items",
-        "[Scheduler_unit]")
+    TEST_CASE("Testing Scheduling Work Items", "[Scheduler_unit]")
     {
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
@@ -49,25 +47,8 @@ namespace Tests
             REQUIRE( ++currentWorkItemId == pWorkItem->GetId() );
             idVector.push_back(pWorkItem->GetId());
 
-            uint64_t id = pWorkItem->GetId();
-            auto index = pMockScheduler->GetWorkItemMap().find(id);
-            if (index == pMockScheduler->GetWorkItemMap().end())
-            {
-                REQUIRE( false );
-            }
-            REQUIRE( id == index->second->GetId() );
         }
 
-        // check all work Items are still in the map
-        REQUIRE( pMockScheduler->GetWorkItemMap().size() ==
-            numberOfWorkItemsToSchedule );
-
-        for (int i = 0; i < numberOfWorkItemsToSchedule; ++i)
-        {
-            REQUIRE( pMockScheduler->DetachWorkItem(idVector[i]) );
-        }
-
-        REQUIRE( pMockScheduler->GetWorkItemMap().size() == 0 );
     }
 
     TEST_CASE("Testing Executing Work Items on Schedulers with Successful functions",
@@ -164,7 +145,6 @@ namespace Tests
         for (unsigned int i = 0; i < workVector.size(); ++i)
         {
             REQUIRE( workVector[i]->GetStateAsString().compare("Done") == 0 );
-            REQUIRE( pMockScheduler->DetachWorkItem(workVector[i]->GetId()) );
         }
     }
 

@@ -23,7 +23,7 @@ namespace Tests
         {
             return 10;
         }, schedulerId);
-        EntryPoint::IEnginePtr pEngine = GetEngine();
+        EntryPoint::IEnginePtr pEngine = GetStaticEngine();
         REQUIRE( pEngine != nullptr );
         REQUIRE( pEngine->GetScheduler(schedulerId) != nullptr );
         REQUIRE( pEngine->GetScheduler(schedulerId)->IsRunning() );

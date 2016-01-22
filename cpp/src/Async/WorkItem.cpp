@@ -30,11 +30,13 @@ namespace Async
 
 	void WorkItem::AttachMainFunction(FunctionPtr func)
 	{
+        std::lock_guard<std::mutex> executionLock(this->_executionMutex);
 		this->_pMainFunction = func;
 	}
 
 	void WorkItem::AttachPosteriorFunction(FunctionPtr func)
 	{
+        std::lock_guard<std::mutex> executionLock(this->_executionMutex);
 		this->_pPostFunction = func;
 	}
 
@@ -110,4 +112,10 @@ namespace Async
     {
         return this->_jobPriority;
     }
+
+    std::mutex& WorkItem::GetExecutionMutex()
+    {
+        return this->_executionMutex;
+    }
+
 }

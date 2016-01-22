@@ -2,11 +2,8 @@
 
 
 // C++ PROJECT INCLUDES
-#include "Async/Result.hpp"
-#include "Async/Scheduler.hpp"
+#include "Async/IEngine.hpp"
 #include "Async/Engine.hpp"
-#include "Async/AsyncExecution.hpp"
-
 
 namespace Async
 {
@@ -18,9 +15,4 @@ namespace Async
         return pEngine;
     }
 
-    EntryPoint::IEnginePtr GetEngine()
-    {
-        return GetStaticEngine();
-    }
-
-}
+} // end of namespace Async

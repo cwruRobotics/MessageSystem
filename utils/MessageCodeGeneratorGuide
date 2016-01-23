@@ -1,0 +1,9 @@
+Reserved characters: "<" and ">"
+White space doesn't matter, tabs and new lines are deleted. Spaces from space bar don't matter but will make output file look bad
+You can arbitrarily nest structs
+<struct>Struct Name
+	<dataType>Data type (e.g. int)
+	</dataType>
+	<varName>anInt
+	</varName>
+</struct>

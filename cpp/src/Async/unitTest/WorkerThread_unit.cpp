@@ -7,6 +7,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 #include "Async/JobPriorities.hpp"
 #include "Async/ConcurrencyStates.hpp"
 #include "Async/WorkerThread.hpp"
@@ -29,6 +30,7 @@ namespace Tests
     TEST_CASE("Testing WorkerThread default constructor and Shutdown()",
         "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 1");
         // construct an object
         Concurrency::WorkerThread wThread;
 
@@ -42,6 +44,7 @@ namespace Tests
 
     TEST_CASE("Testing default WorkerThread destructor", "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 2");
         try
         {
             // construct an object
@@ -59,6 +62,7 @@ namespace Tests
     TEST_CASE("Testing Queue and Execution with WorkItems",
         "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 3");
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
@@ -72,7 +76,7 @@ namespace Tests
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 3 seconds to allow execution" << std::endl;
+        std::cout << "\tSleeping for 3 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
         REQUIRE( pWorkItem->GetException() == nullptr );
@@ -84,6 +88,7 @@ namespace Tests
     TEST_CASE("Testing Queue and Execution with ContinuableWorkItems",
         "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 4");
         ContinuableWorkItemPtr pContinuableWorkItem =
             std::make_shared<ContinuableWorkItem>();
 
@@ -99,7 +104,7 @@ namespace Tests
 
         REQUIRE( pWorkerThread->Queue(pContinuableWorkItem) == Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 3 seconds to allow execution" << std::endl;
+        std::cout << "\tSleeping for 3 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
         REQUIRE( pContinuableWorkItem->GetException() == nullptr );
@@ -111,6 +116,7 @@ namespace Tests
     TEST_CASE("Testing Queuing and Execution of Unsuccessful WorkItem",
         "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 5");
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
@@ -123,7 +129,7 @@ namespace Tests
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pWorkItem->GetException() != nullptr );
@@ -134,6 +140,7 @@ namespace Tests
     TEST_CASE("Testing Queuing and Execution of 5 WorkItems interleaved",
         "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 6");
         WorkItemPtr pWorkItem = std::make_shared<WorkItem>();
 
         Concurrency::WorkerThreadPtr pWorkerThread =
@@ -191,7 +198,7 @@ namespace Tests
 
         REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pWorkerThread->GetState() == States::ConcurrencyState::IDLE );
@@ -199,6 +206,7 @@ namespace Tests
 
     TEST_CASE("Stress test Queuing and Execution of WorkItems", "[WorkerThread_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkerThread_unit test 7");
         int stressLimit = 100;
         std::vector<WorkItemPtr> queuedWorkItems;
 
@@ -217,7 +225,7 @@ namespace Tests
             REQUIRE( pWorkerThread->Queue(pWorkItem) == Types::Result_t::SUCCESS );
         }
 
-        std::cout << "Sleeping for 4 seconds to allow execution" << std::endl;
+        std::cout << "\tSleeping for 4 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(4));
 
         for(int i = 0; i < stressLimit; ++i)

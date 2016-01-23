@@ -4,6 +4,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 #include "Async/unitTest/MockScheduler.hpp"
 #include "Async/SettlementStates.hpp"
 #include "Async/Promise.hpp"
@@ -15,6 +16,7 @@ namespace Tests
 
     TEST_CASE("Testing Promise default constructor", "[Promise_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Promise_unit test 1");
         Promise<int> p;
 
         // REQUIRE( !p.PreconditionsMet() );
@@ -24,6 +26,7 @@ namespace Tests
 
     TEST_CASE("Testing Promise PreconditionsMet()", "[Promise_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Promise_unit test 2");
         Promise<int(int)> p;
 
         p.AttachMainFunction([](int a) -> int
@@ -38,6 +41,7 @@ namespace Tests
 
     TEST_CASE("Testing Promise Execution on Schedulers", "[Promise_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Promise_unit test 3");
         PromisePtr<int> pPromise =
             std::make_shared<Promise<int> >();
         MockSchedulerPtr pMockScheduler =
@@ -50,7 +54,7 @@ namespace Tests
 
         pPromise->Schedule(pMockScheduler);
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pPromise->GetState() ==
@@ -61,6 +65,7 @@ namespace Tests
 
     TEST_CASE("Testing Promise Execution on Schedulers that Throw", "[Promise_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Promise_unit test 4");
         PromisePtr<int> pPromise =
             std::make_shared<Promise<int> >();
         MockSchedulerPtr pMockScheduler =
@@ -73,7 +78,7 @@ namespace Tests
 
         pPromise->Schedule(pMockScheduler);
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         REQUIRE( pPromise->GetState() ==

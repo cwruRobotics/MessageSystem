@@ -61,11 +61,13 @@ namespace Async
         {
             return pFunc(value);
         });
-        if (!GetStaticEngine()->GetScheduler(this->_childSchedulerId))
+
+        EntryPoint::IEnginePtr pEngine = GetStaticEngine();
+        if (!pEngine->GetScheduler(this->_childSchedulerId))
         {
-            GetStaticEngine()->StartScheduler(this->_childSchedulerId);
+            pEngine->StartScheduler(this->_childSchedulerId);
         }
-        this->_pChild->Schedule(GetStaticEngine()->GetScheduler(this->_childSchedulerId));
+        this->_pChild->Schedule(pEngine->GetScheduler(this->_childSchedulerId));
         this->_pParent = nullptr;
         return Types::Result_t::SUCCESS;
     }

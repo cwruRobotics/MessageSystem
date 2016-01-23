@@ -66,6 +66,7 @@ if( RUN_UNIT_TESTS )
 
             # AsyncUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
+            ${SRC_ROOT}/TestUtilities.cpp
             ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.cpp
             ${SRC_ROOT}/MockScheduler.cpp
             ${SRC_ROOT}/WorkItemStateMachine_unit.cpp
@@ -85,6 +86,7 @@ if( RUN_UNIT_TESTS )
 
             # AsyncUnitTests headers
             ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
+            ${SRC_ROOT}/TestUtilities.hpp
             ${SRC_ROOT}/MockScheduler.hpp
         )
 

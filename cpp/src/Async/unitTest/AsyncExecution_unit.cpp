@@ -4,6 +4,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 
 #include "Async/SettlementStates.hpp"
 #include "Async/Promise.hpp"
@@ -18,6 +19,7 @@ namespace Tests
 
     TEST_CASE("Testing AsyncExecution::Execute()", "[AsyncExecution_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("AsyncExecution_unit test 1");
         std::string schedulerId = "testScheduler";
         PromisePtr<int> pPromise = Execute<int>([]() -> int
         {
@@ -28,7 +30,7 @@ namespace Tests
         REQUIRE( pEngine->GetScheduler(schedulerId) != nullptr );
         REQUIRE( pEngine->GetScheduler(schedulerId)->IsRunning() );
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         REQUIRE( pPromise->GetState() == States::SettlementState::SUCCESS );
         REQUIRE( pPromise->GetResult() == 10 );

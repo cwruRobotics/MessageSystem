@@ -3,6 +3,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 
 #include "Async/Result.hpp"
 #include "Async/IEngine.hpp"
@@ -15,6 +16,7 @@ namespace Tests
 
     TEST_CASE("Testing default Engine constructor and destructor", "[Engine_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Engine_unit test 1");
         try
         {
             EntryPoint::Engine engine;
@@ -29,12 +31,14 @@ namespace Tests
 
     TEST_CASE("Testing Engine::Shutdown() with no Schedulers", "[Engine_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Engine_unit test 2");
         EntryPoint::Engine engine;
         REQUIRE( engine.Shutdown() == Types::Result_t::SUCCESS );
     }
 
     TEST_CASE("Testing Engine::StartScheduler() and Engine::GetScheduler()", "[Engine_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Engine_unit test 3");
         ISchedulerPtr pScheduler = nullptr;
         {
             EntryPoint::Engine engine;
@@ -57,6 +61,7 @@ namespace Tests
 
     TEST_CASE("Testing Engine::ShutdownScheduler()", "[Engine_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Engine_unit test 4");
         EntryPoint::Engine engine;
         std::string schedulerId = "testScheduler";
 

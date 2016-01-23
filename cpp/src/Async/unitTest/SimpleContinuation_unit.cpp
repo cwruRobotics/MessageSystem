@@ -4,6 +4,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 
 #include "Async/AsyncExecution.hpp"
 #include "Async/SettlementStates.hpp"
@@ -16,6 +17,7 @@ namespace Tests
 
     TEST_CASE("Testing SimpleContinuation of Promises", "[SimpleContinuation_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("SimpleContinuation_unit test 1");
         std::string schedulerId = "testScheduler";
         PromisePtr<int> pPromise = Execute<int>([]() -> int
         {
@@ -26,7 +28,7 @@ namespace Tests
             return a + 5;
         }, schedulerId);
 
-        std::cout << "Sleeping for 2 seconds to allow execution" << std::endl;
+        std::cout << "\tSleeping for 2 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
         REQUIRE( pPromise->GetState() == States::SettlementState::SUCCESS );
@@ -39,6 +41,7 @@ namespace Tests
     TEST_CASE("Creating SimpleContinuations guarenteeing that Then() is called while Promise is executing",
         "[SimpleContinuation_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("SimpleContinuation_unit test 2");
         std::string schedulerId = "testScheduler";
         PromisePtr<int> pPromise = Execute<int>([]() -> int
         {
@@ -53,7 +56,7 @@ namespace Tests
 
         while ( pPromise->GetState() == States::SettlementState::PENDING )
         {
-            std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+            std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         REQUIRE( pPromise->GetState() == States::SettlementState::SUCCESS );
@@ -61,7 +64,7 @@ namespace Tests
 
         while( pSuccessor->GetState() == States::SettlementState::PENDING )
         {
-            std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+            std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
         REQUIRE( pSuccessor->GetState() == States::SettlementState::SUCCESS );

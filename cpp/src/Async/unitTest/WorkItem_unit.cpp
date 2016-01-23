@@ -3,6 +3,7 @@
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 #include "Async/Result.hpp"
 #include "Async/WorkItem.hpp"
 
@@ -13,6 +14,7 @@ namespace Tests
 
     TEST_CASE("Testing WorkItem default constructor", "[WorkItem_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 1");
         uint64_t customId = 15;
         WorkItem defaultWItem, customWItem(customId);
 
@@ -22,6 +24,7 @@ namespace Tests
 
     TEST_CASE("Testing AttachMainFunction", "[WorkItem_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 2");
         WorkItem workItem;
 
         try
@@ -44,6 +47,7 @@ namespace Tests
 
     TEST_CASE("Testing AttachPosteriorFunction", "[WorkItem_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 3");
         WorkItem workItem;
 
         try
@@ -64,6 +68,7 @@ namespace Tests
 
     TEST_CASE("Testing GetException", "[WorkItem_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 4");
         WorkItem workItem;
 
         REQUIRE( workItem.GetException() == nullptr );

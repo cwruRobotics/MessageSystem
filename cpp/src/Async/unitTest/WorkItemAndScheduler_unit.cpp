@@ -7,6 +7,7 @@
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
 #include "Async/unitTest/MockScheduler.hpp"
+#include "Async/unitTest/TestUtilities.hpp"
 #include "Async/Result.hpp"
 #include "Async/WorkItem.hpp"
 
@@ -17,6 +18,7 @@ namespace Tests
 
     TEST_CASE("Testing Scheduler default constructor", "[Scheduler_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Scheduler_unit test 1");
         MockScheduler scheduler;
 
         REQUIRE( scheduler.GetCurrentWorkItemId() == 0 );
@@ -26,6 +28,7 @@ namespace Tests
 
     TEST_CASE("Testing Scheduling Work Items", "[Scheduler_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("Scheduler_unit test 2");
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
 
@@ -54,6 +57,7 @@ namespace Tests
     TEST_CASE("Testing Executing Work Items on Schedulers with Successful functions",
         "[WorkItemAndScheduler_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItemAndScheduler_unit test 3");
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
 
@@ -71,7 +75,7 @@ namespace Tests
         REQUIRE( pWorkItem->Schedule(pMockScheduler) ==
             Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         REQUIRE( pWorkItem->GetStateAsString().compare("Done") == 0 );
         //-------------------------------------------
@@ -84,7 +88,7 @@ namespace Tests
         REQUIRE( pWorkItem->Schedule(pMockScheduler) ==
             Types::Result_t::SUCCESS );
 
-        std::cout << "Sleeping for 1 second to allow execution" << std::endl;
+        std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         REQUIRE( pWorkItem->GetStateAsString().compare("Done") == 0 );
         //-------------------------------------------
@@ -93,6 +97,7 @@ namespace Tests
     TEST_CASE("Testing Executing Work Items on Schedulers with unsuccessful functions",
         "[WorkItemAndScheduler_unit]")
     {
+        Utilities::WriteUnitTestNameToConsole("WorkItemAndScheduler_unit test 4");
         // --------------------- setup -----------------------
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>();
@@ -138,7 +143,7 @@ namespace Tests
         // ----------------------------------------------------
 
         // -----------------execute work items-----------------
-        std::cout << "Sleeping for 5 seconds to allow execution" << std::endl;
+        std::cout << "\tSleeping for 5 seconds to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(5));
         // ----------------------------------------------------
 

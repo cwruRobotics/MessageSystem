@@ -3,13 +3,14 @@
 #define ASYNC_ENTRYPOINT_IENGINE_HPP
 
 // SYSTEM INCLUDES
+#include <atomic>
 #include <memory>
+#include <mutex>
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
 #include "Async/IScheduler.hpp"
-#include "Async/Promise.hpp"
 
 namespace Async
 {

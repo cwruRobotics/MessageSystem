@@ -113,7 +113,10 @@ namespace Concurrency
             // lock on this thread
             // put the concurrent thread to sleep until it is woken up by
             // a WorkItem being queued.
-            this->_threadCV.wait(queueLock);
+            if (this->_run)
+            {
+                this->_threadCV.wait(queueLock);
+            }
         }
     }
 

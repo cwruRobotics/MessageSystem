@@ -20,8 +20,7 @@ namespace Tests
         Utilities::WriteUnitTestNameToConsole("ContinuableWorkItem_unit test 1");
         ContinuableWorkItem workItem;
 
-        REQUIRE( workItem.GetState() ==
-            States::SettlementState::PENDING );
+        REQUIRE( workItem.GetState() == States::SettlementState::PENDING );
         REQUIRE( !workItem.IsCurrentlyExecuting() );
     }
 
@@ -31,8 +30,7 @@ namespace Tests
         ContinuableWorkItem workItem;
 
         workItem.SetSuccess();
-        REQUIRE( workItem.GetState() ==
-            States::SettlementState::SUCCESS );
+        REQUIRE( workItem.GetState() == States::SettlementState::SUCCESS );
     }
 
     TEST_CASE("Testing ContinuableWorkItem SetFailure()", "[ContinuableWorkItem_unit]")
@@ -41,39 +39,28 @@ namespace Tests
         ContinuableWorkItem workItem;
 
         workItem.SetFailure();
-        REQUIRE( workItem.GetState() ==
-            States::SettlementState::FAILURE );
+        REQUIRE( workItem.GetState() == States::SettlementState::FAILURE );
     }
 
     TEST_CASE("Testing ContinuableWorkItem execution", "[ContinuableWorkItem_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("ContinuableWorkItem_unit test 4");
-        MockSchedulerPtr pMockScheduler =
-            std::make_shared<MockScheduler>();
+        MockSchedulerPtr pMockScheduler = std::make_shared<MockScheduler>();
 
-        ContinuableWorkItemPtr pSuccessWorkItem =
-            std::make_shared<ContinuableWorkItem>();
-        ContinuableWorkItemPtr pFailWorkItem =
-            std::make_shared<ContinuableWorkItem>();
+        ContinuableWorkItemPtr pSuccessWorkItem = std::make_shared<ContinuableWorkItem>();
+        ContinuableWorkItemPtr pFailWorkItem = std::make_shared<ContinuableWorkItem>();
 
-        auto pSuccessFunction = [&]() -> Types::Result_t
+        pSuccessWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            REQUIRE( pSuccessWorkItem->IsCurrentlyExecuting() );
             return Types::Result_t::SUCCESS;
-        };
-        auto pFailFunction = [&]() -> Types::Result_t
+        });
+        pFailWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
-            REQUIRE( pFailWorkItem->IsCurrentlyExecuting() );
             throw std::exception();
-        };
+        });
 
-        pSuccessWorkItem->AttachMainFunction(pSuccessFunction);
-        pFailWorkItem->AttachMainFunction(pFailFunction);
-
-        REQUIRE( pSuccessWorkItem->Schedule(pMockScheduler) ==
-            Types::Result_t::SUCCESS );
-        REQUIRE( pFailWorkItem->Schedule(pMockScheduler) ==
-            Types::Result_t::SUCCESS );
+        REQUIRE( pSuccessWorkItem->Schedule(pMockScheduler) == Types::Result_t::SUCCESS );
+        REQUIRE( pFailWorkItem->Schedule(pMockScheduler) == Types::Result_t::SUCCESS );
 
         std::cout << "\tSleeping for 1 second to allow execution" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));

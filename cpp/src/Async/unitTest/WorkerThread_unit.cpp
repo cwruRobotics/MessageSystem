@@ -98,7 +98,6 @@ namespace Tests
         pContinuableWorkItem->AttachMainFunction([&]() -> Types::Result_t
         {
             REQUIRE( pWorkerThread->GetState() == States::ConcurrencyState::BUSY );
-            REQUIRE( pContinuableWorkItem->GetState() == States::SettlementState::PENDING );
             return Types::Result_t::SUCCESS;
         });
 

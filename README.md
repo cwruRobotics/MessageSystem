@@ -10,8 +10,9 @@ Requirements:
     that it will detect your version of Visual Studio and use it when calling CMake.
 
     So far, this project has been tested using:
-        Visual Studio 15
-        GNU 4.9.2
+        Visual Studio 15    (Windows 7)
+        GNU 4.9.2           (Ubuntu 14.04)
+        GNU 4.8.2           (Ubuntu 15.10)
 
     If you have another system and it successfully builds, please let me know and I will update this list.
     Otherwise, I will continue to branch out for OSX and other compilers.

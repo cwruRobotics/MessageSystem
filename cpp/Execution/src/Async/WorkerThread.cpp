@@ -7,6 +7,7 @@
 #include "Async/WorkItem.hpp"
 
 // logging functionality
+/**
 #include "AsyncLoggingConfig.hpp"
 //#include "Logging/ILogger.hpp"
 #include "Logging/Factory.hpp"
@@ -18,6 +19,7 @@ Logging::LoggerPtr GetStaticCallerLogger(std::string workerThreadId)
                                     (Async::Logging::LOGGING_ROOT + workerThreadId + ".txt").c_str());
     return pLogger;
 }
+*/
 
 namespace Async
 {

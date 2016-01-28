@@ -93,17 +93,6 @@ if( BUILD_TESTMATHUTILS )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TestMathUtils" )
 endif()
 
-if( BUILD_TESTMATHCLIENT )
-    # TestMathUtils library
-    add_subdirectory( ${SRC_ROOT}/TestMathClient/src/TestMathClient
-                      ${OUT_ROOT}/TestMathClient )
-
-    # give other subprojects a chance to search for libraries and header
-    # files created before the "make install"
-    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/TestMathClient" )
-    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TestMathClient" )
-endif()
-
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 
@@ -123,12 +112,6 @@ if( RUN_UNIT_TESTS )
         # Robos unit tests
         # add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
         #                   ${OUT_ROOT}/LoggerUnit )
-    endif()
-
-    if( BUILD_TESTMATHCLIENT )
-        # TestMathClient unit tests
-        add_subdirectory( ${SRC_ROOT}/TestMathClient/src/TestMathClient/unitTest
-                          ${OUT_ROOT}/TestMathClientUnit )
     endif()
 
 endif()

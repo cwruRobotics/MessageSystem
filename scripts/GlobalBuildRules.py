@@ -236,7 +236,8 @@ class GlobalBuild(object):
             "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
             "-DBUILD_%s=ON" % self._project_name.upper(),
             "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
-            "-DRUN_UNIT_TESTS=ON",
+            "-DRUN_UNIT_TESTS=%s" % (self._custom_args["test"] if self._custom_args.get("test") is not None else "OFF"),
+            "-DENABLE_LOGGING=%s" % (self._custom_args["logging"] if self._custom_args.get("logging") is not None else "OFF" ),
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
@@ -340,6 +341,9 @@ def help():
     print "                                     they are built."
     print "         -numTimesToRun <num>        the number of times that unit tests will be run as part"
     print "                                     or the build process."
+    print "         -logging <ON|OFF>           enables or disables logging capabilites (default = OFF)."
+    print "         -test <ON|OFF>              enables or disables running unit tests as part of build"
+    print "                                     process."
     print ""
     print ""
 

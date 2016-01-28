@@ -82,7 +82,7 @@ class GlobalBuild(object):
             Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", projectToCopyFrom + ".lib"), destLibDir)
         else:
             # copy .so
-            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", projectToCopyFrom + ".so"), destLibDir)
+            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so"), destLibDir)
         Utilities.copyTree(os.path.join(rootToCopyFrom, "include", projectToCopyFrom),
                            os.path.join(destinationDir, "include", projectToCopyFrom))
 

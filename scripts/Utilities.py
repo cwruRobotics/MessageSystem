@@ -90,8 +90,8 @@ def copyTree(srcPath, destPath):
 # this is no longer windows specific
 def getProcessorInfo():
     machine = platform.machine().lower()
-    if "x86 64" in machine:
-        machine = "x86"
+    if "x86_64" in machine:
+        machine = "x64"
     elif "x86" in machine:
         machine = "x86_arm"
     elif "aarch64" in machine:

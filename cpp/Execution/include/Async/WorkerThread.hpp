@@ -44,20 +44,9 @@ namespace Concurrency
 
     public:
 
-        WorkerThread() :
-            _state(States::ConcurrencyState::IDLE),
-            _queueMutex(), _queue(), _run(true), _threadCV()
-        {
-            this->_thread = std::thread(&WorkerThread::Run, this);
-        }
+        WorkerThread();
 
-        ~WorkerThread()
-        {
-            if (this->_run)
-            {
-                this->Join();
-            }
-        }
+        ~WorkerThread();
 
         std::thread::id GetId() override;
 

@@ -15,7 +15,7 @@ namespace Tests
     TEST_CASE("GetName should reflect logger name set in constructor", "[Logger_unit]")
     {
         const char* testLoggerName = "My.Test.Name";
-        LoggerPtr testLogger = Factory::makeLogger(testLoggerName);
+        LoggerPtr testLogger = Factory::MakeLogger(testLoggerName);
 
         REQUIRE( strcmp(testLoggerName, testLogger->GetName()) == 0 );
     }
@@ -26,12 +26,12 @@ namespace Tests
         const char* testOutputFile = "C:/MyOutputFile/test.txt";
 
         // test providing an output file to write to
-        LoggerPtr testLogger = Factory::makeLogger(testLoggerName, testOutputFile);
+        LoggerPtr testLogger = Factory::MakeLogger(testLoggerName, testOutputFile);
 
         REQUIRE( strcmp(testOutputFile, testLogger->GetOutputFile()) == 0 );
 
         // test writing to standard out if no output file is provided
-        testLogger = Factory::makeLogger(testLoggerName);
+        testLogger = Factory::MakeLogger(testLoggerName);
         
         REQUIRE( strcmp(testLogger->GetOutputFile(), "std::cout") == 0 );
     }

@@ -29,6 +29,8 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include ABSOLUTE )
 
+get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ ABSOLUTE )
+
 # ------------------------------------------------------------------------------
 # GTest
 #
@@ -62,8 +64,8 @@ if( RUN_UNIT_TESTS )
         set( INCLUDE_DIRS
             ${INC_ROOT}
             ${SRC_ROOT}/../..
-            ${GTEST_INCLUDE_DIRS}
             ${CMAKE_CURRENT_SOURCE_DIR}/..
+            ${CATCH_ROOT}
         )
 
         if( MSVC )

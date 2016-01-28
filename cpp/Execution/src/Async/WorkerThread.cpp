@@ -6,10 +6,38 @@
 #include "Async/WorkerThread.hpp"
 #include "Async/WorkItem.hpp"
 
+// logging functionality
+#include "AsyncLoggingConfig.hpp"
+//#include "Logging/ILogger.hpp"
+#include "Logging/Factory.hpp"
+
+Logging::LoggerPtr GetStaticCallerLogger(std::string workerThreadId)
+{
+    static Logging::LoggerPtr pLogger =
+        Logging::Factory::MakeLogger(workerThreadId.c_str(),
+                                    (Async::Logging::LOGGING_ROOT + workerThreadId + ".txt").c_str());
+    return pLogger;
+}
+
 namespace Async
 {
 namespace Concurrency
 {
+
+    WorkerThread::WorkerThread() :
+        _state(States::ConcurrencyState::IDLE),
+        _queueMutex(), _queue(), _run(true), _threadCV()
+    {
+        this->_thread = std::thread(&WorkerThread::Run, this);
+    }
+
+    WorkerThread::~WorkerThread()
+    {
+        if (this->_run)
+        {
+            this->Join();
+        }
+    }
 
     bool WorkerThread::IsQueueEmpty()
     {

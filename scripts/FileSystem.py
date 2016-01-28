@@ -1,6 +1,8 @@
 
+# SYSTEM IMPORTS
 import os
 
+# PYTHON PROJECT IMPORTS
 import Utilities
 
 ROOT = 1                    # the absolute path to the top level of the project
@@ -25,6 +27,7 @@ OUT_ROOT = 11               # the absolute path to the directory where built cod
 INSTALL_ROOT = 12           # the absolute path to the top level directory where all built code goes
 INSTALL_DIR = 13            # the absolute path to the directory where public c++ headers go when built
 LOG_DIR = 14                # the absolute path to the directory where all log files will be written
+DEPENDENCIES = 15
 
 
 # a method to get the absolute path to a directory within the project based
@@ -58,5 +61,7 @@ def getDirectory(directoryEnum, configuration='', projectName=''):
         return os.path.join(getDirectory(OUT_ROOT, configuration, projectName), 'install')
     elif directoryEnum == LOG_DIR:
         return os.path.join(getDirectory(WORKING, configuration, projectName), 'logs')
+    elif directoryEnum == DEPENDENCIES:
+        return os.path.join(getDirectory(ROOT), "dependencies")
     else:
         Utilities.failExecution("Unknown directoryEnum: [%s]" % directoryEnum)

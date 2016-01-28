@@ -13,7 +13,7 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 
 # this points to the root of the cmake directory
 # which contains all the toolchains and modules
-get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake ABSOLUTE )
+get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake ABSOLUTE )
 
 # add our custom module path to the CMAKE_MODULE_PATH
 # this allows us to say include( <module_name> )
@@ -55,13 +55,13 @@ set( LOGGING_SRCS
 # Public header files (installed together with libraries)
 set( LOGGING_PUBLIC_HEADERS
     ${INC_ROOT}/Logging/LibraryExport.hpp
+    ${INC_ROOT}/Logging/LoggingLevels.hpp
     ${INC_ROOT}/Logging/ILogger.hpp
     ${INC_ROOT}/Logging/Factory.hpp
 )
 
 # header files that are not exported to clients.
 set( LOGGING_PRIVATE_HEADERS
-    ${INC_ROOT}/Logging/LoggingLevels.hpp
     ${INC_ROOT}/Logging/Logger.hpp
 )
 

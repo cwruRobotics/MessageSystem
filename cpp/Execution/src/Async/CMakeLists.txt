@@ -13,7 +13,7 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 
 # this points to the root of the cmake directory
 # which contains all the toolchains and modules
-get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake ABSOLUTE )
+get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake ABSOLUTE )
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
@@ -30,6 +30,8 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE )
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../include ABSOLUTE )
 
+get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../build/out/include ABSOLUTE )
+
 # ===============================================================================
 # PROJECT EXTERNAL OPTIONS
 # ===============================================================================
@@ -44,6 +46,9 @@ set( PROJECT_VERSION_PATCH "0" )
 
 # Source files
 set( ASYNC_SRCS
+    # logging
+    ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
+
     ${SRC_ROOT}/Async/Result.cpp
     ${SRC_ROOT}/Async/WorkItemStates.cpp
     ${SRC_ROOT}/Async/WorkItemStateMachine.cpp
@@ -76,6 +81,9 @@ set( ASYNC_PUBLIC_HEADERS
 )
 
 set( ASYNC_PRIVATE_HEADERS
+    # logging
+    ${CONFIG_ROOT}/AsyncLoggingConfig.hpp
+
     ${INC_ROOT}/Async/WorkItemStates.hpp
     ${INC_ROOT}/Async/WorkItemStateMachine.hpp
     ${INC_ROOT}/Async/Scheduler.hpp
@@ -94,6 +102,8 @@ source_group( PublicHeaders FILES ${ASYNC_PUBLIC_HEADERS} )
 set( INCLUDE_DIRS
     ${INC_ROOT}
     ${SRC_ROOT}
+    ${CONFIG_ROOT}
+    ${CMAKE_PREFIX_PATH}/include
 )
 
 # load external modules
@@ -131,6 +141,21 @@ set( DEPENDENCY_CHECK TRUE )
 
 include( GNUInstallDirs )
 
+set( ASYNC_LIBS )
+find_package( Logging REQUIRED )
+if( LOGGING_FOUND )
+    add_library( LOGGING SHARED IMPORTED )
+    set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
+    set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
+    # add_definitions(-DTESTMATHUTILS=1)
+
+    list( APPEND ASYNC_LIBS LOGGING )
+
+else()
+    message( WARNING "Logging not found...skipping usage" )
+endif()
+list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
+
 if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )
 endif()
@@ -153,7 +178,9 @@ set( ASYNC_LIB_NAME ${PROJECT_NAME} )
 include( GenerateExportHeader )
 
 add_library( ${ASYNC_LIB_NAME} SHARED ${ASYNC_SRCS} ${ASYNC_PUBLIC_HEADERS} ${ASYNC_PRIVATE_HEADERS})
-# target_link_libraries( ${ASYNC_LIB_NAME} ${ASYNC_LIBS} )
+if( ${ASYNC_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${ASYNC_LIB_NAME} ${ASYNC_LIBS} )
+endif()
 
 set_target_properties( ${ASYNC_LIB_NAME} PROPERTIES
     PUBLIC_HEADER       "${ASYNC_PUBLIC_HEADERS}"

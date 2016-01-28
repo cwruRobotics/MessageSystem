@@ -25,7 +25,7 @@ namespace Factory
     // ILogger.hpp
     // Note proper documentation tags will come with the arrival of doxygen
     // (our documentation software).
-    LoggerPtr LOGGING_API makeLogger(const char* name,
+    LOGGING_API LoggerPtr MakeLogger(const char* name,
                                      const char* outputFile=nullptr);
 
 } // end of namespace Factory

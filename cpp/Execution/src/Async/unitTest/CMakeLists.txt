@@ -29,6 +29,10 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include ABSOLUTE )
 
+get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../build/out/include ABSOLUTE )
+
+get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ ABSOLUTE )
+
 # ------------------------------------------------------------------------------
 # GTest
 #
@@ -38,6 +42,20 @@ if( RUN_UNIT_TESTS )
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
 
+    set( ASYNC_LIBS )
+    find_package( Logging REQUIRED )
+    if( LOGGING_FOUND )
+        add_library( LOGGING SHARED IMPORTED )
+        set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
+        set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
+        # add_definitions(-DTESTMATHUTILS=1)
+
+        list( APPEND ASYNC_LIBS LOGGING )
+
+    else()
+        message( WARNING "Logging not found...skipping usage" )
+    endif()
+    list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
     find_package( Catch REQUIRED )
 
     if( CATCH_FOUND )
@@ -51,6 +69,9 @@ if( RUN_UNIT_TESTS )
 
         # source files
         set( ASYNC_UNITTEST_SOURCES
+            # Logging sources
+            ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
+
             # Async sources
             ${SRC_ROOT}/../Result.cpp
             ${SRC_ROOT}/../WorkItemStates.cpp
@@ -94,8 +115,10 @@ if( RUN_UNIT_TESTS )
         set( INCLUDE_DIRS
             ${INC_ROOT}
             ${SRC_ROOT}/../..
-            ${GTEST_INCLUDE_DIRS}
             ${CMAKE_CURRENT_SOURCE_DIR}/..
+            ${CONFIG_ROOT}
+            ${CATCH_ROOT}
+            ${CMAKE_PREFIX_PATH}/include
         )
 
         if( MSVC )
@@ -117,6 +140,9 @@ if( RUN_UNIT_TESTS )
         include_directories( ${INCLUDE_DIRS} )
 
         add_executable( ${PROJECT_NAME} ${ASYNC_UNITTEST_SOURCES} )
+        if( ${ASYNC_LIBS_LENGTH} GREATER 0 )
+            target_link_libraries( ${PROJECT_NAME} ${ASYNC_LIBS} )
+        endif()
 
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )

@@ -1,5 +1,5 @@
 
-# imports
+# SYSTEM IMPORTS
 import inspect
 import os
 import platform
@@ -7,6 +7,8 @@ import shutil
 import subprocess
 import sys
 import traceback
+
+# PYTHON PROJECT IMPORTS
 
 def failExecution(errorMsg):
     print("Failed Build Stack:")
@@ -92,6 +94,8 @@ def getProcessorInfo():
         machine = "x86"
     elif "x86" in machine:
         machine = "x86_arm"
+    elif "aarch64" in machine:
+        machine = "aarch64"
     elif "x64" in machine:
         machine = "x64"
     elif "amd64" not in machine:
@@ -125,7 +129,7 @@ def getWindowsRegistryValue(key, subkey, value):
 '''
 
 def getMachineBits():
-    if platform.machine().endswith("64"):
+    if "64" in getProcessorInfo():
         return "x64"
     else:
         return "x86"

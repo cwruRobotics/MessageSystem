@@ -1,10 +1,10 @@
 
-# BUILT IN MODULES
+# SYSTEM IMPORTS
 import os
 import platform
 # import _winreg
 
-# PYTHON PROJECT MODULES
+# PYTHON PROJECT IMPORTS
 import LocalEnvironment
 import Utilities
 import FileSystem
@@ -39,10 +39,78 @@ class GlobalBuild(object):
         if os.path.exists(buildDirectory):
             Utilities.rmTree(buildDirectory)
 
+    def parseDependencyFile(self):
+        dependencyFilePath = os.path.join(FileSystem.getDirectory(FileSystem.DEPENDENCIES), "dependencies.txt")
+        if not os.path.exists(dependencyFilePath):
+            Utilities.failExecution("dependency file [%s] does not exist" % dependencyFilePath)
+        requiredProjects = []
+        with open(dependencyFilePath, 'r') as file:
+            flag = False
+            lineNum = 0
+            splitLine = None
+            for line in file:
+                splitLine = line.strip().split(None)
+                if len(splitLine) == 0 or splitLine[0] == '#':
+                    continue
+                if splitLine[0] == '-' + self._project_name:
+                    flag = True
+                elif flag and '-' not in splitLine[0]:
+                    requiredProjects.append(splitLine[0])
+                elif flag and '-' in splitLine[0] and ('-' + self._project_name) not in splitLine[0]:
+                    flag = False
+                elif not flag:
+                    continue
+                else:
+                    Utilities.failExecution("Parse error in dependency file [%s] at line [%s]"
+                                            % (dependencyFilePath, lineNum))
+                lineNum += 1
+        print("Required projects for project [%s] are %s" % (self._project_name, requiredProjects))
+        return requiredProjects
+
+    def moveDependentProjectsToWorkingDir(self, projectToCopyFrom, rootToCopyFrom):
+        destinationDir = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name)
+
+        destLibDir = os.path.join(destinationDir, "lib")
+        if not os.path.exists(destLibDir):
+                Utilities.mkdir(destLibDir)
+        if platform.system() == "Windows":
+            destBinDir = os.path.join(destinationDir, "bin")
+            if not os.path.exists(destBinDir):
+                Utilities.mkdir(destBinDir)
+            # copy dll and lib
+            Utilities.copyTree(os.path.join(rootToCopyFrom, "bin", projectToCopyFrom + ".dll"), destBinDir)
+            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", projectToCopyFrom + ".lib"), destLibDir)
+        else:
+            # copy .so
+            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", projectToCopyFrom + ".so"), destLibDir)
+        Utilities.copyTree(os.path.join(rootToCopyFrom, "include", projectToCopyFrom),
+                           os.path.join(destinationDir, "include", projectToCopyFrom))
+
+    def buildAndLoadDependencies(self):
+        rootBuildDirectory = FileSystem.getDirectory(FileSystem.WORKING, self._config)
+        dependentProjects = self.parseDependencyFile()
+        print("dependentProjects %s" % dependentProjects)
+        projectBuild = None
+        
+        Utilities.mkdir(FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name))
+        allBuiltOutDir = FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config)
+        for project in dependentProjects:
+            dependentProjectPath = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  project)
+
+            # build the project if necessary
+            if not os.path.exists(dependentProjectPath):
+                projectBuild = LocalBuildRules.LocalBuild(project)
+                projectBuild.run(([], {'configuration': self._config}))
+
+            # copy over necessary objects to link
+            self.moveDependentProjectsToWorkingDir(project, allBuiltOutDir)
+            
+
     def setupWorkspace(self):
         print("Setting up workspaces for project [%s]" % self._project_name)
         self.cleanBuildWorkspace()
         Utilities.mkdir(FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name))
+        self.buildAndLoadDependencies()
 
     def generateProjectVersion(self):
         outIncludeDir = os.path.join(
@@ -51,16 +119,55 @@ class GlobalBuild(object):
         )
         print("making directory %s" % outIncludeDir)
         Utilities.mkdir(outIncludeDir)
-        with open(os.path.join(outIncludeDir, 'Version.h'), 'w') as file:
-            file.write("#ifndef VERSION_H \n"
-                       "#define VERSION_H \n\n"
+        with open(os.path.join(outIncludeDir, 'Version.hpp'), 'w') as file:
+            file.write("#pragma once\n"
+                       "#ifndef VERSION_H\n"
+                       "#define VERSION_H\n\n"
                        "#define VERSION       " + self._project_build_number + "\n"
                        "#define VERSION_STR  \"" + self._project_build_number + "\"\n\n"
                        "#endif  // VERSION_H\n\n")
 
+    def generateLoggingConfig(self):
+        outIncludeDir = os.path.join(FileSystem.getDirectory(FileSystem.OUT_ROOT),
+                                     "include")
+        projectLogDir = FileSystem.getDirectory(FileSystem.LOG_DIR, self._config, self._project_name)
+        Utilities.mkdir(outIncludeDir)
+
+        if os.path.exists(projectLogDir):
+            Utilities.rmTree(projectLogDir)
+        Utilities.mkdir(projectLogDir)
+
+        with open(os.path.join(outIncludeDir, self._project_name + "LoggingConfig.hpp"), 'w') as file:
+            file.write("#pragma once\n"
+                       "#ifndef " + self._project_name.upper() + "_LOGGING_LOGGINGCONFIG_HPP\n"
+                       "#define " + self._project_name.upper() + "_LOGGING_LOGGINGCONFIG_HPP\n\n"
+                       "// SYSTEM INCLUDES\n"
+                       "#include <string>\n\n"
+                       "// C++ PROJECT INCLUDES\n\n"
+                       "namespace " + self._project_name + "\n"
+                       "{\n"
+                       "namespace Logging\n"
+                       "{\n\n"
+                       "    extern const std::string LOGGING_ROOT;\n\n"
+                       "} // end of namespace Logging\n"
+                       "} // end of namespace " + self._project_name + "\n"
+                       "#endif // end of " + self._project_name + "_LOGGING_LOGGINGCONFIG_HPP\n")
+        with open(os.path.join(outIncludeDir, self._project_name + "LoggingConfig.cpp"), 'w') as file:
+            file.write("// SYSTEM INCLUDES\n\n"
+                       "// C++ PROJECT INCLUDES\n"
+                       "#include \"" + self._project_name + "LoggingConfig.hpp\"\n\n"
+                       "namespace Async\n"
+                       "{\n"
+                       "namespace Logging\n"
+                       "{\n\n"
+                       "    const std::string LOGGING_ROOT = \"" + projectLogDir.replace("\\", "/") + "\";\n\n"
+                       "} // end of namespace Logging\n"
+                       "} // end of namespace Async\n")
+
     def preBuild(self):
         self.setupWorkspace()
         self.generateProjectVersion()
+        self.generateLoggingConfig()
 
     def getCMakeArgs(self, pathPrefix, workingDirectory):
         CMakeProjectDir = "projects"
@@ -233,3 +340,5 @@ def help():
     print "                                     or the build process."
     print ""
     print ""
+
+import LocalBuildRules

@@ -51,7 +51,7 @@ set(DOC_PRIVATE_INPUT_LIST )
 # they are what controls the project build flow.
 if( BUILD_LOGGING )
     # Logger library
-    add_subdirectory( ${SRC_ROOT}/src/Logging
+    add_subdirectory( ${SRC_ROOT}/Logging/src/Logging
                       ${OUT_ROOT}/Logging )
 
     # give other subprojects a chance to search for libraries and header
@@ -62,7 +62,7 @@ endif()
 
 if( BUILD_ASYNC )
     # Async library
-    add_subdirectory( ${SRC_ROOT}/src/Async
+    add_subdirectory( ${SRC_ROOT}/Execution/src/Async
                       ${OUT_ROOT}/Async )
 
     # give other subprojects a chance to search for libraries and header
@@ -73,7 +73,7 @@ endif()
 
 if( BUILD_ROBOS )
     # Robos library
-    add_subdirectory( ${SRC_ROOT}/src/Robos
+    add_subdirectory( ${SRC_ROOT}/Robos/src/Robos
                       ${OUT_ROOT}/Robos )
 
     # give other subprojects a chance to search for libraries and header
@@ -82,25 +82,53 @@ if( BUILD_ROBOS )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos" )
 endif()
 
+if( BUILD_TESTMATHUTILS )
+    # TestMathUtils library
+    add_subdirectory( ${SRC_ROOT}/TestMathUtils/src/TestMathUtils
+                      ${OUT_ROOT}/TestMathUtils )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/TestMathUtils" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TestMathUtils" )
+endif()
+
+if( BUILD_TESTMATHCLIENT )
+    # TestMathUtils library
+    add_subdirectory( ${SRC_ROOT}/TestMathClient/src/TestMathClient
+                      ${OUT_ROOT}/TestMathClient )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/TestMathClient" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TestMathClient" )
+endif()
+
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 
     if( BUILD_LOGGING )
         # Logger unit tests
-        add_subdirectory( ${SRC_ROOT}/src/Logging/unitTest
+        add_subdirectory( ${SRC_ROOT}/Logging/src/Logging/unitTest
                           ${OUT_ROOT}/LoggerUnit )
     endif()
 
     if( BUILD_ASYNC )
         # Async unit tests
-        add_subdirectory( ${SRC_ROOT}/src/Async/unitTest
+        add_subdirectory( ${SRC_ROOT}/Execution/src/Async/unitTest
                           ${OUT_ROOT}/AsyncUnit )
     endif()
 
     if( BUILD_ROBOS )
         # Robos unit tests
-        # add_subdirectory( ${SRC_ROOT}/src/Robos/unitTest
+        # add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
         #                   ${OUT_ROOT}/LoggerUnit )
+    endif()
+
+    if( BUILD_TESTMATHCLIENT )
+        # TestMathClient unit tests
+        add_subdirectory( ${SRC_ROOT}/TestMathClient/src/TestMathClient/unitTest
+                          ${OUT_ROOT}/TestMathClientUnit )
     endif()
 
 endif()

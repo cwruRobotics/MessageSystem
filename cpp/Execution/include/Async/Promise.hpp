@@ -88,11 +88,15 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
     std::string& childSchedulerId)
 {
     PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >();
+    auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
+    {
+        auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
+        return pBoundChildFunction;
+    };
     IChainLinkerPtr pChain =
         std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
-            std::dynamic_pointer_cast<Promise<PROMISE_RESULT> >(shared_from_this()),
+            pContinuationFunction,
             pSuccessor,
-            pFunc,
             childSchedulerId
         );
     this->AddSuccessor(pChain, true);

@@ -22,10 +22,9 @@ namespace Async
     {
     private:
 
-        std::shared_ptr<Promise<PARENT_TYPE> >  _pParent;
-        std::shared_ptr<Promise<CHILD_TYPE> >   _pChild;
-        std::function<CHILD_TYPE(PARENT_TYPE)>  _pChildFunction;
-        std::string                             _childSchedulerId;
+        std::function<std::function<CHILD_TYPE()>()>    _pResolutionFunction;
+        std::shared_ptr<Promise<CHILD_TYPE> >           _pChild;
+        std::string                                     _childSchedulerId;
 
     protected:
 
@@ -33,10 +32,9 @@ namespace Async
 
     public:
 
-        SimpleChainLinker(std::shared_ptr<Promise<PARENT_TYPE> > pParent,
-            std::shared_ptr<Promise<CHILD_TYPE> > pChild,
-            std::function<CHILD_TYPE(PARENT_TYPE)> pFunction, std::string id) : _pParent(pParent),
-            _pChild(pChild), _pChildFunction(pFunction), _childSchedulerId(id)
+        SimpleChainLinker(std::function<std::function<CHILD_TYPE()>()> pResolutionFunction,
+            std::shared_ptr<Promise<CHILD_TYPE> > pChild, std::string id) : _pChild(pChild),
+            _pResolutionFunction(pResolutionFunction), _childSchedulerId(id)
         {
         }
 
@@ -55,12 +53,7 @@ namespace Async
     template<typename PARENT_TYPE, typename CHILD_TYPE>
     Types::Result_t SimpleChainLinker<PARENT_TYPE, CHILD_TYPE>::ApplyFunctionToChild()
     {
-        PARENT_TYPE value = this->_pParent->GetResult();
-        std::function<CHILD_TYPE(PARENT_TYPE)> pFunc = this->_pChildFunction;
-        this->_pChild->AttachMainFunction([value, pFunc]() -> CHILD_TYPE
-        {
-            return pFunc(value);
-        });
+        this->_pChild->AttachMainFunction(this->_pResolutionFunction());
 
         EntryPoint::IEnginePtr pEngine = GetStaticEngine();
         if (!pEngine->GetScheduler(this->_childSchedulerId))
@@ -68,7 +61,7 @@ namespace Async
             pEngine->StartScheduler(this->_childSchedulerId);
         }
         this->_pChild->Schedule(pEngine->GetScheduler(this->_childSchedulerId));
-        this->_pParent = nullptr;
+        // this->_pParent = nullptr;
         return Types::Result_t::SUCCESS;
     }
 

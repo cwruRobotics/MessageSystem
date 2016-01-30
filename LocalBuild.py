@@ -8,6 +8,7 @@ import sys
 # PYTHON PROJECT IMPORTS
 sys.path.append("scripts")  # now we can import modules from <currentDirectory>/scripts
 import LocalBuildRules
+import GlobalBuildRules
 import Utilities
 import FileSystem
 

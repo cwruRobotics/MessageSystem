@@ -22,7 +22,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( Robos CXX )
+project( Utilities CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE )
@@ -45,36 +45,37 @@ set( PROJECT_VERSION_PATCH "0" )
 # Logging library
 
 # Source files
-set( ROBOS_SRCS
+set( UTILITIES_SRCS
     # logging
-    ${CONFIG_ROOT}/RobosLoggingConfig.cpp
+    ${CONFIG_ROOT}/UtilitiesLoggingConfig.cpp
 
-    ${SRC_ROOT}/Robos/MessageBase.cpp
-    ${SRC_ROOT}/Robos/NodeBase.cpp
-    ${SRC_ROOT}/Robos/NodeDatabase.cpp
-    ${SRC_ROOT}/Robos/MasterNode.cpp
+    # utilities
+    ${SRC_ROOT}/Utilities/Semaphore.cpp
 
     # factories
-    # ${SRC_ROOT}/Robos/Factories/EngineFactory.cpp
+
 )
 
 # Public header files (installed together with libraries)
-set( ROBOS_PUBLIC_HEADERS
-    ${INC_ROOT}/Robos/LibraryExport.hpp
-    ${INC_ROOT}/Robos/MessageBase.hpp
-    ${INC_ROOT}/Robos/NodeBase.hpp
+set( UTILITIES_PUBLIC_HEADERS
+    ${INC_ROOT}/Utilities/LibraryExport.hpp
+    ${INC_ROOT}/Utilities/Semaphore.hpp
+    ${INC_ROOT}/Utilities/btree.h
+    ${INC_ROOT}/Utilities/btree_map.h
+    ${INC_ROOT}/Utilities/btree_multimap.h
+    ${INC_ROOT}/Utilities/btree_multiset.h
+    ${INC_ROOT}/Utilities/btree_set.h
 )
 
-set( ROBOS_PRIVATE_HEADERS
+set( UTILITIES_PRIVATE_HEADERS
     # logging
-    ${CONFIG_ROOT}/RobosLoggingConfig.hpp
+    ${CONFIG_ROOT}/UtilitiesLoggingConfig.hpp
 
-    ${INC_ROOT}/Robos/NodeDatabase.hpp
-    ${INC_ROOT}/Robos/MasterNode.hpp
+    # factories
 )
 
 # setup visual studio source groups
-source_group( PublicHeaders FILES ${ROBOS_PUBLIC_HEADERS} )
+source_group( PublicHeaders FILES ${UTILITIES_PUBLIC_HEADERS} )
 
 # Directories to search for header files
 set( INCLUDE_DIRS
@@ -87,10 +88,12 @@ set( INCLUDE_DIRS
 # load external modules
 # (none yet)...Logging does not depend on anything else
 
+set( ENABLE_EXTERNAL_STRUCTURES_TEST "OFF" )
+
 # set target specific compiler definitions
 # this should ONLY be definitions needed to build the source code.
 # examples: macros ON/OFF, etc.
-set( ROBOS_COMPILE_DEFINITIONS )
+set( UTILITIES_COMPILE_DEFINITIONS )
 
 # check required libraries and header files and such.
 # this will fail CMake if set to False due to required
@@ -119,7 +122,7 @@ set( DEPENDENCY_CHECK FALSE )
 
 include( GNUInstallDirs )
 
-# set( ROBOS_LIBS )
+# set( UTILITIES_LIBS )
 # if( ENABLE_LOGGING )
 #     find_package( Logging REQUIRED )
 #     if( LOGGING_FOUND )
@@ -130,20 +133,18 @@ include( GNUInstallDirs )
 #         else()
 #             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
 #         endif()
-# 
-#         list( APPEND ROBOS_LIBS LOGGING )
-# 
+
+#         list( APPEND UTILITIES_LIBS LOGGING )
+
 #     else()
 #         message( WARNING "Logging not found...skipping usage" )
 #     endif()
 # endif()
-# list( LENGTH ROBOS_LIBS ROBOS_LIBS_LENGTH )
+# list( LENGTH UTILITIES_LIBS UTILITIES_LIBS_LENGTH )
 
 set( ${PROJECT_NAME}_IMPORTED_LIST
-    # all libraries to import when building Robos
+    # all libraries to import when building Async
     "Logging"
-    "Utilities"
-    "Async"
 )
 include(ProjectLinker)
 
@@ -163,19 +164,19 @@ include_directories( ${INCLUDE_DIRS} )
 #
 
 # Logging library
-set( ROBOS_LIB_NAME ${PROJECT_NAME} )
+set( UTILITIES_LIB_NAME ${PROJECT_NAME} )
 
 # Shared Library export header file supporte
 include( GenerateExportHeader )
 
-add_library( ${ROBOS_LIB_NAME} SHARED ${ROBOS_SRCS} ${ROBOS_PUBLIC_HEADERS} ${ROBOS_PRIVATE_HEADERS})
+add_library( ${UTILITIES_LIB_NAME} SHARED ${UTILITIES_SRCS} ${UTILITIES_PUBLIC_HEADERS} ${UTILITIES_PRIVATE_HEADERS})
 if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
-    target_link_libraries( ${ROBOS_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+    target_link_libraries( ${UTILITIES_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
 endif()
 
-set_target_properties( ${ROBOS_LIB_NAME} PROPERTIES
-    PUBLIC_HEADER       "${ROBOS_PUBLIC_HEADERS}"
-    COMPILE_DEFINITIONS "${ROBOS_COMPILE_DEFINITIONS}"
+set_target_properties( ${UTILITIES_LIB_NAME} PROPERTIES
+    PUBLIC_HEADER       "${UTILITIES_PUBLIC_HEADERS}"
+    COMPILE_DEFINITIONS "${UTILITIES_COMPILE_DEFINITIONS}"
     SOVERSION           "${PROJECT_VERSION_MAJOR}"
     VERSION             "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
@@ -185,11 +186,11 @@ set_target_properties( ${ROBOS_LIB_NAME} PROPERTIES
 # -------------------------------------------------------------------------------
 
 # install targets
-install( TARGETS ${ROBOS_LIB_NAME}
+install( TARGETS ${UTILITIES_LIB_NAME}
          RUNTIME        DESTINATION ${CMAKE_INSTALL_BINDIR}
          LIBRARY        DESTINATION ${CMAKE_INSTALL_LIBDIR}
          ARCHIVE        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Robos
+         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Utilities
 )
 
 if( MSVC )

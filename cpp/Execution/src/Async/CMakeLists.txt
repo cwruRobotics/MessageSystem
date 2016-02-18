@@ -57,6 +57,7 @@ set( ASYNC_SRCS
     ${SRC_ROOT}/Async/SettlementStates.cpp
     ${SRC_ROOT}/Async/ContinuableWorkItem.cpp
     ${SRC_ROOT}/Async/PromiseBase.cpp
+    ${SRC_ROOT}/Async/ConcurrencyStates.cpp
     ${SRC_ROOT}/Async/WorkerThread.cpp
     ${SRC_ROOT}/Async/Engine.cpp
 
@@ -74,9 +75,14 @@ set( ASYNC_PUBLIC_HEADERS
     ${INC_ROOT}/Async/IScheduler.hpp
     ${INC_ROOT}/Async/IChainLinker.hpp
     ${INC_ROOT}/Async/IContinuableWorkItem.hpp
+    ${INC_ROOT}/Async/IPromise.hpp
     ${INC_ROOT}/Async/PromiseBase.hpp
     ${INC_ROOT}/Async/Promise.hpp
+    ${INC_ROOT}/Async/ConcurrencyStates.hpp
+    ${INC_ROOT}/Async/JobPriorities.hpp
+    ${INC_ROOT}/Async/IThread.hpp
     ${INC_ROOT}/Async/IEngine.hpp
+    ${INC_ROOT}/Async/SimpleChainLinker.hpp
     ${INC_ROOT}/Async/AsyncExecution.hpp
 )
 
@@ -89,10 +95,8 @@ set( ASYNC_PRIVATE_HEADERS
     ${INC_ROOT}/Async/Scheduler.hpp
     ${INC_ROOT}/Async/WorkItem.hpp
     ${INC_ROOT}/Async/ContinuableWorkItem.hpp
-    ${INC_ROOT}/Async/IThread.hpp
     ${INC_ROOT}/Async/WorkerThread.hpp
     ${INC_ROOT}/Async/Engine.hpp
-    ${INC_ROOT}/Async/SimpleChainLinker.hpp
 )
 
 # setup visual studio source groups
@@ -117,7 +121,7 @@ set( ASYNC_COMPILE_DEFINITIONS )
 # check required libraries and header files and such.
 # this will fail CMake if set to False due to required
 # modules requiring their own dependencies
-set( DEPENDENCY_CHECK TRUE )
+set( DEPENDENCY_CHECK FALSE )
 
 # OS specific files and definitions
 # if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
@@ -141,23 +145,31 @@ set( DEPENDENCY_CHECK TRUE )
 
 include( GNUInstallDirs )
 
-set( ASYNC_LIBS )
-if( ENABLE_LOGGING )
-    find_package( Logging REQUIRED )
-    if( LOGGING_FOUND )
-        add_library( LOGGING SHARED IMPORTED )
-        if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-            set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-        endif()
-        set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
+# set( ASYNC_LIBS )
+# if( ENABLE_LOGGING )
+#     find_package( Logging REQUIRED )
+#     if( LOGGING_FOUND )
+#         add_library( LOGGING SHARED IMPORTED )
+#         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
+#             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
+#         else()
+#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
+#         endif()
+# 
+#         list( APPEND ASYNC_LIBS LOGGING )
+# 
+#     else()
+#         message( WARNING "Logging not found...skipping usage" )
+#     endif()
+# endif()
+# list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
 
-        list( APPEND ASYNC_LIBS LOGGING )
-
-    else()
-        message( WARNING "Logging not found...skipping usage" )
-    endif()
-endif()
-list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
+set( ${PROJECT_NAME}_IMPORTED_LIST
+    # all libraries to import when building Async
+    "Logging"
+)
+include(ProjectLinker)
 
 if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )
@@ -181,8 +193,8 @@ set( ASYNC_LIB_NAME ${PROJECT_NAME} )
 include( GenerateExportHeader )
 
 add_library( ${ASYNC_LIB_NAME} SHARED ${ASYNC_SRCS} ${ASYNC_PUBLIC_HEADERS} ${ASYNC_PRIVATE_HEADERS})
-if( ${ASYNC_LIBS_LENGTH} GREATER 0 )
-    target_link_libraries( ${ASYNC_LIB_NAME} ${ASYNC_LIBS} )
+if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${ASYNC_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
 endif()
 
 set_target_properties( ${ASYNC_LIB_NAME} PROPERTIES
@@ -205,10 +217,8 @@ install( TARGETS ${ASYNC_LIB_NAME}
 )
 
 if( MSVC )
-    get_filename_component( PDB_DIR ${OUT_ROOT}/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
-    install( DIRECTORY ${PDB_DIR}
-        DESTINATION .
-        FILES_MATCHING
-        PATTERN ${ASYNC_LIB_NAME}.pdb
+    get_filename_component( PDB_DIR ${OUT_ROOT}/stuff/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
+    install( FILES ${PDB_DIR}/${PROJECT_NAME}.pdb
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 endif()

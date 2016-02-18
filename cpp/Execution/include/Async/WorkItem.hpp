@@ -4,7 +4,6 @@
 #define ASYNC_WORKITEM_HPP
 
 // SYSTEM INCLUDES
-#include <stdexcept>
 #include <mutex>
 
 // C++ PROJECT INCLUDES
@@ -43,7 +42,7 @@ namespace Async
 
         void SetException(const std::exception_ptr pException);
 
-        virtual Types::Result_t Execute();
+        virtual Types::Result_t Execute() override;
 
         void Finish();
 
@@ -68,7 +67,7 @@ namespace Async
 
         const uint64_t GetId() override;
 
-        std::exception_ptr GetException() const;
+        virtual std::exception_ptr GetException() const override;
 
         const std::string GetStateAsString();
 

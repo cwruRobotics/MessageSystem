@@ -15,13 +15,15 @@ class LocalEnvironment(object):
         # print("Injecting static environment variables")
         env = os.environ
         for item in self._static_environment_variables.items():
-            env[item[0]] = item[1]
+            if item[0] not in env:
+                env[item[0]] = item[1]
 
     def injectProjectSpecificEnvironmentVariables(self):
         # print("Injecting project specific environment variables")
         env = os.environ
         for item in self._project_specific_static_env_vars.items():
-            env[item[0]] = item[1]
+            if item[0] not in env:
+                env[item[0]] = item[1]
 
     def injectDynamicEnvironmentVariables(self):
         env = os.environ
@@ -30,11 +32,16 @@ class LocalEnvironment(object):
             # print("Injecting dynamic environment variables")
             with open(toAdd) as file:
                 splitLine = None
+                keyToAdd = None
+                valueToAdd = None
                 line = 1
                 for line in file:
                     splitLine = line.split('=')
                     if len(splitLine) == 2:
-                        env[splitLine[0].trim()] = splitLine[1].trim()
+                        keyToAdd = splitLine[0].trim()
+                        valueToAdd = splitLine[1].trim()
+                        if keyToAdd not in env:
+                            env[keyToAdd] = valueToAdd
                     else:
                         raise Exception("invalid syntax in [%s] at line [%s] (line 1 is beginning of file)" %
                                         (toAdd, line))

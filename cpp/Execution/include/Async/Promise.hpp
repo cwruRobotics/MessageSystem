@@ -63,7 +63,8 @@ namespace Async
 
         std::exception_ptr GetError() override
         {
-            return this->_internalWorkItem->GetException();
+            return std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
+                ->GetException();
         }
 
         void AttachMainFunction(std::function<PROMISE_RESULT()> pFunc)
@@ -88,18 +89,27 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
     std::string& childSchedulerId)
 {
     PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >();
+
+    // this is a safe way to transfer the result of the parent Promise to
+    // the child Promise
     auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
     {
         auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
         return pBoundChildFunction;
     };
+
+    // create the linker to be executed on success of this Promise
     IChainLinkerPtr pChain =
         std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
             pContinuationFunction,
             pSuccessor,
             childSchedulerId
         );
+
+    // "true" for "execute on success"
     this->AddSuccessor(pChain, true);
+
+    // if the Promise has already resolved successfully, execute the chain
     if (this->GetState() == States::SettlementState::SUCCESS)
     {
         pChain->Chain();
@@ -156,7 +166,8 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
 
         std::exception_ptr GetError() override
         {
-            return this->_internalWorkItem->GetException();
+            return std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
+                ->GetException();
         }
 
         bool PreconditionsMet()

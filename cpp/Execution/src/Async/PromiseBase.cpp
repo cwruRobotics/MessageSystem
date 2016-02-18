@@ -2,10 +2,20 @@
 
 
 // C++ PROJECT INCLUDES
+#include "Async/ContinuableWorkItem.hpp"
 #include "Async/PromiseBase.hpp"
 
 namespace Async
 {
+
+    PromiseBase::PromiseBase() : _internalWorkItem(std::make_shared<ContinuableWorkItem>())
+    {
+    }
+
+    PromiseBase::~PromiseBase()
+    {
+    }
+
     void PromiseBase::AddSuccessor(IChainLinkerPtr successorGenerator,
         bool onSuccess)
     {
@@ -14,7 +24,8 @@ namespace Async
 
     const States::SettlementState PromiseBase::GetState()
     {
-        return this->_internalWorkItem->GetState();
+        return std::dynamic_pointer_cast<ContinuableWorkItem>(this->_internalWorkItem)
+            ->GetState();
     }
 
     bool PromiseBase::PreconditionsMet()
@@ -40,7 +51,8 @@ namespace Async
 
     std::mutex& PromiseBase::GetExecutionMutex()
     {
-        return this->_internalWorkItem->GetExecutionMutex();
+        return std::dynamic_pointer_cast<ContinuableWorkItem>(this->_internalWorkItem)
+            ->GetExecutionMutex();
     }
 
 }

@@ -60,6 +60,17 @@ if( BUILD_LOGGING )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
 endif()
 
+if( BUILD_UTILITIES )
+    # Utilities library
+    add_subdirectory( ${SRC_ROOT}/Utilities/src/Utilities
+                      ${OUT_ROOT}/Utilities )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Utilities" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Utilities" )
+endif()
+
 if( BUILD_ASYNC )
     # Async library
     add_subdirectory( ${SRC_ROOT}/Execution/src/Async
@@ -82,17 +93,6 @@ if( BUILD_ROBOS )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos" )
 endif()
 
-if( BUILD_TESTMATHUTILS )
-    # TestMathUtils library
-    add_subdirectory( ${SRC_ROOT}/TestMathUtils/src/TestMathUtils
-                      ${OUT_ROOT}/TestMathUtils )
-
-    # give other subprojects a chance to search for libraries and header
-    # files created before the "make install"
-    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/TestMathUtils" )
-    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TestMathUtils" )
-endif()
-
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 
@@ -100,6 +100,12 @@ if( RUN_UNIT_TESTS )
         # Logger unit tests
         add_subdirectory( ${SRC_ROOT}/Logging/src/Logging/unitTest
                           ${OUT_ROOT}/LoggerUnit )
+    endif()
+
+    if( BUILD_UTILITIES )
+        # Utilities unit tests
+        add_subdirectory( ${SRC_ROOT}/Utilities/src/Utilities/unitTest
+                          ${OUT_ROOT}/UtilitiesUnit )
     endif()
 
     if( BUILD_ASYNC )
@@ -110,8 +116,8 @@ if( RUN_UNIT_TESTS )
 
     if( BUILD_ROBOS )
         # Robos unit tests
-        # add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
-        #                   ${OUT_ROOT}/LoggerUnit )
+        add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
+                          ${OUT_ROOT}/LoggerUnit )
     endif()
 
 endif()

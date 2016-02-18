@@ -71,5 +71,28 @@ namespace Tests
         REQUIRE( !engine.GetScheduler(schedulerId)->IsRunning() );
     }
 
+    void CreateScheduler(EntryPoint::IEnginePtr pEngine, std::string& schedulerId)
+    {
+        pEngine->StartScheduler(schedulerId);
+    }
+
+    void CheckSchedulerExists(EntryPoint::IEnginePtr pEngine, std::string& schedulerId)
+    {
+        REQUIRE( pEngine->GetScheduler(schedulerId) != nullptr );
+    }
+
+    TEST_CASE("Testing static engine functionality", "[Engine_unit]")
+    {
+        std::string schedulerId = "testScheduler";
+        CreateScheduler(GetStaticEngine(), schedulerId);
+
+        ISchedulerPtr pScheduler = GetStaticEngine()->GetScheduler(schedulerId);
+        REQUIRE( pScheduler != nullptr );
+
+        CheckSchedulerExists(GetStaticEngine(), schedulerId);
+
+        // GetStaticEngine()->ShutdownScheduler(schedulerId);
+    }
+
 } // end of namespace Tests
 } // end of namespace Async

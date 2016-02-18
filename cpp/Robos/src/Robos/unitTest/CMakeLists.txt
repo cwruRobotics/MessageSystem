@@ -21,7 +21,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( AsyncUnitTests CXX )
+project( RobosUnitTests CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
@@ -42,7 +42,7 @@ if( RUN_UNIT_TESTS )
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
 
-    # set( ASYNC_LIBS )
+    # set( ROBOS_LIBS )
     # if( ENABLE_LOGGING )
     #     find_package( Logging REQUIRED )
     #     if( LOGGING_FOUND )
@@ -54,16 +54,16 @@ if( RUN_UNIT_TESTS )
     #             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
     #         endif()
 
-    #         list( APPEND ASYNC_LIBS LOGGING )
+    #         list( APPEND ROBOS_LIBS LOGGING )
 
     #     else()
     #         message( WARNING "Logging not found...skipping usage" )
     #     endif()
     # endif()
-    # list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
+    # list( LENGTH ROBOS_LIBS ROBOS_LIBS_LENGTH )
 
     set( ${PROJECT_NAME}_IMPORTED_LIST
-        # all libraries to import when building Async
+        # all libraries to import when building Robos
         "Logging"
     )
     include(ProjectLinker)
@@ -79,47 +79,26 @@ if( RUN_UNIT_TESTS )
         # ---------------------------------------------------------------------
 
         # source files
-        set( ASYNC_UNITTEST_SOURCES
+        set( ROBOS_UNITTEST_SOURCES
             # Logging sources
-            ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
+            ${CONFIG_ROOT}/RobosLoggingConfig.cpp
 
-            # Async sources
-            ${SRC_ROOT}/../Result.cpp
-            ${SRC_ROOT}/../WorkItemStates.cpp
-            ${SRC_ROOT}/../WorkItemStateMachine.cpp
-            ${SRC_ROOT}/../Scheduler.cpp
-            ${SRC_ROOT}/../WorkItem.cpp
-            ${SRC_ROOT}/../SettlementStates.cpp
-            ${SRC_ROOT}/../ContinuableWorkItem.cpp
-            ${SRC_ROOT}/../PromiseBase.cpp
-            ${SRC_ROOT}/../WorkerThread.cpp
-            ${SRC_ROOT}/../Engine.cpp
-            ${SRC_ROOT}/../Factories/EngineFactory.cpp
+            # Robos sources
+            ${SRC_ROOT}/../MessageBase.cpp
+            ${SRC_ROOT}/../NodeDatabase.cpp
 
-            # AsyncUnitTests sources
+            # RobosUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
-            ${SRC_ROOT}/TestUtilities.cpp
-            ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.cpp
-            ${SRC_ROOT}/MockScheduler.cpp
-            ${SRC_ROOT}/WorkItemStateMachine_unit.cpp
-            ${SRC_ROOT}/WorkItem_unit.cpp
-            ${SRC_ROOT}/WorkItemAndScheduler_unit.cpp
-            ${SRC_ROOT}/ContinuableWorkItem_unit.cpp
-            ${SRC_ROOT}/Promise_unit.cpp
-            ${SRC_ROOT}/WorkerThread_unit.cpp
-            ${SRC_ROOT}/Engine_unit.cpp
-            ${SRC_ROOT}/AsyncExecution_unit.cpp
-            ${SRC_ROOT}/SimpleContinuation_unit.cpp
+            ${SRC_ROOT}/MessageBase_unit.cpp
+            ${SRC_ROOT}/NodeDatabase_unit.cpp
         )
 
-        set( ASYNC_UNITTEST_HEADERS
-            # apparently we don't need to include Async headers.
+        set( ROBOS_UNITTEST_HEADERS
+            # apparently we don't need to include Robos headers.
             # I assume its because we are not exporting them.
 
-            # AsyncUnitTests headers
-            ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
-            ${SRC_ROOT}/TestUtilities.hpp
-            ${SRC_ROOT}/MockScheduler.hpp
+            # RobosUnitTests headers
+            # ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
         )
 
         # directories to search for header files
@@ -146,11 +125,11 @@ if( RUN_UNIT_TESTS )
             message(SEND_ERROR "OS [${CMAKE_SYSTEM_NAME}] not supported")
         endif()
 
-        add_definitions(-DASYNC_STATIC_DEFINE) #
+        add_definitions(-DROBOS_STATIC_DEFINE) #
 
         include_directories( ${INCLUDE_DIRS} )
 
-        add_executable( ${PROJECT_NAME} ${ASYNC_UNITTEST_SOURCES} )
+        add_executable( ${PROJECT_NAME} ${ROBOS_UNITTEST_SOURCES} )
         if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
             target_link_libraries( ${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
         endif()

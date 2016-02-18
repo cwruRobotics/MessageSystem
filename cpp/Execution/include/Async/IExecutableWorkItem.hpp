@@ -4,7 +4,7 @@
 #define ASYNC_IEXECUTABLEWORKITEM_HPP
 
 // SYSTEM INCLUDES
-
+#include <stdexcept>
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
@@ -50,6 +50,8 @@ namespace Concurrency
         // main function. This function is intended to be quick,
         // and should execute small follow up logic, or cleanup logic.
         virtual void AttachPosteriorFunction(FunctionPtr pFunc) = 0;
+
+        virtual std::exception_ptr GetException() const = 0;
 
     };
 

@@ -153,10 +153,8 @@ install( TARGETS ${LOGGING_LIB_NAME}
 )
 
 if( MSVC )
-    get_filename_component( PDB_DIR ${OUT_ROOT}/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
-    install( DIRECTORY ${PDB_DIR}
-        DESTINATION .
-        FILES_MATCHING
-        PATTERN ${LOGGING_LIB_NAME}.pdb
+    get_filename_component( PDB_DIR ${OUT_ROOT}/stuff/${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ABSOLUTE )
+    install( FILES ${PDB_DIR}/${PROJECT_NAME}.pdb
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 endif()

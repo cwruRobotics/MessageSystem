@@ -8,7 +8,8 @@
 
 // C++ PROJECT INCLUDES
 #include "Async/IExecutableWorkItem.hpp"
-#include "Async/ContinuableWorkItem.hpp"
+#include "Async/IContinuableWorkItem.hpp"
+#include "Async/SettlementStates.hpp"
 #include "Async/LibraryExport.hpp"
 
 // project namespace
@@ -25,20 +26,16 @@ namespace Async
         // this is protection. It separates the public methods
         // of the internal representation from the external methods
         // available to clients.
-        ContinuableWorkItemPtr _internalWorkItem;
+        IContinuableWorkItemPtr _internalWorkItem;
 
     protected:
 
         void AddSuccessor(IChainLinkerPtr successorGenerator, bool onSuccess=true);
 
     public:
-        PromiseBase() : _internalWorkItem(std::make_shared<ContinuableWorkItem>())
-        {
-        }
+        PromiseBase();
 
-        ~PromiseBase()
-        {
-        }
+        ~PromiseBase();
 
         const States::SettlementState GetState();
 

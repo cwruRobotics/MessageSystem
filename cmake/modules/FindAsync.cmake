@@ -1,5 +1,4 @@
-
-find_path( LOGGING_INCLUDE_DIRS Logging/ILogger.hpp
+find_path( ASYNC_INCLUDE_DIRS Async/AsyncExecution.hpp
     HINTS
         ${CMAKE_PREFIX_PATH}/include
 )
@@ -7,23 +6,23 @@ find_path( LOGGING_INCLUDE_DIRS Logging/ILogger.hpp
 # find libraries depending on OS.
 if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
     # handle dll AND lib?
-    find_path( LOGGING_SHARED_LIB Logging.dll
+    find_path( ASYNC_SHARED_LIB Async.dll
         HINTS
             ${CMAKE_PREFIX_PATH}/bin
     )
-    find_library( LOGGING_LIB Logging
+    find_library( ASYNC_LIB Async
         HINTS
             ${CMAKE_PREFIX_PATH}/lib
     )
 else()
-    find_library( LOGGING_SHARED_LIB Logging
+    find_library( ASYNC_SHARED_LIB Async
         HINTS
             ${CMAKE_PREFIX_PATH}/lib
     )
 endif()
 
-if( NOT LOGGING_INCLUDE_DIRS OR NOT LOGGING_SHARED_LIB )
-    set( LOGGING_FOUND FALSE )
+if( NOT ASYNC_INCLUDE_DIRS OR NOT ASYNC_SHARED_LIB )
+    set( ASYNC_FOUND FALSE )
 else()
-    set( LOGGING_FOUND TRUE )
+    set( ASYNC_FOUND TRUE )
 endif()

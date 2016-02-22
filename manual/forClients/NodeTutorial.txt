@@ -1,0 +1,67 @@
+After building Robos, if you navigate to the /build/<debug|release>/out/include/Robos directory,
+you will see a file named NodeBase.hpp. This is the class to override for client Nodes to
+be managed by Robos. To derive client Nodes, follow the following steps:
+
+
+1) Create your file <MyNode>.hpp
+2) "#include <Robos/NodeBase.hpp>" and "#include <Robos/MessageBase.hpp>" (if you are using the provided build system)
+3) class <MyClass> : public NodeBase {};
+4) Override MyClass::MainCallbackImpl(MessageBasePtr& pMessage);
+
+Clients can define whatever callbacks they want, but NodeBase::MainCallback(MessageBasePtr& pMessage) is called
+by Robos. This method is non-customizable because it is a well-defined entry point. However, all
+NodeBase::MainCallback(MessageBasePtr& pMessage) does is call NodeBase::MainCallbackImpl(MessageBasePtr& pMessage),
+which MUCH be overriden (it is declared pure virtual in NodeBase). It is up to the client to invoke their own
+functionality by writing their own version of NodeBase::MainCallbackImpl. An example is as follows:
+
+
+//SYSTEM INCLUDES
+#include <memory>
+#include <Robos/NodeBase.hpp>
+#include <Robos/MessageBase.hpp>
+
+//C++ PROJECT INCLUDES
+// include whatever you need for your project.
+
+class MyClass : public Robos::NodeBase
+{
+private:
+
+    // your own private members and methods.
+
+    Robos::MessageBasePtr& MainCallbackImpl(Robos::MessageBasePtr& pMessage) override
+    // implementation should be in MyClass.cpp unless MyClass is templated
+    {
+        if(pMessage->topic == "My_Message_Type_1")
+        {
+            // call callback that uses My_Message_Type_1 message type
+            return this->My_Callback_1(
+                // cast pMessage to appropriate type.
+                std::dynamic_ptr_cast<My_Message_Type_1_Ptr>(pMessage)
+            );
+        }
+        else if(pMessage->topic == "My_Message_Type_2")
+        {
+            // otherwise call other functionality
+            return this->My_Callback_2(
+                // cast pMessage to appropriate type
+                std::dynamic_ptr_cast<My_Message_Type_2_Ptr>(pMessage)
+            );
+        }
+        return nullptr;
+    }
+
+public:
+
+    // your constructor
+    MyClass();
+
+    // your destructor
+    ~MyClass();
+
+    // your callbacks
+    Robos::MessageBasePtr& My_Callback_1(My_Message_Type_1_Ptr& pMessage);
+
+    Robos::MessageBasePtr& My_Callback_2(My_Message_Type_2_Ptr& pMessage);
+
+};

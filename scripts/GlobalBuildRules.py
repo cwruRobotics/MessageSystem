@@ -171,7 +171,7 @@ class GlobalBuild(object):
         self.generateProjectVersion()
         self.generateLoggingConfig()
 
-    def getCMakeArgs(self, pathPrefix, workingDirectory):
+    def getCMakeArgs(self, pathPrefix, workingDirectory, test, logging):
         CMakeProjectDir = "projects"
         relCMakeProjectDir = os.path.relpath(CMakeProjectDir,
                                              workingDirectory)
@@ -236,8 +236,8 @@ class GlobalBuild(object):
             "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
             "-DBUILD_%s=ON" % self._project_name.upper(),
             "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
-            "-DRUN_UNIT_TESTS=%s" % (self._custom_args["test"] if self._custom_args.get("test") is not None else "OFF"),
-            "-DENABLE_LOGGING=%s" % (self._custom_args["logging"] if self._custom_args.get("logging") is not None else "OFF" ),
+            "-DRUN_UNIT_TESTS=%s" % test,
+            "-DENABLE_LOGGING=%s" % logging,
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
@@ -256,11 +256,14 @@ class GlobalBuild(object):
     def package(self):
         print("packaging project [%s]" % self._project_name)
 
-    def runUnitTests(self, numTimesToRun=1):
+    def runUnitTests(self, iterations=1, test="OFF"):
         print("Running unit tests for project [%s]" % self._project_name)
+        if test == "OFF":
+            print("Unit tests disables for project [%s]" % self._project_name)
+            return
         installRoot = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  self._project_name)
-        for iteration in range(0, int(numTimesToRun)):
-            print("Running unit tests [%s/%s]" % (iteration + 1, numTimesToRun))
+        for iteration in range(0, int(iterations)):
+            print("Running unit tests [%s/%s]" % (iteration + 1, iterations))
             for testToRun in self._tests_to_run:
                 if platform.system() == "Windows":
                     testToRun += ".exe"
@@ -269,7 +272,7 @@ class GlobalBuild(object):
                     Utilities.PFork(appToExecute=executablePath, failOnError=True)
                 else:
                     print("%s does NOT exist!" % executablePath)
-            if numTimesToRun > 1:
+            if iterations > 1:
                 print("\n\n")
 
     # executes a particular part of the build process and fails the build
@@ -339,7 +342,7 @@ def help():
     print "         -configuration <project>    the configuration of the build (debug or release)."
     print "         -projects  <projects...>    the projects that will be built and the order in which"
     print "                                     they are built."
-    print "         -numTimesToRun <num>        the number of times that unit tests will be run as part"
+    print "         -iterations <num>           the number of times that unit tests will be run as part"
     print "                                     or the build process."
     print "         -logging <ON|OFF>           enables or disables logging capabilites (default = OFF)."
     print "         -test <ON|OFF>              enables or disables running unit tests as part of build"

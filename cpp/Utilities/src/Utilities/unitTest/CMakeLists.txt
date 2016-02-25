@@ -39,6 +39,7 @@ get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ ABSO
 
 if( RUN_UNIT_TESTS )
     enable_testing()
+    set( ENABLE_EXTERNAL_STRUCTURES_TEST "OFF" )
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
 

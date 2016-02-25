@@ -18,7 +18,7 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-#pragma warning( disable : 4996 )
+// #pragma warning( disable : 4996 )
 
 // SYSTEM INCLUDES
 #include <cstdlib>

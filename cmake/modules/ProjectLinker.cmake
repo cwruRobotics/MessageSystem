@@ -19,6 +19,8 @@ function(LinkProjects Requirement )
             if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
                 set_property( TARGET ${ProjectToLinkUpper}_LIB_VAR PROPERTY
                               IMPORTED_IMPLIB ${${ProjectToLinkUpper}_LIB} )
+                # message("${ProjectToLink} IMPORTED_LIBRARY: ${${ProjectToLinkUpper}_SHARED_LIB}")
+                # message("${ProjectToLink} STATIC LIBRARY: ${${ProjectToLinkUpper}_LIB}")
             endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
             list( APPEND ${PROJECT_NAME}_IMPORTED_LIBS ${ProjectToLinkUpper}_LIB_VAR )

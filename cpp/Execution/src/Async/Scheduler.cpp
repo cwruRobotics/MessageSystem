@@ -1,5 +1,6 @@
 // SYSTEM INCLUDES
-
+#include <Logging/Factory.hpp>
+#include <Logging/ILogger.hpp>
 
 // C++ PROJECT INCLUDES
 #include "Async/Scheduler.hpp"
@@ -35,6 +36,8 @@ namespace Async
 
     void Scheduler::Shutdown()
     {
+        // Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("ConsoleLogger");
+        // LOG_INFO(pLogger, "%s", "Logging to Console!");
         if (this->_running)
         {
             this->_running = false;

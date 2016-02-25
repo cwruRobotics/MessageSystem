@@ -8,7 +8,7 @@
 #include <memory>
 
 // C++ PROJECT INCLUDES
-#include "Async/LibraryExport.hpp"
+// #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
 
 // project namespace
@@ -22,14 +22,17 @@ namespace Async
     // cannot have a virtual template method.
     // This interface is exported to clients.
     template<typename PROMISE_RESULT>
-    class ASYNC_API IPromise
+    class /*ASYNC_API*/ IPromise
     {
     protected:
         // virtual void SetMainFunction(
         //     std::function<Types::Result_t()> pFunc) = 0;
 
     public:
-        virtual ~IPromise() = default;
+
+        virtual ~IPromise()
+        {
+        }
 
         virtual PROMISE_RESULT GetResult() = 0;
 
@@ -45,7 +48,7 @@ namespace Async
     // void template specialization.
     // this template specialization is exported to clients.
     template<>
-    class ASYNC_API IPromise<void>
+    class /*ASYNC_API*/ IPromise<void>
     {
     protected:
         // virtual void SetFunction(

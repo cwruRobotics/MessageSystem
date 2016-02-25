@@ -10,7 +10,7 @@
 // C++ PROJECT INCLUDES
 #include "Async/SimpleChainLinker.hpp"
 #include "Async/IPromise.hpp"
-#include "Async/LibraryExport.hpp"
+// #include "Async/LibraryExport.hpp"
 #include "Async/PromiseBase.hpp"
 
 namespace Async
@@ -23,7 +23,7 @@ namespace Async
     using PromisePtr = std::shared_ptr<Promise<PROMISE_RESULT> >;
 
     template<typename PROMISE_RESULT>
-    class Promise : public PromiseBase, public IPromise<PROMISE_RESULT>
+    class /*ASYNC_API*/ Promise : public IPromise<PROMISE_RESULT>, public PromiseBase
     {
     private:
 
@@ -79,47 +79,41 @@ namespace Async
 
         template<typename NEXT_RESULT>
         PromisePtr<NEXT_RESULT> Then(std::function<NEXT_RESULT(PROMISE_RESULT)> pFunc,
-            std::string& childSchedulerId);
+            std::string& childSchedulerId)
+        {
+            PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >();
+
+            // this is a safe way to transfer the result of the parent Promise to
+            // the child Promise
+            auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
+            {
+                auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
+                return pBoundChildFunction;
+            };
+
+            // create the linker to be executed on success of this Promise
+            IChainLinkerPtr pChain =
+                std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
+                    pContinuationFunction,
+                    pSuccessor,
+                    childSchedulerId
+                );
+
+            // "true" for "execute on success"
+            this->AddSuccessor(pChain, true);
+
+            // if the Promise has already resolved successfully, execute the chain
+            if (this->GetState() == States::SettlementState::SUCCESS)
+            {
+                pChain->Chain();
+            }
+            return pSuccessor;
+        }
     };
-
-// #include "Async/SimpleChainLinker.hpp"
-template<typename PROMISE_RESULT>
-template<typename NEXT_RESULT>
-PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(PROMISE_RESULT)> pFunc,
-    std::string& childSchedulerId)
-{
-    PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >();
-
-    // this is a safe way to transfer the result of the parent Promise to
-    // the child Promise
-    auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
-    {
-        auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
-        return pBoundChildFunction;
-    };
-
-    // create the linker to be executed on success of this Promise
-    IChainLinkerPtr pChain =
-        std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
-            pContinuationFunction,
-            pSuccessor,
-            childSchedulerId
-        );
-
-    // "true" for "execute on success"
-    this->AddSuccessor(pChain, true);
-
-    // if the Promise has already resolved successfully, execute the chain
-    if (this->GetState() == States::SettlementState::SUCCESS)
-    {
-        pChain->Chain();
-    }
-    return pSuccessor;
-}
 
     
     template<typename PROMISE_RESULT, typename ARG1, typename ... ARGS>
-    class Promise<PROMISE_RESULT(ARG1, ARGS...)> : public IPromise<PROMISE_RESULT>,
+    class /*ASYNC_API*/ Promise<PROMISE_RESULT(ARG1, ARGS...)> : public IPromise<PROMISE_RESULT>,
         public PromiseBase,
         public std::enable_shared_from_this<Promise<PROMISE_RESULT(ARG1, ARGS...)> >
     {
@@ -130,7 +124,7 @@ PromisePtr<NEXT_RESULT> Promise<PROMISE_RESULT>::Then(std::function<NEXT_RESULT(
         std::atomic<bool>                               _argsGiven;
 
     public:
-        Promise() : PromiseBase(), _unboundFunction(),
+        Promise() : IPromise(), PromiseBase(), _unboundFunction(),
             _argsGiven(false)
         {
         }

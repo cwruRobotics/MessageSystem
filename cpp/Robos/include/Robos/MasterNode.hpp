@@ -3,13 +3,11 @@
 
 // SYSTEM INCLUDES
 #include <atomic>   // std::atomic
+#include <Async/AsyncExecution.hpp>     // Async::Execute
+#include <Async/Promise.hpp>            // Async::PromisePtr<...>::Then
 
 // C++ PROJECT INCLUDES
 #include "Utilities/Semaphore.hpp"
-
-#include "Async/AsyncExecution.hpp"
-#include "Async/Promise.hpp"
-
 #include "Robos/MessageBase.hpp"
 #include "Robos/NodeBase.hpp"
 #include "Robos/NodeDatabase.hpp"
@@ -20,7 +18,7 @@ namespace Internal
 {
 
     // giving a name for std::shared_ptr<Async::Promise<std::shared_ptr<Robos::MessageBase> > >
-    using ServiceRequestPtr = Async::PromisePtr<MessageBasePtr>;
+    // using ServiceRequestPtr = Async::PromisePtr<MessageBasePtr>;
 
     class MasterNode
     {
@@ -41,6 +39,10 @@ namespace Internal
         MasterNode();
 
         ~MasterNode();
+
+        bool AddNode(const NodeBasePtr& pNodeBase);
+
+        void InvokeSubscribers(const MessageBasePtr& pMessage);
 
         bool Shutdown();
     };

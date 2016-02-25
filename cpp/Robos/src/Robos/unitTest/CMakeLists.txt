@@ -65,6 +65,9 @@ if( RUN_UNIT_TESTS )
     set( ${PROJECT_NAME}_IMPORTED_LIST
         # all libraries to import when building Robos
         "Logging"
+        "Utilities"
+        "Async"
+        # "Robos"
     )
     include(ProjectLinker)
     find_package( Catch REQUIRED )
@@ -85,12 +88,15 @@ if( RUN_UNIT_TESTS )
 
             # Robos sources
             ${SRC_ROOT}/../MessageBase.cpp
+            ${SRC_ROOT}/../NodeBase.cpp
             ${SRC_ROOT}/../NodeDatabase.cpp
+            ${SRC_ROOT}/../MasterNode.cpp
 
             # RobosUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
             ${SRC_ROOT}/NodeDatabase_unit.cpp
+            ${SRC_ROOT}/MasterNode_unit.cpp
         )
 
         set( ROBOS_UNITTEST_HEADERS

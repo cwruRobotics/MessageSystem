@@ -5,19 +5,24 @@
 #include <functional>   // std::less
 #include <memory>       // std::shared_ptr
 #include <vector>       // std::vector
+#include <Utilities/btree_map.h>
+
 
 // C++ PROJECT INCLUDES
-#include "Utilities/btree_map.h"
-
 #include "Robos/NodeBase.hpp"
+
 
 namespace Robos
 {
 namespace Internal
 {
 
+    using SubscriberNodeDatabaseImpl = stx::btree<std::string, NodeBasePtr,
+                                                 std::less<std::string>, stx::btree_default_set_traits<std::string> >;
+    using SubscriberNodeDatabaseImplPtr = std::shared_ptr<SubscriberNodeDatabaseImpl>;
+
     using NodeDatabaseImpl = stx::btree_map<std::string, std::vector<NodeBasePtr>,
-                                            std::less<std::string>, stx::btree_default_set_traits<std::string> >;
+                                            std::less<std::string>, stx::btree_default_map_traits<std::string, std::vector<NodeBasePtr> > >;
     struct NodeDatabase
     {
         NodeDatabaseImpl map;

@@ -19,7 +19,7 @@
  ******************************************************************************/
 
 
-#pragma warning( disable : 4996 )
+// #pragma warning( disable : 4996 )
 
 // SYSTEM INCLUDES
 #include <cstdlib>

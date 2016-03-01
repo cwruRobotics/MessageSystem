@@ -34,13 +34,17 @@ namespace Internal
         Utilities::Semaphore    _readCountAccess;   // access to readCount
         Utilities::Semaphore    _serviceQueue;      // fairness between readers and writers
 
+    private:
+
+        unsigned int HashTopic(const std::string& topic);
+
     public:
 
         MasterNode();
 
         ~MasterNode();
 
-        bool AddNode(const NodeBasePtr& pNodeBase);
+        bool Register(const NodeBasePtr& pNodeBase);
 
         void InvokeSubscribers(const MessageBasePtr& pMessage);
 

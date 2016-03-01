@@ -148,7 +148,7 @@ class GlobalBuild(object):
                        "// C++ PROJECT INCLUDES\n\n"
                        "namespace " + self._project_name + "\n"
                        "{\n"
-                       "namespace Logging\n"
+                       "namespace LoggingConfig\n"
                        "{\n\n"
                        "    extern const std::string LOGGING_ROOT;\n\n"
                        "} // end of namespace Logging\n"
@@ -158,13 +158,13 @@ class GlobalBuild(object):
             file.write("// SYSTEM INCLUDES\n\n"
                        "// C++ PROJECT INCLUDES\n"
                        "#include \"" + self._project_name + "LoggingConfig.hpp\"\n\n"
-                       "namespace Async\n"
+                       "namespace " + self._project_name + "\n"
                        "{\n"
-                       "namespace Logging\n"
+                       "namespace LoggingConfig\n"
                        "{\n\n"
                        "    const std::string LOGGING_ROOT = \"" + projectLogDir.replace("\\", "/") + "\";\n\n"
-                       "} // end of namespace Logging\n"
-                       "} // end of namespace Async\n")
+                       "} // end of namespace LoggingConfig\n"
+                       "} // end of namespace " + self._project_name + " \n")
 
     def preBuild(self):
         self.setupWorkspace()

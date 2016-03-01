@@ -93,7 +93,12 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../MasterNode.cpp
 
             # RobosUnitTests sources
+            ${SRC_ROOT}/TestMessageA.cpp
+            ${SRC_ROOT}/TestMessageB.cpp
+
             ${SRC_ROOT}/catchConfig.cpp
+            ${SRC_ROOT}/TestNode.cpp
+            ${SRC_ROOT}/TestNodeTemplate.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
             ${SRC_ROOT}/NodeDatabase_unit.cpp
             ${SRC_ROOT}/MasterNode_unit.cpp
@@ -104,7 +109,10 @@ if( RUN_UNIT_TESTS )
             # I assume its because we are not exporting them.
 
             # RobosUnitTests headers
-            # ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
+            ${SRC_ROOT}/TestMessageA.hpp
+            ${SRC_ROOT}/TestMessageB/hpp
+            ${SRC_ROOT}/TestNode.hpp
+            ${SRC_ROOT}/TestNodeTemplate.hpp
         )
 
         # directories to search for header files

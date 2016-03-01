@@ -17,12 +17,12 @@ namespace Robos
 namespace Internal
 {
 
-    using SubscriberNodeDatabaseImpl = stx::btree<std::string, NodeBasePtr,
-                                                 std::less<std::string>, stx::btree_default_set_traits<std::string> >;
-    using SubscriberNodeDatabaseImplPtr = std::shared_ptr<SubscriberNodeDatabaseImpl>;
+    // using SubscriberNodeDatabaseImpl = stx::btree<std::string, NodeBasePtr,
+    //                                               std::less<std::string>, stx::btree_default_set_traits<std::string> >;
+    // using SubscriberNodeDatabaseImplPtr = std::shared_ptr<SubscriberNodeDatabaseImpl>;
 
-    using NodeDatabaseImpl = stx::btree_map<std::string, std::vector<NodeBasePtr>,
-                                            std::less<std::string>, stx::btree_default_map_traits<std::string, std::vector<NodeBasePtr> > >;
+    using NodeDatabaseImpl = stx::btree_map<unsigned int, std::vector<NodeBasePtr>,
+                                            std::less<unsigned int>, stx::btree_default_map_traits<unsigned int, std::vector<NodeBasePtr> > >;
     struct NodeDatabase
     {
         NodeDatabaseImpl map;

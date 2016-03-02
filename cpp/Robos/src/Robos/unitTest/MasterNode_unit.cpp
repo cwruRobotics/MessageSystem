@@ -100,13 +100,13 @@ namespace Tests
         TestMessageAPtr pTestMessageA = std::make_shared<TestMessageA>();
         pTestMessageA->data = 10;
 
-        Internal::MasterNode mn;
+        Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
         TestNodePtr pTestNode = std::make_shared<TestNode>();
 
-        REQUIRE( mn.Register(pTestNode) );
+        REQUIRE( pMaster->Register(pTestNode) );
         try
         {
-            mn.InvokeSubscribers(pTestMessageA);
+            pMaster->InvokeSubscribers(pTestMessageA);
             REQUIRE( true );
         }
         catch(std::exception e)

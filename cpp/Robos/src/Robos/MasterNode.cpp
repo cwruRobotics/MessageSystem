@@ -61,14 +61,14 @@ namespace Internal
                it != this->_pUnprotectedNodeDB->map.end())
             {
                 LOG_DEBUG(pLogger, "subscription: [%s] already exists! Checking if node already exists", subscription.c_str());
-                std::vector<NodeBasePtr>& subscribers = it.data();
+                std::shared_ptr<std::vector<NodeBasePtr> > subscribers = it.data();
 
                 // check if pNode already is already existing as a subscriber here.
-                if(std::find_if(subscribers.begin(), subscribers.end(),
+                if(std::find_if(subscribers->begin(), subscribers->end(),
                     [nodeName](NodeBasePtr& pNode) -> bool
                 {
                     return pNode->GetName() == nodeName;
-                }) != subscribers.end())
+                }) != subscribers->end())
                 {
                     modification = false;
                 }
@@ -77,8 +77,9 @@ namespace Internal
             {
                 LOG_DEBUG(pLogger, "adding subscription: [%s] to database.", subscription.c_str());
                 // add the <subscription, std::vector<NodeBasePtr>{pNode}>
-                std::vector<NodeBasePtr> subscribers;
-                subscribers.push_back(pNode);
+                std::shared_ptr<std::vector<NodeBasePtr> > subscribers =
+                    std::make_shared<std::vector<NodeBasePtr> >();
+                subscribers->push_back(pNode);
                 if(!this->_pUnprotectedNodeDB->map.insert(hash, subscribers).second)
                 {
                    modification = false;
@@ -105,15 +106,13 @@ namespace Internal
         this->_readCountAccess.signal();
 
         //--------------CRITICAL SECTION----------------
-        // get list of NodeBases that subscribe to message topic
-        // and invoke them...give invoke this method in posterior function
-        ///*
         auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
         if(iterator != this->_pUnprotectedNodeDB->map.end())
         {
-            for(NodeBasePtr& pNodeBase : iterator.data())
+            for(auto vecIt = iterator.data()->begin(); vecIt != iterator.data()->end(); ++vecIt)
             {
-                Async::Execute<MessageBasePtr>([pMessage, &pNodeBase]() -> MessageBasePtr
+                NodeBasePtr pNodeBase = *vecIt;
+                Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
                     return pNodeBase->MainCallback(pMessage);
                 }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
@@ -124,7 +123,6 @@ namespace Internal
             }
         }
         //----------------------------------------------
-        //*/
 
         this->_readCountAccess.wait();
         this->_readCount--;

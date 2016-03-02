@@ -3,6 +3,7 @@
 
 // SYSTEM INCLUDES
 #include <atomic>   // std::atomic
+#include <memory>   // std::shared_ptr
 #include <Async/AsyncExecution.hpp>     // Async::Execute
 #include <Async/Promise.hpp>            // Async::PromisePtr<...>::Then
 
@@ -50,6 +51,8 @@ namespace Internal
 
         bool Shutdown();
     };
+
+    using MasterNodePtr = std::shared_ptr<MasterNode>;
 
 } // end of namespace Internal
 } // end of namespace Robos

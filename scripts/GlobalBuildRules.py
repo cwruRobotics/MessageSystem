@@ -262,14 +262,17 @@ class GlobalBuild(object):
             print("Unit tests disables for project [%s]" % self._project_name)
             return
         installRoot = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  self._project_name)
+        args = []
         for iteration in range(0, int(iterations)):
             print("Running unit tests [%s/%s]" % (iteration + 1, iterations))
             for testToRun in self._tests_to_run:
                 if platform.system() == "Windows":
                     testToRun += ".exe"
+                else:
+                    args = ['valgrind', '--leak-check=yes', '-O0']
                 executablePath = os.path.join(installRoot, "bin", testToRun)
                 if os.path.exists(executablePath):
-                    Utilities.PFork(appToExecute=executablePath, failOnError=True)
+                    Utilities.PFork(appToExecute=executablePath, argsForApp=args, failOnError=True)
                 else:
                     print("%s does NOT exist!" % executablePath)
             if iterations > 1:

@@ -143,7 +143,7 @@ namespace Tests
                     REQUIRE( false );
                 }
             }
-        }   
+        }
     }
 
 } // end of Tests

@@ -270,7 +270,7 @@ class GlobalBuild(object):
                 if platform.system() == "Windows":
                     executablePath += ".exe"
                 else:
-                    args = ['valgrind', '--leak-check=yes', '-O0', executablePath]
+                    args = ['valgrind', '--leak-check=yes', executablePath]
                 if os.path.exists(executablePath):
                     Utilities.PFork(appToExecute=(executablePath if len(args) == 0 else None),
                                     argsForApp=args, failOnError=True)

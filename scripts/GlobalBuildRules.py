@@ -266,11 +266,12 @@ class GlobalBuild(object):
         for iteration in range(0, int(iterations)):
             print("Running unit tests [%s/%s]" % (iteration + 1, iterations))
             for testToRun in self._tests_to_run:
-                if platform.system() == "Windows":
-                    testToRun += ".exe"
-                else:
-                    args = ['valgrind', '--leak-check=yes', '-O0']
                 executablePath = os.path.join(installRoot, "bin", testToRun)
+                if platform.system() == "Windows":
+                    executablePath += ".exe"
+                else:
+                    args = ['valgrind', '--leak-check=yes', '-O0', executablePath]
+                    executablePath = None
                 if os.path.exists(executablePath):
                     Utilities.PFork(appToExecute=executablePath, argsForApp=args, failOnError=True)
                 else:

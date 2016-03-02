@@ -8,7 +8,8 @@
 #include "Robos/unitTest/TestMessageA.hpp"
 #include "Robos/unitTest/TestMessageB.hpp"
 #include "Robos/unitTest/TestNode.hpp"
-#include "Robos/unitTest/TestNodeTemplate.hpp"
+#include "Robos/unitTest/TestNodeNameTemplate.hpp"
+#include "Robos/unitTest/TestNodeSubscriberTemplate.hpp"
 
 namespace Robos
 {
@@ -76,10 +77,21 @@ namespace Tests
             for(int i = 0; i < numNodes; ++i)
             {
                 NodeBasePtr pTestTemplate =
-                    std::make_shared<TestNodeTemplate>("testNode" + IntToString(i));
+                    std::make_shared<TestNodeNameTemplate>("testNode" + IntToString(i));
                 // std::cout << "\tRegistering node [" << pTestTemplate->GetName().c_str() << "] with Master" << std::endl;
                 REQUIRE( mn.Register(pTestTemplate) );
             }
+        }
+    }
+
+    TEST_CASE("Registering a Node with many subscriptions", "[MasterNode_unit]")
+    {
+        std::vector<std::string> subscriptions;
+        for(int numSubscriptions = 1; numSubscriptions <= 1000; numSubscriptions *= 10)
+        {
+            Internal::MasterNode mn;
+            subscriptions.push_back("testMessage" + IntToString(numSubscriptions));
+            REQUIRE( mn.Register(std::make_shared<TestNodeSubscriberTemplate>(subscriptions)) );
         }
     }
 
@@ -116,7 +128,7 @@ namespace Tests
             for(int i = 0; i < numNodes; ++i)
             {
                 NodeBasePtr pTestTemplate =
-                    std::make_shared<TestNodeTemplate>("testNode" + IntToString(i));
+                    std::make_shared<TestNodeNameTemplate>("testNode" + IntToString(i));
                 // std::cout << "\tRegistering node [" << pTestTemplate->GetName().c_str() << "] with Master" << std::endl;
                 REQUIRE( mn.Register(pTestTemplate) );
 
@@ -131,8 +143,7 @@ namespace Tests
                     REQUIRE( false );
                 }
             }
-        }
-        
+        }   
     }
 
 } // end of Tests

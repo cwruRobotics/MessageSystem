@@ -2,7 +2,7 @@
 // #include <Utilities/VectorUtils.hpp>
 
 // C++ PROJECT INCLUDES
-#include "Robos/unitTest/TestNodeTemplate.hpp"
+#include "Robos/unitTest/TestNodeNameTemplate.hpp"
 #include "catch/catch.hpp"
 
 namespace Robos
@@ -10,16 +10,16 @@ namespace Robos
 namespace Tests
 {
 
-    TestNodeTemplate::TestNodeTemplate(const std::string name) : NodeBase(name, "testScheduler",
+    TestNodeNameTemplate::TestNodeNameTemplate(const std::string name) : NodeBase(name, "testScheduler",
         std::vector<std::string>{"testTopicA"})
     {
     }
 
-    TestNodeTemplate::~TestNodeTemplate()
+    TestNodeNameTemplate::~TestNodeNameTemplate()
     {
     }
 
-    MessageBasePtr TestNodeTemplate::TestNodeCallback(const TestMessageAPtr& pMessage)
+    MessageBasePtr TestNodeNameTemplate::TestNodeCallback(const TestMessageAPtr& pMessage)
     {
         TestMessageBPtr producedMessage = std::make_shared<TestMessageB>();
         REQUIRE( pMessage->data == 10 );
@@ -27,7 +27,7 @@ namespace Tests
         return producedMessage;
     }
 
-    MessageBasePtr TestNodeTemplate::MainCallbackImpl(const MessageBasePtr& pMessage)
+    MessageBasePtr TestNodeNameTemplate::MainCallbackImpl(const MessageBasePtr& pMessage)
     {
         if(pMessage->topic == "testTopicA")
         {

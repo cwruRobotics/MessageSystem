@@ -124,7 +124,7 @@ namespace Async
         std::atomic<bool>                               _argsGiven;
 
     public:
-        Promise() : IPromise(), PromiseBase(), _unboundFunction(),
+        Promise() : PromiseBase(), _unboundFunction(),
             _argsGiven(false)
         {
         }

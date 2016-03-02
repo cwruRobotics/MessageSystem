@@ -3,6 +3,7 @@
 
 // SYSTEM INCLUDES
 #include <functional>   // std::less
+#include <map>
 #include <memory>       // std::shared_ptr
 #include <vector>       // std::vector
 #include <Utilities/btree_map.h>
@@ -21,9 +22,14 @@ namespace Internal
     //                                               std::less<std::string>, stx::btree_default_set_traits<std::string> >;
     // using SubscriberNodeDatabaseImplPtr = std::shared_ptr<SubscriberNodeDatabaseImpl>;
 
+    /*
     using NodeDatabaseImpl = stx::btree_map<unsigned int, std::shared_ptr<std::vector<NodeBasePtr> >,
                                             std::less<unsigned int>,
                                             stx::btree_default_map_traits<unsigned int, std::shared_ptr<std::vector<NodeBasePtr> > > >;
+    */
+
+    using NodeDatabaseImpl = std::map<unsigned int, std::vector<NodeBasePtr> >;
+
     struct NodeDatabase
     {
         NodeDatabaseImpl map;

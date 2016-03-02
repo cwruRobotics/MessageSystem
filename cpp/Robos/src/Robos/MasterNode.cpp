@@ -61,14 +61,14 @@ namespace Internal
                it != this->_pUnprotectedNodeDB->map.end())
             {
                 LOG_DEBUG(pLogger, "subscription: [%s] already exists! Checking if node already exists", subscription.c_str());
-                std::shared_ptr<std::vector<NodeBasePtr> > subscribers = it.data();
+                std::vector<NodeBasePtr> subscribers = it->second;//.data();
 
                 // check if pNode already is already existing as a subscriber here.
-                if(std::find_if(subscribers->begin(), subscribers->end(),
+                if(std::find_if(subscribers.begin(), subscribers.end(),
                     [nodeName](NodeBasePtr& pNode) -> bool
                 {
                     return pNode->GetName() == nodeName;
-                }) != subscribers->end())
+                }) != subscribers.end())
                 {
                     modification = false;
                 }
@@ -77,13 +77,16 @@ namespace Internal
             {
                 LOG_DEBUG(pLogger, "adding subscription: [%s] to database.", subscription.c_str());
                 // add the <subscription, std::vector<NodeBasePtr>{pNode}>
-                std::shared_ptr<std::vector<NodeBasePtr> > subscribers =
-                    std::make_shared<std::vector<NodeBasePtr> >();
-                subscribers->push_back(pNode);
+                std::vector<NodeBasePtr> subscribers;
+                subscribers.push_back(pNode);
+                /*
                 if(!this->_pUnprotectedNodeDB->map.insert(hash, subscribers).second)
                 {
                    modification = false;
                 }
+                */
+                this->_pUnprotectedNodeDB->map.insert(
+                    std::pair<unsigned int, std::vector<NodeBasePtr> >(hash, subscribers));
             }
         }
         //----------------------------------------------
@@ -109,9 +112,8 @@ namespace Internal
         auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
         if(iterator != this->_pUnprotectedNodeDB->map.end())
         {
-            for(auto vecIt = iterator.data()->begin(); vecIt != iterator.data()->end(); ++vecIt)
+            for(NodeBasePtr pNodeBase : iterator->second)
             {
-                NodeBasePtr pNodeBase = *vecIt;
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
                     return pNodeBase->MainCallback(pMessage);

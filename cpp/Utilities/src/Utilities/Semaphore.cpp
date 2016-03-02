@@ -26,7 +26,7 @@ namespace Utilities
 
     void Semaphore::signal()
     {
-        std::unique_lock<std::mutex> mutexLock(this->_mutex);
+        std::lock_guard<std::mutex> mutexLock(this->_mutex);
         //this->_count++;
         if(++this->_count <= 0)
         {

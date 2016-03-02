@@ -98,7 +98,8 @@ if( RUN_UNIT_TESTS )
 
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/TestNode.cpp
-            ${SRC_ROOT}/TestNodeTemplate.cpp
+            ${SRC_ROOT}/TestNodeNameTemplate.cpp
+            ${SRC_ROOT}/TestNodeSubscriberTemplate.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
             ${SRC_ROOT}/NodeDatabase_unit.cpp
             ${SRC_ROOT}/MasterNode_unit.cpp
@@ -112,7 +113,8 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/TestMessageA.hpp
             ${SRC_ROOT}/TestMessageB/hpp
             ${SRC_ROOT}/TestNode.hpp
-            ${SRC_ROOT}/TestNodeTemplate.hpp
+            ${SRC_ROOT}/TestNodeNameTemplate.hpp
+            ${SRC_ROOT}/TestNodeSubscriberTemplate.hpp
         )
 
         # directories to search for header files

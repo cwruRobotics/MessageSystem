@@ -1,5 +1,5 @@
-#ifndef ROBOS_TESTS_TESTNODETEMPLATE_HPP
-#define ROBOS_TESTS_TESTNODETEMPLATE_HPP
+#ifndef ROBOS_TESTS_TESTNODESUBSCRIBERTEMPLATE_HPP
+#define ROBOS_TESTS_TESTNODESUBSCRIBERTEMPLATE_HPP
 
 // SYSTEM INCLUDES
 
@@ -14,7 +14,7 @@ namespace Robos
 namespace Tests
 {
 
-    class TestNodeTemplate : public NodeBase
+    class TestNodeSubscriberTemplate : public NodeBase
     {
     private:
 
@@ -24,15 +24,15 @@ namespace Tests
 
     public:
 
-        TestNodeTemplate(const std::string name);
+        TestNodeSubscriberTemplate(const std::vector<std::string> subscriptions);
 
-        ~TestNodeTemplate();
+        ~TestNodeSubscriberTemplate();
     };
 
-    using TestNodeTemplatePtr = std::shared_ptr<TestNodeTemplate>;
+    using TestNodeSubscriberTemplatePtr = std::shared_ptr<TestNodeSubscriberTemplate>;
 
 } // end of namespace Tests
 } // end of namespace Robos
 
 
-#endif // end of ROBOS_TESTS_TESTNODETEMPLATE_HPP
+#endif // end of ROBOS_TESTS_TESTNODESUBSCRIBERTEMPLATE_HPP

@@ -271,9 +271,9 @@ class GlobalBuild(object):
                     executablePath += ".exe"
                 else:
                     args = ['valgrind', '--leak-check=yes', '-O0', executablePath]
-                    executablePath = None
                 if os.path.exists(executablePath):
-                    Utilities.PFork(appToExecute=executablePath, argsForApp=args, failOnError=True)
+                    Utilities.PFork(appToExecute=(executablePath if len(args) == 0 else None),
+                                    argsForApp=args, failOnError=True)
                 else:
                     print("%s does NOT exist!" % executablePath)
             if iterations > 1:

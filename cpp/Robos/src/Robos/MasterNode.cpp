@@ -2,6 +2,11 @@
 #include <algorithm>                    // std::find_if
 #include <stdexcept>                    // std::logic_error
 
+// SUPER JENKY HACK!!!!!!!!!!!!!!!!!!!!!!
+#include <chrono>
+#include <thread>
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 // C++ PROJECT INCLUDES
 #include "Logging/Factory.hpp"          // Logging::Factory::MakeLogger
 #include "Logging/ILogger.hpp"          // Logging macros
@@ -34,7 +39,7 @@ namespace Internal
         return hash;
     }
 
-    bool MasterNode::Register(const NodeBasePtr& pNode)
+    bool MasterNode::Register(const NodeBasePtr pNode)
     {
         std::string loggingPath = Robos::LoggingConfig::LOGGING_ROOT + "/MasterNodeLog.txt";
         Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("MasterNode::Register()",
@@ -96,7 +101,7 @@ namespace Internal
         return modification;
     }
 
-    void MasterNode::InvokeSubscribers(const MessageBasePtr& pMessage)
+    void MasterNode::InvokeSubscribers(const MessageBasePtr pMessage)
     {
         this->_serviceQueue.wait();
         this->_readCountAccess.wait();
@@ -117,11 +122,27 @@ namespace Internal
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
                     return pNodeBase->MainCallback(pMessage);
-                }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
+                }, pNodeBase->GetExecutionTopic());
+                /*
+                ->Then<bool>([this](MessageBasePtr pMessage) -> bool
                 {
                     this->InvokeSubscribers(pMessage);
                     return true;
                 }, pNodeBase->GetExecutionTopic());
+                */
+
+                // THIS LINE IS A TEMPORARY FIX...LIKE ON THE SAME SCALE OF FIXING
+                // A CAR WITH DUCT TAPE.
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                // This is having an issue on linux (a segmentation fault)
+                // because SAVING the Promise!!! The scenario exists
+                // where the Async is taking longer than the rest of this method's execution to fulfill
+                // the Promise and the Promise (and lambda) have destructed before it can be fulfilled!!!!
+
+                // I'm still not sure how to fix this. We could save the Promise in a database but that may
+                // be memory intensive or we could come up with another algorithm for executing Client Nodes.
+                // Or we could have Async track them....I also wonder if move semantics would be enough here
+                // to preserve the lambda?
             }
         }
         //----------------------------------------------

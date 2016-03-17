@@ -31,7 +31,7 @@ get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include AB
 
 get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../build/out/include ABSOLUTE )
 
-get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../ ABSOLUTE )
+get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../TestingFrameworks ABSOLUTE )
 
 # ------------------------------------------------------------------------------
 # GTest

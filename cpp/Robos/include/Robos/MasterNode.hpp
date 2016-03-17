@@ -45,9 +45,9 @@ namespace Internal
 
         ~MasterNode();
 
-        bool Register(const NodeBasePtr& pNodeBase);
+        bool Register(const NodeBasePtr pNodeBase);
 
-        void InvokeSubscribers(const MessageBasePtr& pMessage);
+        void InvokeSubscribers(const MessageBasePtr pMessage);
 
         bool Shutdown();
     };

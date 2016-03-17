@@ -55,8 +55,8 @@ class GlobalBuild(object):
                 if splitLine[0] == '-' + self._project_name:
                     flag = True
                 elif flag and '-' not in splitLine[0]:
-                    requiredProjects.append(splitLine[0])
-                elif flag and '-' in splitLine[0] and ('-' + self._project_name) not in splitLine[0]:
+                    requiredProjects.append(splitLine)
+                elif flag and '-' in splitLine[0] and ('-' + self._project_name) != splitLine[0]:
                     flag = False
                 elif not flag:
                     continue
@@ -67,7 +67,7 @@ class GlobalBuild(object):
         print("Required projects for project [%s] are %s" % (self._project_name, requiredProjects))
         return requiredProjects
 
-    def moveDependentProjectsToWorkingDir(self, projectToCopyFrom, rootToCopyFrom):
+    def moveDependentProjectsToWorkingDir(self, projectToCopyFrom, projectType, rootToCopyFrom):
         destinationDir = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name)
 
         destLibDir = os.path.join(destinationDir, "lib")
@@ -78,13 +78,18 @@ class GlobalBuild(object):
             if not os.path.exists(destBinDir):
                 Utilities.mkdir(destBinDir)
             # copy dll and lib
-            Utilities.copyTree(os.path.join(rootToCopyFrom, "bin", projectToCopyFrom + ".dll"), destBinDir)
+            if projectType is None or projectType.upper() == "SHARED":
+                Utilities.copyTree(os.path.join(rootToCopyFrom, "bin", projectToCopyFrom + ".dll"), destBinDir)
             Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", projectToCopyFrom + ".lib"), destLibDir)
         else:
-            # copy .so
-            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so"), destLibDir)
-            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1"), destLibDir)
-            Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1.0.0"), destLibDir)
+            if projectType is None or projectType.upper() == "SHARED":
+                # copy .so
+                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so"), destLibDir)
+                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1"), destLibDir)
+                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1.0.0"), destLibDir)
+            else:
+                # copy .a
+                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".a"), destLibDir)
         Utilities.copyTree(os.path.join(rootToCopyFrom, "include", projectToCopyFrom),
                            os.path.join(destinationDir, "include", projectToCopyFrom))
 
@@ -97,15 +102,17 @@ class GlobalBuild(object):
         Utilities.mkdir(FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name))
         allBuiltOutDir = FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config)
         for project in dependentProjects:
-            dependentProjectPath = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  project)
+            dependentProjectPath = FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config,  project[0])
 
             # build the project if necessary
             if not os.path.exists(dependentProjectPath):
-                projectBuild = LocalBuildRules.LocalBuild(project)
+                projectBuild = LocalBuildRules.LocalBuild(project[0])
                 projectBuild.run(([], {'configuration': self._config}))
 
             # copy over necessary objects to link
-            self.moveDependentProjectsToWorkingDir(project, allBuiltOutDir)
+            self.moveDependentProjectsToWorkingDir(project[0],
+                                                   project[1] if len(project) >= 2 else None,
+                                                   allBuiltOutDir)
             
 
     def setupWorkspace(self):

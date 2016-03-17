@@ -18,8 +18,7 @@ namespace Async
 
     // a PromiseBase is all code that a Promise contains, that is
     // not template dependent. This reduces compile time.
-    class ASYNC_API PromiseBase : public IWorkItem,
-        public std::enable_shared_from_this<PromiseBase>
+    class ASYNC_API PromiseBase : public IWorkItem
     {
     protected:
 

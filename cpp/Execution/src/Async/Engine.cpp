@@ -4,11 +4,45 @@
 // C++ PROJECT INCLUDES
 #include "Async/Engine.hpp"
 #include "Async/Scheduler.hpp"
+#include "Async/JobPriorities.hpp"
 
 namespace Async
 {
 namespace EntryPoint
 {
+
+    Engine::Engine(std::string configPath) : _schedulerMap(), _schedulerMapMutex(), _running(true)
+    {
+        if (configPath != "")
+        {
+            this->Configure(configPath);
+        }
+    }
+
+    Engine::~Engine()
+    {
+        if (this->_running)
+        {
+            this->Shutdown();
+        }
+    }
+
+    void Engine::Configure(std::string& configPath)
+    {
+        using ConfigMapType = std::map<std::string, std::vector<Types::JobPriority> >;
+        // check validity of file path, open if it exists, and try to parse out configurations
+        // for Async. Pass down these configurations to each Scheduler.
+        ConfigMapType configuration;
+
+        // check file path validity
+        // open file and parse
+
+        for(ConfigMapType::iterator it = configuration.begin(); it != configuration.end(); ++it)
+        {
+            ISchedulerPtr pScheduler = std::make_shared<Scheduler>(it->second, it->first);
+            this->_schedulerMap.insert(std::pair<std::string, ISchedulerPtr>(it->first, pScheduler));
+        }
+    }
 
     std::map<std::string, ISchedulerPtr>& Engine::GetSchedulerMap()
     {
@@ -23,11 +57,6 @@ namespace EntryPoint
             return nullptr;
         }
         return index->second;
-    }
-
-    void Engine::BuildConfiguration(const char* pConfigFilePath)
-    {
-        return;
     }
 
     ISchedulerPtr Engine::GetScheduler(std::string& schedulerId)
@@ -60,11 +89,11 @@ namespace EntryPoint
         return Types::Result_t::FAILURE;
     }
 
-    Types::Result_t Engine::StartScheduler(std::string& schedulerId)
+    Types::Result_t Engine::StartScheduler(std::string& schedulerId, std::vector<Types::JobPriority>& config)
     {
         if (this->_running)
         {
-            ISchedulerPtr pScheduler = std::make_shared<Scheduler>(schedulerId);
+            ISchedulerPtr pScheduler = std::make_shared<Scheduler>(config, schedulerId);
 
             std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
             this->GetSchedulerMap().insert(std::pair<std::string&,

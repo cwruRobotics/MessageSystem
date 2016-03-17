@@ -9,6 +9,24 @@
 namespace Async
 {
 
+    Scheduler::Scheduler(std::vector<Types::JobPriority>& configuration, std::string id) : _id(std::move(id)),
+            _threadMap(), _currentWorkItemId(0), _running(true)
+    {
+        for(Types::JobPriority priority : configuration)
+        {
+            this->_threadMap.insert(std::pair<Types::JobPriority,
+                Concurrency::IThreadPtr>(priority, std::make_shared<Concurrency::WorkerThread>()));
+        }
+    }
+
+    Scheduler::~Scheduler()
+    {
+        if (this->_running)
+        {
+            this->Shutdown();
+        }
+    }
+
 	std::map<Types::JobPriority, Concurrency::IThreadPtr>& Scheduler::GetThreadMap()
 	{
 		return this->_threadMap;

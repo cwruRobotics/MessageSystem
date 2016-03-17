@@ -19,7 +19,10 @@ class LocalBuild(GlobalBuild):
                              "package",
                              "uploadPackagedVersion"]  # MessageFramework specific default build steps
 
-        self._tests_to_run = ["%sUnitTests" % self._project_name]
+        if self._project_name.endswith("_FT"):
+            self._tests_to_run = [self._project_name]
+        else:
+            self._tests_to_run = ["%sUnitTests" % self._project_name]
 
     # this method will launch CMake.
     # CMake is handling all of our compiling and linking.
@@ -62,7 +65,8 @@ class LocalBuild(GlobalBuild):
 
     def make(self):
         self.makeTarget(["all"])
-        self.makeTarget(["install"])
+        if not self._project_name.endswith("_FT"):
+            self.makeTarget(["install"])
 
     def build(self):
         print("Building project [%s]" % self._project_name)

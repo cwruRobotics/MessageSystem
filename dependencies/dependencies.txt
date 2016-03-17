@@ -1,8 +1,21 @@
+# syntax for dependency file:
+#
+# -<PROJECT_BEING_BUILT>
+#     <PROJECT_NEEDED>	<PROJECT_TYPE>
+#
+#
+# NOTE that <PROJECT_TYPE> is either SHARED or STATIC. If no project
+# type is written, it will be assumed to be SHARED.
+
 -Logging
     # none
 
 -Utilities
     Logging
+
+-Utilities_FT
+    gtest
+    Utilities
 
 -Async
     Logging

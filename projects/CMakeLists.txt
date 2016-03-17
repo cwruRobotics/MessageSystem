@@ -60,6 +60,17 @@ if( BUILD_LOGGING )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Logging" )
 endif()
 
+if( BUILD_GTEST )
+    # gtest library
+    add_subdirectory( ${SRC_ROOT}/TestingFrameworks/gtest/src
+                      ${OUT_ROOT}/gtest )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/gtest" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/gtest" )
+endif()
+
 if( BUILD_UTILITIES )
     # Utilities library
     add_subdirectory( ${SRC_ROOT}/Utilities/src/Utilities
@@ -69,6 +80,17 @@ if( BUILD_UTILITIES )
     # files created before the "make install"
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Utilities" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Utilities" )
+endif()
+
+if( BUILD_UTILITIES_FT )
+    # Utilities_FT executable
+    add_subdirectory( ${SRC_ROOT}/Utilities_FT/src
+                      ${OUT_ROOT}/Utilities_FT )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Utilities_FT" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Utilities_FT" )
 endif()
 
 if( BUILD_ASYNC )

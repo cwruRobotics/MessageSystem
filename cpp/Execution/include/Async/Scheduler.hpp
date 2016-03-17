@@ -7,6 +7,7 @@
 #include <atomic>
 #include <mutex>
 #include <string>
+#include <vector>
 
 // C++ PROJECT INCLUDES
 #include "Async/IExecutableWorkItem.hpp"
@@ -41,27 +42,9 @@ namespace Async
 
 	public:
 
-		Scheduler(std::string id="") : _id(std::move(id)),
-            _threadMap(), _currentWorkItemId(0), _running(true)
-		{
-            this->_threadMap.insert(std::pair<Types::JobPriority,
-                Concurrency::IThreadPtr>(Types::JobPriority::IMMEDIATE,
-                std::make_shared<Concurrency::WorkerThread>()));
-            this->_threadMap.insert(std::pair<Types::JobPriority,
-                Concurrency::IThreadPtr>(Types::JobPriority::RELAXED,
-                std::make_shared<Concurrency::WorkerThread>()));
-            this->_threadMap.insert(std::pair<Types::JobPriority,
-                Concurrency::IThreadPtr>(Types::JobPriority::OTHER,
-                std::make_shared<Concurrency::WorkerThread>()));
-		}
+		Scheduler(std::vector<Types::JobPriority>& configuration, std::string id="");
 
-		virtual ~Scheduler()
-		{
-            if (this->_running)
-            {
-                this->Shutdown();
-            }
-		}
+		virtual ~Scheduler();
 
 		bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) override;
 

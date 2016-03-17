@@ -1,7 +1,7 @@
 
 find_path( CATCH_INCLUDE_DIRS catch/catch.hpp
     HINTS
-        ${INC_ROOT}
+        ${INC_ROOT}/
         ${CATCH_ROOT}
 )
 

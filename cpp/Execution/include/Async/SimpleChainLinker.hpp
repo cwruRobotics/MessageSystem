@@ -54,13 +54,7 @@ namespace Async
     Types::Result_t SimpleChainLinker<PARENT_TYPE, CHILD_TYPE>::ApplyFunctionToChild()
     {
         this->_pChild->AttachMainFunction(this->_pResolutionFunction());
-
-        EntryPoint::IEnginePtr pEngine = GetStaticEngine();
-        if (!pEngine->GetScheduler(this->_childSchedulerId))
-        {
-            pEngine->StartScheduler(this->_childSchedulerId);
-        }
-        this->_pChild->Schedule(pEngine->GetScheduler(this->_childSchedulerId));
+        this->_pChild->Schedule(GetEngineSingleton()->GetScheduler(this->_childSchedulerId));
         // this->_pParent = nullptr;
         return Types::Result_t::SUCCESS;
     }

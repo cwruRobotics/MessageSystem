@@ -6,6 +6,7 @@
 #include <atomic>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
@@ -26,13 +27,12 @@ namespace EntryPoint
 
         virtual ~IEngine() = default;
 
-        virtual void BuildConfiguration(const char* pConfigFilePath) = 0;
-
         virtual ISchedulerPtr GetScheduler(std::string& schedulerId) = 0;
 
         virtual Types::Result_t ShutdownScheduler(std::string& schedulerId) = 0;
 
-        virtual Types::Result_t StartScheduler(std::string& schedulerId) = 0;
+        virtual Types::Result_t StartScheduler(std::string& schedulerId,
+                                               std::vector<Types::JobPriority>& config) = 0;
 
         virtual Types::Result_t Shutdown() = 0;
 
@@ -40,7 +40,7 @@ namespace EntryPoint
 
 } // end of namespace EntryPoint
 
-    ASYNC_API EntryPoint::IEnginePtr GetStaticEngine();
+    ASYNC_API EntryPoint::IEnginePtr GetEngineSingleton();
 
 } // end of namespace Async
 

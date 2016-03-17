@@ -84,6 +84,7 @@ set( ASYNC_PUBLIC_HEADERS
     ${INC_ROOT}/Async/IEngine.hpp
     ${INC_ROOT}/Async/SimpleChainLinker.hpp
     ${INC_ROOT}/Async/AsyncExecution.hpp
+    ${INC_ROOT}/Async/Async.hpp
 )
 
 set( ASYNC_PRIVATE_HEADERS
@@ -144,26 +145,6 @@ set( DEPENDENCY_CHECK FALSE )
 # endif()
 
 include( GNUInstallDirs )
-
-# set( ASYNC_LIBS )
-# if( ENABLE_LOGGING )
-#     find_package( Logging REQUIRED )
-#     if( LOGGING_FOUND )
-#         add_library( LOGGING SHARED IMPORTED )
-#         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
-#         else()
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
-#         endif()
-# 
-#         list( APPEND ASYNC_LIBS LOGGING )
-# 
-#     else()
-#         message( WARNING "Logging not found...skipping usage" )
-#     endif()
-# endif()
-# list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
 
 set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Async

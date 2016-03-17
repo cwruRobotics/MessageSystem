@@ -12,6 +12,7 @@
 #include "Async/IPromise.hpp"
 // #include "Async/LibraryExport.hpp"
 #include "Async/PromiseBase.hpp"
+// #include "Async/ValueHolder.hpp"
 
 namespace Async
 {
@@ -23,11 +24,12 @@ namespace Async
     using PromisePtr = std::shared_ptr<Promise<PROMISE_RESULT> >;
 
     template<typename PROMISE_RESULT>
-    class /*ASYNC_API*/ Promise : public IPromise<PROMISE_RESULT>, public PromiseBase
+    class /*ASYNC_API*/ Promise : public IPromise<PROMISE_RESULT>, public PromiseBase,
+        public std::enable_shared_from_this<Promise<PROMISE_RESULT> >
     {
     private:
 
-        PROMISE_RESULT  _result;
+        PROMISE_RESULT     _result;
 
     public:
         Promise() : PromiseBase()
@@ -69,10 +71,27 @@ namespace Async
 
         void AttachMainFunction(std::function<PROMISE_RESULT()> pFunc)
         {
+            /*
+                There is a really, really, really subtle program error here.
+
+                A Promise instance so far is not kept alive BY Async until it is executed,
+                so the scenario exists where, if client code does not "save" the Promise
+                instance, it will be destructed (using a shared_ptr) when the client code
+                exits IF the client code takes less time than it does for Async to fulfill
+                the Promise. Then, since we are capturing by reference in the lambda, the
+                client function may not exist anymore AND the Promise instance may not exist
+                anymore.
+            */
+
+            // get a copy to the Promise that is being executed here. This should prevent
+            // the Promise instance from destructing (because the counter increments by 1)...I think
+            PromisePtr thisCopy = this->shared_from_this();
             std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                ->AttachMainFunction([this, pFunc]() -> Types::Result_t
+                ->AttachMainFunction([thisCopy, pFunc]() -> Types::Result_t
             {
-                this->Fulfill(pFunc());
+                // convert it to a Promise. This should prevent the Promise instance from being
+                // destructed.
+                thisCopy->Fulfill(pFunc());
                 return Types::Result_t::SUCCESS;
             });
         }

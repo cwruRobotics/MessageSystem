@@ -18,21 +18,9 @@ namespace Async
     PromisePtr<PROMISE_RESULT> Execute(std::function<PROMISE_RESULT()> pFunc,
                                        std::string& schedulerId)
     {
-        EntryPoint::IEnginePtr pEngine = GetStaticEngine();
-        ISchedulerPtr pScheduler = pEngine->GetScheduler(schedulerId);
-        Types::Result_t result = Types::Result_t::SUCCESS;
-        if (!pScheduler)
-        {
-            result = pEngine->StartScheduler(schedulerId);
-        }
-        if (result == Types::Result_t::FAILURE)
-        {
-            return nullptr;
-        }
-        pScheduler = pEngine->GetScheduler(schedulerId);
         PromisePtr<PROMISE_RESULT> pPromise = std::make_shared<Promise<PROMISE_RESULT> >();
         pPromise->AttachMainFunction(pFunc);
-        pPromise->Schedule(pScheduler);
+        pPromise->Schedule(GetEngineSingleton()->GetScheduler(schedulerId));
         return pPromise;
     }
 

@@ -84,9 +84,22 @@ class GlobalBuild(object):
         else:
             if projectType is None or projectType.upper() == "SHARED":
                 # copy .so
-                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so"), destLibDir)
-                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1"), destLibDir)
+                baseRoot = os.path.join(rootToCopyFrom, "lib")
+                fileRegex = "lib" + projectToCopyFrom
+                currentFilePath = None
+                for entry in os.listdir(baseRoot):
+                    currentFilePath = os.path.join(baseRoot, entry)
+                    if fileRegex in entry and not os.path.isdir(currentFilePath):
+                        Utilities.copyTree(currentFilePath, destLibDir)
+                '''
+                baseLibrary = os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so")
+                if os.path.exists(baseLibrary):
+                    Utilities.copyTree(baseLibrary, destLibDir)
+                if os.path.exists(baseLibrary + ".1"):
+                    Utilities.copyTree(baseLibrary + ".1", destLibDir)
+                if os.path.exists(baseLibrary + ".1.0.0")
                 Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1.0.0"), destLibDir)
+                '''
             else:
                 # copy .a
                 Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".a"), destLibDir)

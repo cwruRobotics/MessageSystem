@@ -15,7 +15,8 @@ namespace Async_FT
     {
         ASSERT_EQ(Async::GetEngineSingleton(), nullptr) << "Engine should be null before a call to Async::Start()";
 
-        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
+            Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
         Async::Start(configFilePath);
 
         ASSERT_NE(Async::GetEngineSingleton(), nullptr) << "Engine should not be null after" <<

@@ -79,7 +79,7 @@ namespace Async_FT
 
     TEST(SimpleExecutionTest, WaitingForPromiseToSettle)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(4));
+        // std::this_thread::sleep_for(std::chrono::seconds(4));
         ASSERT_EQ(Async::Stop(), true);
     }
 

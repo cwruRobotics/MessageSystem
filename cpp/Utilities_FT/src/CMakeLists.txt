@@ -41,7 +41,7 @@ if( RUN_UNIT_TESTS )
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
     # include(BringInPackages)  # NOT build in
     # BringInPackages()
-    find_package( Customgtest REQUIRED )
+    find_package( gtest REQUIRED )
 
     if( GTEST_FOUND )
         message( "GTEST_LIBS: ${GTEST_LIBS}" )

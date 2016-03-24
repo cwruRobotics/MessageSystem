@@ -61,6 +61,11 @@ namespace Async
     {
         //this->_pChild->AttachMainFunction(this->_pResolutionFunction());
         this->_pChild->AttachMainFunction(std::bind(this->_pChildFunction, this->_pParent->GetResult()));
+        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
+        if(pEngine == nullptr)
+        {
+            return Types::Result_t::FAILURE;
+        }
         this->_pChild->Schedule(GetEngineSingleton()->GetScheduler(this->_childSchedulerId));
         this->_pParent = nullptr;
         return Types::Result_t::SUCCESS;

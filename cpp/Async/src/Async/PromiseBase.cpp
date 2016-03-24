@@ -1,5 +1,5 @@
 // SYSTEM INCLUDES
-
+#include <stdexcept>
 
 // C++ PROJECT INCLUDES
 #include "Async/ContinuableWorkItem.hpp"
@@ -41,6 +41,10 @@ namespace Async
 
     Types::Result_t PromiseBase::Schedule(ISchedulerPtr scheduler)
     {
+        if(scheduler == nullptr)
+        {
+            throw std::logic_error("scheduler is null");
+        }
         if (scheduler->ScheduleWorkItem(
             std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)))
         {

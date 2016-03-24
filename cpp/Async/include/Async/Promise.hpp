@@ -109,6 +109,7 @@ namespace Async
             std::string& childSchedulerId)
         {
             PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >(this->GetPriority());
+            pSuccessor->MakeSafe();
 
             // this is a safe way to transfer the result of the parent Promise to
             // the child Promise
@@ -131,7 +132,7 @@ namespace Async
                 std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
                     this->shared_from_this(),
                     pFunc,
-                    pSuccessor,
+                    pSuccessor->shared_from_this(),
                     childSchedulerId
                 );
 

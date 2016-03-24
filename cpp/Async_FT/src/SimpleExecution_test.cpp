@@ -77,10 +77,14 @@ namespace Async_FT
         }, schedulerName);
     }
 
+    TEST(SimpleExecutionTest, WaitingForPromiseToSettle)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(4));
+        ASSERT_EQ(Async::Stop(), true);
+    }
+
     TEST(SimpleExecutionTest, PromiseOutlivesCallingFunction)
     {
-        ASSERT_EQ(Async::Stop(), true);
-
         std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
             Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
         Async::Start(configFilePath);

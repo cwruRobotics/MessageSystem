@@ -13,7 +13,7 @@ namespace Async
 
 std::mutex             engineLock;
 EntryPoint::IEnginePtr pEngine = nullptr;
-std::atomic<bool>      engineStarted = false;
+std::atomic<bool>      engineStarted(false);
 
     bool Start(std::string configPath)
     {

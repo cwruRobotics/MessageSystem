@@ -132,7 +132,7 @@ namespace EntryPoint
         return Types::Result_t::FAILURE;
     }
 
-    Types::Result_t Engine::StartScheduler(std::string& schedulerId, std::vector<Types::JobPriority>& config)
+    Types::Result_t Engine::StartScheduler(std::string& schedulerId, std::vector<Types::JobPriority> config)
     {
         if (this->_running)
         {

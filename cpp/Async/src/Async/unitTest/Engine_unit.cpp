@@ -34,7 +34,8 @@ namespace Tests
         {
             // test 1
             LOG_DEBUG(pLogger, "Parsing file with 1 Scheduler");
-            std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+            std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+                OSUtils::GetPathSep() + "TestEngineConfig.xml";
             EntryPoint::Engine engine(configFilePath);
             std::vector<std::string> schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);
             for(std::string schedulerName : schedulersToCheck)
@@ -46,7 +47,8 @@ namespace Tests
 
             // test 2
             LOG_DEBUG(pLogger, "Parsing file with 2 Schedulers");
-            configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngine2SchedulersConfig.xml";
+            configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+                OSUtils::GetPathSep() + "TestEngineConfig.xml";
             EntryPoint::Engine engine2(configFilePath);
             schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);
             for(std::string schedulerName : schedulersToCheck)
@@ -58,7 +60,8 @@ namespace Tests
 
             // test many
             LOG_DEBUG(pLogger, "Parsing file with 10 Schedulers");
-            configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngine10SchedulersConfig.xml";
+            configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+                OSUtils::GetPathSep() + "TestEngineConfig.xml";
             EntryPoint::Engine engine10(configFilePath);
             schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);
             for(std::string schedulerName : schedulersToCheck)
@@ -79,7 +82,8 @@ namespace Tests
     TEST_CASE("Testing Engine::Shutdown() with no Schedulers", "[Engine_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("Engine_unit test 2");
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         EntryPoint::Engine engine(configFilePath);
 
         std::vector<std::string> schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);
@@ -96,7 +100,8 @@ namespace Tests
         Utilities::WriteUnitTestNameToConsole("Engine_unit test 3");
         ISchedulerPtr pScheduler = nullptr;
         {
-            std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+            std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+                OSUtils::GetPathSep() + "TestEngineConfig.xml";
             EntryPoint::Engine engine(configFilePath);
             std::vector<std::string> schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);
             for(std::string schedulerName : schedulersToCheck)
@@ -125,7 +130,8 @@ namespace Tests
     TEST_CASE("Testing Engine::ShutdownScheduler()", "[Engine_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("Engine_unit test 4");
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         EntryPoint::Engine engine(configFilePath);
 
         std::vector<std::string> schedulersToCheck = Utilities::GetSchedulersToCheckFor(configFilePath);

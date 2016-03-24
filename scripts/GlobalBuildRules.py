@@ -91,15 +91,6 @@ class GlobalBuild(object):
                     currentFilePath = os.path.join(baseRoot, entry)
                     if fileRegex in entry and not os.path.isdir(currentFilePath):
                         Utilities.copyTree(currentFilePath, destLibDir)
-                '''
-                baseLibrary = os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so")
-                if os.path.exists(baseLibrary):
-                    Utilities.copyTree(baseLibrary, destLibDir)
-                if os.path.exists(baseLibrary + ".1"):
-                    Utilities.copyTree(baseLibrary + ".1", destLibDir)
-                if os.path.exists(baseLibrary + ".1.0.0")
-                Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".so.1.0.0"), destLibDir)
-                '''
             else:
                 # copy .a
                 Utilities.copyTree(os.path.join(rootToCopyFrom, "lib", "lib" + projectToCopyFrom + ".a"), destLibDir)
@@ -276,7 +267,7 @@ class GlobalBuild(object):
     def package(self):
         print("packaging project [%s]" % self._project_name)
 
-    def runUnitTests(self, iterations=1, test="OFF"):
+    def runUnitTests(self, iterations=1, test="OFF", valgrind="OFF"):
         print("Running unit tests for project [%s]" % self._project_name)
         if test == "OFF":
             print("Unit tests disables for project [%s]" % self._project_name)
@@ -290,7 +281,8 @@ class GlobalBuild(object):
                 if platform.system() == "Windows":
                     executablePath += ".exe"
                 else:
-                    args = ['valgrind', '--leak-check=yes', executablePath]
+                    if valgrind == "ON":
+                        args = ['valgrind', '--leak-check=yes', executablePath]
                 if os.path.exists(executablePath):
                     Utilities.PFork(appToExecute=(executablePath if len(args) == 0 else None),
                                     argsForApp=args, failOnError=True)

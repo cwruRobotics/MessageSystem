@@ -61,11 +61,13 @@ if( RUN_UNIT_TESTS )
             # test code
             ${SRC_ROOT}/Async_test.cpp
             ${SRC_ROOT}/SimpleExecution_test.cpp
+            ${SRC_ROOT}/SimpleContinuation_test.cpp
             ${SRC_ROOT}/main.cpp
         )
 
         set( ASYNC_FT_UNITTEST_HEADERS
             ${INC_ROOT}/MathUtils.hpp
+            ${INC_ROOT}/PromiseFactory.hpp
         )
 
         # directories to search for header files

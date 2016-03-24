@@ -15,7 +15,8 @@ namespace Async_FT
 
     TEST(SimpleExecutionTest, TrivialCallExecution)
     {
-        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
+            Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
         Async::Start(configFilePath);
 
         std::string schedulerName = "TestScheduler";
@@ -37,7 +38,8 @@ namespace Async_FT
 
     TEST(SimpleExecutionTest, FunctionCallInPromise)
     {
-        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
+            Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
         Async::Start(configFilePath);
 
         int squareArg = 5;

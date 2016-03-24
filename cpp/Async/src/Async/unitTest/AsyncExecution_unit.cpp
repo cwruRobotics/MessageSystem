@@ -24,7 +24,8 @@ namespace Tests
     TEST_CASE("Testing AsyncExecution::Execute()", "[AsyncExecution_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("AsyncExecution_unit test 1");
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         Start(configFilePath);
 
         std::string schedulerId = "TestScheduler";

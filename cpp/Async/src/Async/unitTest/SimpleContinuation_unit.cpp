@@ -23,7 +23,8 @@ namespace Tests
     TEST_CASE("Testing SimpleContinuation of Promises", "[SimpleContinuation_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("SimpleContinuation_unit test 1");
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         Start(configFilePath);
 
         std::string schedulerId = "TestScheduler";
@@ -52,7 +53,8 @@ namespace Tests
         "[SimpleContinuation_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("SimpleContinuation_unit test 2");
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         Start(configFilePath);
 
         std::string schedulerId = "TestScheduler";

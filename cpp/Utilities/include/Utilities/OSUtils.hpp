@@ -17,6 +17,8 @@ namespace OS
 
     UTILITIES_API std::string GetCurrentDirectory(std::string pathToFile);
 
+    UTILITIES_API std::string GetPathSep();
+
 } // end of namespace OS
 } // end of namespace Utilities
 

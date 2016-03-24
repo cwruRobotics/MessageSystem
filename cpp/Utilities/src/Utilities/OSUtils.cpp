@@ -22,5 +22,14 @@ namespace OS
         return pathToFile.substr(0, indexOfLastPath);
     }
 
+    std::string GetPathSep()
+    {
+        #if defined _WIN32 || defined __CYGWIN__ || defined _WIN64
+            return "\\";
+        #else
+            return "/";
+        #endif
+    }
+
 } // end of namespace OS
 } // end of namespace Utilities

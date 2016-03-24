@@ -29,7 +29,8 @@ namespace Tests
 
     TEST_CASE("Starting and stopping the engine singleton", "[Async_unit]")
     {
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         REQUIRE( Start(configFilePath) );
         REQUIRE( GetEngineSingleton() != nullptr );
 
@@ -45,7 +46,8 @@ namespace Tests
 
     TEST_CASE("Calling Async::Start() multiple times", "[Async_unit]")
     {
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         REQUIRE( Start(configFilePath) );
         REQUIRE( GetEngineSingleton() != nullptr );
 
@@ -59,7 +61,8 @@ namespace Tests
 
     TEST_CASE("Calling Async::Stop() multiple times", "[Async_unit]")
     {
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         REQUIRE( Start(configFilePath) );
         REQUIRE( GetEngineSingleton() != nullptr );
 
@@ -75,7 +78,8 @@ namespace Tests
     {
         REQUIRE( GetEngineSingleton() == nullptr );
 
-        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) + "\\TestEngineConfig.xml";
+        std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
+            OSUtils::GetPathSep() + "TestEngineConfig.xml";
         REQUIRE( Start(configFilePath) );
         REQUIRE( GetEngineSingleton() != nullptr );
         REQUIRE( Stop() );

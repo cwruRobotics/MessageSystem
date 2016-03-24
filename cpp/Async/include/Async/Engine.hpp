@@ -47,7 +47,7 @@ namespace EntryPoint
         Types::Result_t ShutdownScheduler(std::string& schedulerId) override;
 
         Types::Result_t StartScheduler(std::string& schedulerId,
-                                       std::vector<Types::JobPriority>& config) override;
+                                       std::vector<Types::JobPriority> config) override;
 
         Types::Result_t Shutdown() override;
 

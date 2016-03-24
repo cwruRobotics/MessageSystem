@@ -32,7 +32,7 @@ namespace EntryPoint
         virtual Types::Result_t ShutdownScheduler(std::string& schedulerId) = 0;
 
         virtual Types::Result_t StartScheduler(std::string& schedulerId,
-                                               std::vector<Types::JobPriority>& config) = 0;
+                                               std::vector<Types::JobPriority> config) = 0;
 
         virtual Types::Result_t Shutdown() = 0;
 

@@ -17,6 +17,7 @@ namespace Utilities
     private:
 
         std::atomic<int>        _count;
+        std::atomic<bool>       _trigger;
         std::condition_variable _cv;
         std::mutex              _mutex;
 

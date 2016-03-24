@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Engine version="1.0" type="example">
+    <Scheduler name="TestScheduler">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="OTHER"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler2">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler3">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler4">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler5">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler6">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler7">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler8">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler9">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    <Scheduler name="TestScheduler10">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+</Engine>

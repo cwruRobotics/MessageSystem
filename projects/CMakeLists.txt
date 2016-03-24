@@ -95,13 +95,24 @@ endif()
 
 if( BUILD_ASYNC )
     # Async library
-    add_subdirectory( ${SRC_ROOT}/Execution/src/Async
+    add_subdirectory( ${SRC_ROOT}/Async/src/Async
                       ${OUT_ROOT}/Async )
 
     # give other subprojects a chance to search for libraries and header
     # files created before the "make install"
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Async" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Async" )
+endif()
+
+if( BUILD_ASYNC_FT )
+    # Async_FT executable
+    add_subdirectory( ${SRC_ROOT}/Async_FT/src
+                      ${OUT_ROOT}/Async_FT )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Async_FT" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Async_FT" )
 endif()
 
 if( BUILD_ROBOS )
@@ -132,7 +143,7 @@ if( RUN_UNIT_TESTS )
 
     if( BUILD_ASYNC )
         # Async unit tests
-        add_subdirectory( ${SRC_ROOT}/Execution/src/Async/unitTest
+        add_subdirectory( ${SRC_ROOT}/Async/src/Async/unitTest
                           ${OUT_ROOT}/AsyncUnit )
     endif()
 

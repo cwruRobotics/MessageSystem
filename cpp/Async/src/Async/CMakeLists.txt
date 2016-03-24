@@ -22,7 +22,7 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 # ===============================================================================
 
 # Project name
-project( Utilities CXX )
+project( Async CXX )
 
 # source code root directory
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE )
@@ -45,49 +45,65 @@ set( PROJECT_VERSION_PATCH "0" )
 # Logging library
 
 # Source files
-set( UTILITIES_SRCS
+set( ASYNC_SRCS
     # logging
-    ${CONFIG_ROOT}/UtilitiesLoggingConfig.cpp
+    ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
 
-    # utilities
-    ${SRC_ROOT}/Utilities/Semaphore.cpp
-    ${SRC_ROOT}/Utilities/OSUtils.cpp
+    ${SRC_ROOT}/Async/Result.cpp
+    ${SRC_ROOT}/Async/WorkItemStates.cpp
+    ${SRC_ROOT}/Async/WorkItemStateMachine.cpp
+    ${SRC_ROOT}/Async/Scheduler.cpp
+    ${SRC_ROOT}/Async/WorkItem.cpp
+    ${SRC_ROOT}/Async/SettlementStates.cpp
+    ${SRC_ROOT}/Async/ContinuableWorkItem.cpp
+    ${SRC_ROOT}/Async/JobPriorities.cpp
+    ${SRC_ROOT}/Async/PromiseBase.cpp
+    ${SRC_ROOT}/Async/ConcurrencyStates.cpp
+    ${SRC_ROOT}/Async/WorkerThread.cpp
+    ${SRC_ROOT}/Async/Engine.cpp
 
     # factories
-
+    ${SRC_ROOT}/Async/Factories/EngineFactory.cpp
 )
 
 # Public header files (installed together with libraries)
-set( UTILITIES_PUBLIC_HEADERS
-    # project code
-    ${INC_ROOT}/Utilities/LibraryExport.hpp
-    ${INC_ROOT}/Utilities/Semaphore.hpp
-    ${INC_ROOT}/Utilities/OSUtils.hpp
-
-    # third party library data structures
-    ${INC_ROOT}/Utilities/btree.h
-    ${INC_ROOT}/Utilities/btree_map.h
-    ${INC_ROOT}/Utilities/btree_multimap.h
-    ${INC_ROOT}/Utilities/btree_multiset.h
-    ${INC_ROOT}/Utilities/btree_set.h
-
-    # third party library xml parser
-    ${INC_ROOT}/Utilities/manual.html
-    ${INC_ROOT}/Utilities/rapidxml.hpp
-    ${INC_ROOT}/Utilities/rapidxml_iterators.hpp
-    ${INC_ROOT}/Utilities/rapidxml_print.hpp
-    ${INC_ROOT}/Utilities/rapidxml_utils.hpp
+set( ASYNC_PUBLIC_HEADERS
+    ${INC_ROOT}/Async/LibraryExport.hpp
+    ${INC_ROOT}/Async/Result.hpp
+    ${INC_ROOT}/Async/SettlementStates.hpp
+    ${INC_ROOT}/Async/IWorkItem.hpp
+    ${INC_ROOT}/Async/IExecutableWorkItem.hpp
+    ${INC_ROOT}/Async/IScheduler.hpp
+    ${INC_ROOT}/Async/IChainLinker.hpp
+    ${INC_ROOT}/Async/IContinuableWorkItem.hpp
+    ${INC_ROOT}/Async/IPromise.hpp
+    ${INC_ROOT}/Async/PromiseBase.hpp
+    ${INC_ROOT}/Async/Promise.hpp
+    ${INC_ROOT}/Async/ConcurrencyStates.hpp
+    ${INC_ROOT}/Async/JobPriorities.hpp
+    ${INC_ROOT}/Async/IThread.hpp
+    ${INC_ROOT}/Async/IEngine.hpp
+    ${INC_ROOT}/Async/PromiseLifeSaver.hpp
+    ${INC_ROOT}/Async/SimpleChainLinker.hpp
+    ${INC_ROOT}/Async/AsyncExecution.hpp
+    ${INC_ROOT}/Async/Async.hpp
 )
 
-set( UTILITIES_PRIVATE_HEADERS
+set( ASYNC_PRIVATE_HEADERS
     # logging
-    ${CONFIG_ROOT}/UtilitiesLoggingConfig.hpp
+    ${CONFIG_ROOT}/AsyncLoggingConfig.hpp
 
-    # factories
+    ${INC_ROOT}/Async/WorkItemStates.hpp
+    ${INC_ROOT}/Async/WorkItemStateMachine.hpp
+    ${INC_ROOT}/Async/Scheduler.hpp
+    ${INC_ROOT}/Async/WorkItem.hpp
+    ${INC_ROOT}/Async/ContinuableWorkItem.hpp
+    ${INC_ROOT}/Async/WorkerThread.hpp
+    ${INC_ROOT}/Async/Engine.hpp
 )
 
 # setup visual studio source groups
-source_group( PublicHeaders FILES ${UTILITIES_PUBLIC_HEADERS} )
+source_group( PublicHeaders FILES ${ASYNC_PUBLIC_HEADERS} )
 
 # Directories to search for header files
 set( INCLUDE_DIRS
@@ -100,12 +116,10 @@ set( INCLUDE_DIRS
 # load external modules
 # (none yet)...Logging does not depend on anything else
 
-set( ENABLE_EXTERNAL_STRUCTURES_TEST "OFF" )
-
 # set target specific compiler definitions
 # this should ONLY be definitions needed to build the source code.
 # examples: macros ON/OFF, etc.
-set( UTILITIES_COMPILE_DEFINITIONS )
+set( ASYNC_COMPILE_DEFINITIONS )
 
 # check required libraries and header files and such.
 # this will fail CMake if set to False due to required
@@ -134,29 +148,10 @@ set( DEPENDENCY_CHECK FALSE )
 
 include( GNUInstallDirs )
 
-# set( UTILITIES_LIBS )
-# if( ENABLE_LOGGING )
-#     find_package( Logging REQUIRED )
-#     if( LOGGING_FOUND )
-#         add_library( LOGGING SHARED IMPORTED )
-#         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
-#         else()
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
-#         endif()
-
-#         list( APPEND UTILITIES_LIBS LOGGING )
-
-#     else()
-#         message( WARNING "Logging not found...skipping usage" )
-#     endif()
-# endif()
-# list( LENGTH UTILITIES_LIBS UTILITIES_LIBS_LENGTH )
-
 set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Async
     "Logging"
+    "Utilities"
 )
 include(ProjectLinker)
 
@@ -176,19 +171,19 @@ include_directories( ${INCLUDE_DIRS} )
 #
 
 # Logging library
-set( UTILITIES_LIB_NAME ${PROJECT_NAME} )
+set( ASYNC_LIB_NAME ${PROJECT_NAME} )
 
 # Shared Library export header file supporte
 include( GenerateExportHeader )
 
-add_library( ${UTILITIES_LIB_NAME} SHARED ${UTILITIES_SRCS} ${UTILITIES_PUBLIC_HEADERS} ${UTILITIES_PRIVATE_HEADERS})
+add_library( ${ASYNC_LIB_NAME} SHARED ${ASYNC_SRCS} ${ASYNC_PUBLIC_HEADERS} ${ASYNC_PRIVATE_HEADERS})
 if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
-    target_link_libraries( ${UTILITIES_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+    target_link_libraries( ${ASYNC_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
 endif()
 
-set_target_properties( ${UTILITIES_LIB_NAME} PROPERTIES
-    PUBLIC_HEADER       "${UTILITIES_PUBLIC_HEADERS}"
-    COMPILE_DEFINITIONS "${UTILITIES_COMPILE_DEFINITIONS}"
+set_target_properties( ${ASYNC_LIB_NAME} PROPERTIES
+    PUBLIC_HEADER       "${ASYNC_PUBLIC_HEADERS}"
+    COMPILE_DEFINITIONS "${ASYNC_COMPILE_DEFINITIONS}"
     SOVERSION           "${PROJECT_VERSION_MAJOR}"
     VERSION             "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
@@ -198,11 +193,11 @@ set_target_properties( ${UTILITIES_LIB_NAME} PROPERTIES
 # -------------------------------------------------------------------------------
 
 # install targets
-install( TARGETS ${UTILITIES_LIB_NAME}
+install( TARGETS ${ASYNC_LIB_NAME}
          RUNTIME        DESTINATION ${CMAKE_INSTALL_BINDIR}
          LIBRARY        DESTINATION ${CMAKE_INSTALL_LIBDIR}
          ARCHIVE        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Utilities
+         PUBLIC_HEADER  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Async
 )
 
 if( MSVC )

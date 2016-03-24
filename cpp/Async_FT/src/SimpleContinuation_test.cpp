@@ -8,12 +8,11 @@
 
 // C++ PROJECT INCLUDES
 #include "MathUtils.hpp"
-#include "PromiseFactory.hpp"
 
 namespace Async_FT
 {
 
-    TEST(SimpleExecutionTest, TrivialCallExecution)
+    TEST(SimpleContinuationTest, TrivialContinuationCall)
     {
         std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
             Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
@@ -23,6 +22,9 @@ namespace Async_FT
         Async::PromisePtr<int> pPromise = Async::Execute<int>([]() -> int
         {
             return 5;
+        }, schedulerName)->Then<int>([](int a) -> int
+        {
+            return a + 5;
         }, schedulerName);
 
         for(int i = 0; i < 1000 && pPromise->GetState() != Async::States::SettlementState::SUCCESS; ++i)
@@ -31,12 +33,12 @@ namespace Async_FT
         }
 
         EXPECT_EQ(pPromise->GetState(), Async::States::SettlementState::SUCCESS);
-        EXPECT_EQ(pPromise->GetResult(), 5) << "Promise should return 5";
+        EXPECT_EQ(pPromise->GetResult(), 10) << "Promise should return 5";
 
         Async::Stop();
     }
 
-    TEST(SimpleExecutionTest, FunctionCallInPromise)
+    TEST(SimpleContinuationTest, FunctionCallInContinuation)
     {
         std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
             Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
@@ -48,6 +50,9 @@ namespace Async_FT
         Async::PromisePtr<int> pPromise = Async::Execute<int>([squareArg]() -> int
         {
             return MathUtils::Square(squareArg);
+        }, schedulerName)->Then<int>([](int a) -> int
+        {
+            return MathUtils::Square(a);
         }, schedulerName);
 
         for(int i = 0; i < 1000 && pPromise->GetState() != Async::States::SettlementState::SUCCESS; ++i)
@@ -56,44 +61,33 @@ namespace Async_FT
         }
 
         EXPECT_EQ(pPromise->GetState(), Async::States::SettlementState::SUCCESS);
-        EXPECT_EQ(pPromise->GetResult(), MathUtils::Square(squareArg)) << "Promise should return 25";
+        EXPECT_EQ(pPromise->GetResult(), MathUtils::Square(MathUtils::Square(squareArg))) << "Promise should return 25^2";
 
         Async::Stop();
     }
 
-    TEST(SimpleExecutionTest, PromiseOutlivesCallingMacro)
+    TEST(SimpleContinuationTest, ContinuationOutlivesCallingMacro)
     {
         std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
             Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
         Async::Start(configFilePath);
 
-        int squareArg = 5;
-        ASSERT_EQ(MathUtils::Square(squareArg), squareArg * squareArg) << "Square functionality not correct";
         std::string schedulerName = "TestScheduler";
-        PromiseFactory::ExecuteAsynchronously<int>([squareArg]() -> int
+        Async::PromisePtr<int> pPromise = Async::Execute<int>([]() -> int
+        {
+            return 5;
+        }, schedulerName);
+
+        pPromise->Then<int>([](int a) -> int
         {
             std::this_thread::sleep_for(std::chrono::seconds(2));
-            return MathUtils::Square(squareArg);
+            return a + 5;
         }, schedulerName);
+
     }
 
-    TEST(SimpleExecutionTest, PromiseOutlivesCallingFunction)
+    TEST(SimpleContinuationTest, CheckingSingletonStillExistsAndForceQuitting)
     {
-        ASSERT_EQ(Async::Stop(), true);
-
-        std::string configFilePath = Utilities::OS::GetCurrentDirectory(__FILE__) +
-            Utilities::OS::GetPathSep() + "TestEngineConfig.xml";
-        Async::Start(configFilePath);
-
-        int squareArg = 5;
-        ASSERT_EQ(MathUtils::Square(squareArg), squareArg * squareArg) << "Square functionality not correct";
-        std::string schedulerName = "TestScheduler";
-        Async::Execute<int>([squareArg]() -> int
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            return MathUtils::Square(squareArg);
-        }, schedulerName);
-
         ASSERT_EQ(Async::Stop(), true);
     }
 

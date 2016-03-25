@@ -12,6 +12,7 @@
 #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
 #include "Async/IScheduler.hpp"
+#include "Async/IWorkItem.hpp"
 
 namespace Async
 {
@@ -41,6 +42,9 @@ namespace EntryPoint
 } // end of namespace EntryPoint
 
     ASYNC_API EntryPoint::IEnginePtr GetEngineSingleton();
+
+    ASYNC_API Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
+                                                        std::string schedulerName);
 
 } // end of namespace Async
 

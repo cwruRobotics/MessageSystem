@@ -15,6 +15,8 @@ std::mutex             engineLock;
 EntryPoint::IEnginePtr pEngine = nullptr;
 std::atomic<bool>      engineStarted(false);
 
+    // MODEL AS A READER WRITER PROBLEM????
+
     bool Start(std::string configPath)
     {
         std::lock_guard<std::mutex> lock(engineLock);
@@ -34,6 +36,23 @@ std::atomic<bool>      engineStarted(false);
             throw std::logic_error("Engine started but is null");
         }
         return pEngine;
+    }
+
+    Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
+                                                        std::string schedulerName)
+    {
+        std::lock_guard<std::mutex> lock(engineLock);
+        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
+        if(!pEngine)
+        {
+            return Types::Result_t::FAILURE;
+        }
+        ISchedulerPtr pScheduler = pEngine->GetScheduler(schedulerName);
+        if(!pScheduler)
+        {
+            std::logic_error("Scheduler is null put Engine is not null");
+        }
+        return pWorkItem->Schedule(pScheduler);
     }
 
     bool Stop()

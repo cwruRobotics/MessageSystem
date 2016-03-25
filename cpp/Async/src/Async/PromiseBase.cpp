@@ -41,11 +41,7 @@ namespace Async
 
     Types::Result_t PromiseBase::Schedule(ISchedulerPtr scheduler)
     {
-        if(scheduler == nullptr)
-        {
-            throw std::logic_error("scheduler is null");
-        }
-        if (scheduler->ScheduleWorkItem(
+        if (scheduler != nullptr && scheduler->ScheduleWorkItem(
             std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)))
         {
             return Types::Result_t::SUCCESS;

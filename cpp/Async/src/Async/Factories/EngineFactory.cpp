@@ -1,5 +1,6 @@
 // SYSTEM INCLUDES
 #include <atomic>
+#include <iostream>
 #include <mutex>
 #include <stdexcept>
 
@@ -49,21 +50,26 @@ std::atomic<bool>      engineStarted(false);
     {
         std::lock_guard<std::mutex> lock(engineLock);
         EntryPoint::IEnginePtr pEngine = GetEngineSingletonHelper();
-        if(!pEngine)
+        std::cout << "Submitting service request" << std::endl;
+        if(!pEngine || !pEngine->IsRunning())
         {
+            std::cout << "engine is null or not running. Cannot submit request" << std::endl;
             return Types::Result_t::FAILURE;
         }
         ISchedulerPtr pScheduler = pEngine->GetScheduler(schedulerName);
+        std::cout << "Got Scheduler from Engine" << std::endl;
         if(!pScheduler)
         {
-            std::logic_error("Scheduler is null put Engine is not null");
+            std::logic_error("Scheduler is null but Engine is not null");
         }
+        std::cout << "Scheduling WorkItem" << std::endl;
         return pWorkItem->Schedule(pScheduler);
     }
 
     bool Stop()
     {
         std::lock_guard<std::mutex> lock(engineLock);
+        std::cout << "Async::Stop() called" << std::endl;
         if(!engineStarted)
         {
             return false;

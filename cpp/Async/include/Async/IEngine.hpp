@@ -37,6 +37,8 @@ namespace EntryPoint
 
         virtual Types::Result_t Shutdown() = 0;
 
+        virtual bool IsRunning() = 0;
+
     };
 
 } // end of namespace EntryPoint

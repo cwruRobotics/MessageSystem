@@ -3,7 +3,7 @@
 
 // SYSTEM INCLUDES
 #include <functional>
-
+#include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Async/IChainLinker.hpp"
@@ -59,6 +59,7 @@ namespace Async
     template<typename PARENT_TYPE, typename CHILD_TYPE>
     Types::Result_t SimpleChainLinker<PARENT_TYPE, CHILD_TYPE>::ApplyFunctionToChild()
     {
+        std::cout << "Chaining continuation" << std::endl;
         //this->_pChild->AttachMainFunction(this->_pResolutionFunction());
         this->_pChild->AttachMainFunction(std::bind(this->_pChildFunction, this->_pParent->GetResult()));
         Types::Result_t result = SubmitEngineSingletonServiceRequest(this->_pChild,

@@ -90,6 +90,7 @@ namespace Async_FT
 
     TEST(SimpleContinuationTest, CheckingSingletonStillExistsAndForceQuitting)
     {
+        std::this_thread::sleep_for(std::chrono::seconds(4));
         std::cout << "Calling Async::Stop()" << std::endl;
         ASSERT_EQ(Async::Stop(), true);
     }

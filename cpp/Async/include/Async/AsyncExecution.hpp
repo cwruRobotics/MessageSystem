@@ -23,10 +23,13 @@ namespace Async
                                        Types::JobPriority priority=Types::JobPriority::OTHER)
     {
         PromisePtr<PROMISE_RESULT> pPromise = std::make_shared<Promise<PROMISE_RESULT> >(priority);
-        pPromise->MakeSafe();
         pPromise->AttachMainFunction(pFunc);
         Types::Result_t result = SubmitEngineSingletonServiceRequest(pPromise,
                                                                      schedulerId);
+        if(result == Types::Result_t::SUCCESS)
+        {
+            pPromise->MakeSafe();
+        }
         return pPromise;
     }
 

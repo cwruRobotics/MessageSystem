@@ -64,7 +64,7 @@ namespace Async
         Types::Result_t result = SubmitEngineSingletonServiceRequest(this->_pChild,
                                                                      this->_childSchedulerId);
         this->_pParent = nullptr;
-        return Types::Result_t::SUCCESS;
+        return result;
     }
 
     template<typename PARENT_TYPE, typename CHILD_TYPE>

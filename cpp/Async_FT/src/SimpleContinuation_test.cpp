@@ -1,5 +1,6 @@
 // SYSTEM INCLUDES
 #include <chrono>
+#include <iostream>
 
 #include <gtest/gtest.h>
 #include <Utilities/OSUtils.hpp>
@@ -73,13 +74,14 @@ namespace Async_FT
         Async::Start(configFilePath);
 
         std::string schedulerName = "TestScheduler";
-        Async::PromisePtr<int> pPromise = Async::Execute<int>([]() -> int
+        //Async::PromisePtr<int> pPromise =
+        Async::Execute<int>([]() -> int
         {
+            std::cout << "Executing Promise" << std::endl;
             return 5;
-        }, schedulerName);
-
-        pPromise->Then<int>([](int a) -> int
+        }, schedulerName)->Then<int>([](int a) -> int
         {
+            std::cout << "Executing Continuation" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2));
             return a + 5;
         }, schedulerName);
@@ -88,6 +90,7 @@ namespace Async_FT
 
     TEST(SimpleContinuationTest, CheckingSingletonStillExistsAndForceQuitting)
     {
+        std::cout << "Calling Async::Stop()" << std::endl;
         ASSERT_EQ(Async::Stop(), true);
     }
 

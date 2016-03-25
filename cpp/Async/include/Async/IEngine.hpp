@@ -44,7 +44,7 @@ namespace EntryPoint
     ASYNC_API EntryPoint::IEnginePtr GetEngineSingleton();
 
     ASYNC_API Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
-                                                        std::string schedulerName);
+                                                                  std::string schedulerName);
 
 } // end of namespace Async
 

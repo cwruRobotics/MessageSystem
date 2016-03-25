@@ -12,7 +12,7 @@
 namespace Async
 {
 
-std::mutex             engineLock;
+std::mutex             engineStartedLock;
 EntryPoint::IEnginePtr pEngine = nullptr;
 std::atomic<bool>      engineStarted(false);
 
@@ -20,7 +20,7 @@ std::atomic<bool>      engineStarted(false);
 
     bool Start(std::string configPath)
     {
-        std::lock_guard<std::mutex> lock(engineLock);
+        std::lock_guard<std::mutex> lock(engineStartedLock);
         if(engineStarted)
         {
             return false;
@@ -30,26 +30,28 @@ std::atomic<bool>      engineStarted(false);
         return engineStarted;
     }
 
-    EntryPoint::IEnginePtr GetEngineSingletonHelper()
+    EntryPoint::IEnginePtr GetEngineSingleton()
     {
-        if (engineStarted && !pEngine)
+        bool val = false;
+        {
+            std::lock_guard<std::mutex> lock(engineStartedLock);
+            val = engineStarted;
+        }
+        if(!val)
+        {
+            return nullptr;
+        }
+        else if (val && !pEngine)
         {
             throw std::logic_error("Engine started but is null");
         }
         return pEngine;
     }
 
-    EntryPoint::IEnginePtr GetEngineSingleton()
-    {
-        std::lock_guard<std::mutex> lock(engineLock);
-        return GetEngineSingletonHelper();
-    }
-
     Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
                                                         std::string schedulerName)
     {
-        std::lock_guard<std::mutex> lock(engineLock);
-        EntryPoint::IEnginePtr pEngine = GetEngineSingletonHelper();
+        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
         std::cout << "Submitting service request" << std::endl;
         if(!pEngine || !pEngine->IsRunning())
         {
@@ -68,9 +70,13 @@ std::atomic<bool>      engineStarted(false);
 
     bool Stop()
     {
-        std::lock_guard<std::mutex> lock(engineLock);
         std::cout << "Async::Stop() called" << std::endl;
-        if(!engineStarted)
+        bool val = false;
+        {
+            std::lock_guard<std::mutex> lock(engineStartedLock);
+            val = engineStarted;
+        }
+        if(!val)
         {
             return false;
         }

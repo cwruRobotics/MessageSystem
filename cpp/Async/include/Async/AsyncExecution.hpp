@@ -25,11 +25,8 @@ namespace Async
         PromisePtr<PROMISE_RESULT> pPromise = std::make_shared<Promise<PROMISE_RESULT> >(priority);
         pPromise->MakeSafe();
         pPromise->AttachMainFunction(pFunc);
-        if(pPromise->Schedule(GetEngineSingleton()
-           ->GetScheduler(schedulerId)) != Types::Result_t::SUCCESS)
-        {
-            throw std::runtime_error("Error scheduling Promise");
-        }
+        Types::Result_t result = SubmitEngineSingletonServiceRequest(pPromise,
+                                                                     schedulerId);
         return pPromise;
     }
 

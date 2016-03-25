@@ -24,12 +24,12 @@ std::atomic<bool>      engineStarted(false);
         {
             return false;
         }
-        engineStarted = true;
         pEngine = std::make_shared<EntryPoint::Engine>(configPath);
+        engineStarted = true;
         return engineStarted;
     }
 
-    EntryPoint::IEnginePtr GetEngineSingleton()
+    EntryPoint::IEnginePtr GetEngineSingletonHelper()
     {
         if (engineStarted && !pEngine)
         {
@@ -38,11 +38,17 @@ std::atomic<bool>      engineStarted(false);
         return pEngine;
     }
 
+    EntryPoint::IEnginePtr GetEngineSingleton()
+    {
+        std::lock_guard<std::mutex> lock(engineLock);
+        return GetEngineSingletonHelper();
+    }
+
     Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
                                                         std::string schedulerName)
     {
         std::lock_guard<std::mutex> lock(engineLock);
-        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
+        EntryPoint::IEnginePtr pEngine = GetEngineSingletonHelper();
         if(!pEngine)
         {
             return Types::Result_t::FAILURE;

@@ -77,6 +77,7 @@ namespace Concurrency
         // synchronization! This prevents a algorithmic hole in
         // the second while loop in WorkerThread::Run
         std::unique_lock<std::mutex> queueLock(this->_queueMutex);
+        std::cout << "WorkerThread shutting down...";
 
         this->_threadCV.notify_all();
 
@@ -92,6 +93,7 @@ namespace Concurrency
             this->_thread.join();
         }
         this->_state = States::ConcurrencyState::DONE;
+        std::cout << "WorkerThread shut down" << std::endl;
 
     }
 

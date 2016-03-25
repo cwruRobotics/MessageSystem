@@ -51,6 +51,8 @@ namespace EntryPoint
 
         Types::Result_t Shutdown() override;
 
+        bool IsRunning() override;
+
     };
 
     using EnginePtr = std::shared_ptr<Engine>;

@@ -62,6 +62,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/Async_test.cpp
             ${SRC_ROOT}/SimpleExecution_test.cpp
             ${SRC_ROOT}/SimpleContinuation_test.cpp
+            ${SRC_ROOT}/SimpleControlFlow_test.cpp
             ${SRC_ROOT}/main.cpp
         )
 

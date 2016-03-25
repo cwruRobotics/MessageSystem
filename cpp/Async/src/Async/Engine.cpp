@@ -1,4 +1,5 @@
 // SYSTEM INCLUDES
+#include <iostream>
 #include <Utilities/rapidxml.hpp>
 #include <Utilities/rapidxml_utils.hpp>
 #include <Logging/Factory.hpp>
@@ -148,14 +149,19 @@ namespace EntryPoint
 
     Types::Result_t Engine::Shutdown()
     {
-        std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
-
         this->_running = false;
+        std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
         for (auto it = this->GetSchedulerMap().begin(); it != this->GetSchedulerMap().end(); ++it)
         {
+            std::cout << "Shutting down scheduler [" << it->first << "]" << std::endl;
             it->second->Shutdown();
         }
         return Types::Result_t::SUCCESS;
+    }
+
+    bool Engine::IsRunning()
+    {
+        return this->_running;
     }
 
 } // end of namespace EntryPoint

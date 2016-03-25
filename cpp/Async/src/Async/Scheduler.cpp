@@ -1,4 +1,5 @@
 // SYSTEM INCLUDES
+#include <iostream>
 #include <Logging/Factory.hpp>
 #include <Logging/ILogger.hpp>
 
@@ -56,11 +57,13 @@ namespace Async
     {
         // Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("ConsoleLogger");
         // LOG_INFO(pLogger, "%s", "Logging to Console!");
+        
         if (this->_running)
         {
             this->_running = false;
             for (auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
             {
+                std::cout << "Joining down WorkerThread" << std::endl;
                 it->second->Join();
             }
         }

@@ -5,7 +5,8 @@
 #include "catch/catch.hpp"
 #include "Async/unitTest/TestUtilities.hpp"
 #include "Async/Result.hpp"
-#include "Async/WorkItem.hpp"
+#include "Async/WorkItemStates.hpp"
+#include "Async/unitTest/MockWorkItem.hpp"
 
 namespace Async
 {
@@ -16,7 +17,7 @@ namespace Tests
     {
         Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 1");
         uint64_t customId = 15;
-        WorkItem defaultWItem, customWItem(customId);
+        MockWorkItem defaultWItem, customWItem(customId);
 
         REQUIRE( defaultWItem.GetId() == 0 );
         REQUIRE( customWItem.GetId() == customId );
@@ -25,13 +26,13 @@ namespace Tests
     TEST_CASE("Testing AttachMainFunction", "[WorkItem_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 2");
-        WorkItem workItem;
+        MockWorkItem workItem;
 
         try
         {
-            workItem.AttachMainFunction([]() -> Types::Result_t
+            workItem.AttachMainFunction([]() -> States::WorkItemState
             {
-                return Types::Result_t::SUCCESS;
+                return States::WorkItemState::DONE;
             });
 
             // no way to check internal member variable.
@@ -48,13 +49,13 @@ namespace Tests
     TEST_CASE("Testing AttachPosteriorFunction", "[WorkItem_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 3");
-        WorkItem workItem;
+        MockWorkItem workItem;
 
         try
         {
-            workItem.AttachPosteriorFunction([]() -> Types::Result_t
+            workItem.AttachPosteriorFunction([]() -> States::WorkItemState
             {
-                    return Types::Result_t::SUCCESS;
+                    return States::WorkItemState::DONE;
             });
 
             REQUIRE( true );
@@ -69,7 +70,7 @@ namespace Tests
     TEST_CASE("Testing GetException", "[WorkItem_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("WorkItem_unit test 4");
-        WorkItem workItem;
+        MockWorkItem workItem;
 
         REQUIRE( workItem.GetException() == nullptr );
     }

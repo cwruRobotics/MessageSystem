@@ -1,11 +1,22 @@
 // SYSTEM INCLUDES
 
-
 // C++ PROJECT INCLUDES
 #include "Async/WorkItem.hpp"
 
 namespace Async
 {
+
+    FunctionPtr WorkItem::GetPosteriorFunction()
+    {
+        if(this->_pPostFunction)
+        {
+            return this->_pPostFunction;
+        }
+        return []() -> States::WorkItemState
+        {
+            return States::WorkItemState::DONE;
+        };
+    }
 
 	void WorkItem::SetId(uint64_t id)
 	{
@@ -23,20 +34,28 @@ namespace Async
 		this->_pPostFunction = nullptr;
 	}
 
+    States::WorkItemState WorkItem::GetState()
+    {
+        return this->_innerState;
+    }
+
+    void WorkItem::SetState(States::WorkItemState newState)
+    {
+        this->_innerState = newState;
+    }
+
 	bool WorkItem::IsDone()
 	{
-		return this->GetCurrentState() == States::WorkItemState::DONE;
+		return this->_innerState == States::WorkItemState::DONE;
 	}
 
 	void WorkItem::AttachMainFunction(FunctionPtr func)
 	{
-        std::lock_guard<std::mutex> executionLock(this->_executionMutex);
 		this->_pMainFunction = func;
 	}
 
 	void WorkItem::AttachPosteriorFunction(FunctionPtr func)
 	{
-        std::lock_guard<std::mutex> executionLock(this->_executionMutex);
 		this->_pPostFunction = func;
 	}
 
@@ -45,44 +64,40 @@ namespace Async
 		return this->_id;
 	}
 
-	Types::Result_t WorkItem::Execute()
-	{
-		this->Trigger(Types::Result_t::SUCCESS);
+    States::WorkItemState WorkItem::Execute()
+    {
+        States::WorkItemState nextState = States::WorkItemState::DONE;
+        if (this->_pMainFunction)
+        {
+            try
+            {
+                nextState = this->_pMainFunction();
+            }
+            catch (...)
+            {
+                this->SetException(std::current_exception());
+            }
+        }
+        else
+        {
+            throw std::logic_error("No function to execute!");
+        }
 
-		Types::Result_t result = Types::Result_t::FAILURE;
-		if (this->_pMainFunction)
-		{
-			try
-			{
-				result = this->_pMainFunction();
-                this->Trigger(result);
-			}
-			catch (...)
-			{
-                this->Trigger(Types::Result_t::SUCCESS);
-				this->SetException(std::current_exception());
-			}
-		}
-		else
-		{
-			throw std::logic_error("No function to execute!");
-		}
-		this->Trigger(result);
+        FunctionPtr pPost = this->GetPosteriorFunction();
+        if (nextState != States::WorkItemState::DONE && pPost)
+        {
+            try
+            {
+                nextState = pPost();
+            }
+            catch (...)
+            {
+                this->SetException(std::current_exception());
+            }
+        }
 
-		if (result != Types::Result_t::FAILURE && this->_pPostFunction)
-		{
-			try
-			{
-				this->_pPostFunction();
-			}
-			catch (...)
-			{
-				result = Types::Result_t::FAILURE;
-			}
-		}
-		this->Trigger(result);
-
-		return result;
+        this->_innerState = nextState;
+        return nextState;
 	}
 
 	std::exception_ptr WorkItem::GetException() const
@@ -90,11 +105,18 @@ namespace Async
 		return this->_pException;
 	}
 
-	Types::Result_t WorkItem::Schedule(ISchedulerPtr scheduler)
+	Types::Result_t WorkItem::Schedule(SchedulerBasePtr scheduler)
 	{
-		// std::cout << "Entering WorkItem::Schedule() with state: " << this->WorkItem::GetStateString() << std::endl;
-		// if (scheduler->ScheduleWorkItem(std::dynamic_pointer_cast<IWorkItem>(this->shared_from_this())))
+
 		Types::Result_t result = Types::Result_t::FAILURE;
+
+        if(!scheduler || (this->_innerState != States::WorkItemState::IDLE &&
+           this->_innerState != States::WorkItemState::RESCHEDULE))
+        {
+            return result;
+        }
+
+        this->_innerState = States::WorkItemState::SCHEDULE;
 		if(scheduler->ScheduleWorkItem(shared_from_this()))
 		{
 			result = Types::Result_t::SUCCESS;
@@ -105,17 +127,12 @@ namespace Async
 
     const std::string WorkItem::GetStateAsString()
     {
-        return GetWorkItemStateString(this->GetCurrentState());
+        return GetWorkItemStateString(this->_innerState);
     }
 
     const Types::JobPriority WorkItem::GetPriority()
     {
         return this->_jobPriority;
-    }
-
-    std::mutex& WorkItem::GetExecutionMutex()
-    {
-        return this->_executionMutex;
     }
 
 }

@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 // C++ PROJECT INCLUDES
-#include "Async/IEngine.hpp"
+#include "Async/EngineBase.hpp"
 #include "Async/Engine.hpp"
 #include "Async/Async.hpp"
 
@@ -13,7 +13,7 @@ namespace Async
 {
 
 std::mutex             engineStartedLock;
-EntryPoint::IEnginePtr pEngine = nullptr;
+EntryPoint::EngineBasePtr pEngine = nullptr;
 std::atomic<bool>      engineStarted(false);
 
     // MODEL AS A READER WRITER PROBLEM????
@@ -30,7 +30,7 @@ std::atomic<bool>      engineStarted(false);
         return engineStarted;
     }
 
-    EntryPoint::IEnginePtr GetEngineSingleton()
+    EntryPoint::EngineBasePtr GetEngineSingleton()
     {
         bool val = false;
         {
@@ -48,29 +48,29 @@ std::atomic<bool>      engineStarted(false);
         return pEngine;
     }
 
-    Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
+    Types::Result_t SubmitEngineSingletonServiceRequest(WorkItemBasePtr pWorkItem,
                                                         std::string schedulerName)
     {
-        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
-        std::cout << "Submitting service request" << std::endl;
+        EntryPoint::EngineBasePtr pEngine = GetEngineSingleton();
+        // std::cout << "Submitting service request" << std::endl;
         if(!pEngine || !pEngine->IsRunning())
         {
-            std::cout << "engine is null or not running. Cannot submit request" << std::endl;
+            // std::cout << "engine is null or not running. Cannot submit request" << std::endl;
             return Types::Result_t::FAILURE;
         }
-        ISchedulerPtr pScheduler = pEngine->GetScheduler(schedulerName);
-        std::cout << "Got Scheduler from Engine" << std::endl;
+        SchedulerBasePtr pScheduler = pEngine->GetScheduler(schedulerName);
+        // std::cout << "Got Scheduler from Engine" << std::endl;
         if(!pScheduler)
         {
             std::logic_error("Scheduler is null but Engine is not null");
         }
-        std::cout << "Scheduling WorkItem" << std::endl;
+        // std::cout << "Scheduling WorkItem" << std::endl;
         return pWorkItem->Schedule(pScheduler);
     }
 
     bool Stop()
     {
-        std::cout << "Async::Stop() called" << std::endl;
+        // std::cout << "Async::Stop() called" << std::endl;
         bool val = false;
         {
             std::lock_guard<std::mutex> lock(engineStartedLock);

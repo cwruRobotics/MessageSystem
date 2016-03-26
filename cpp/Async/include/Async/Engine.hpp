@@ -7,8 +7,8 @@
 #include <mutex>
 
 // C++ PROJECT INCLUDES
-#include "Async/IEngine.hpp"
-#include "Async/IScheduler.hpp"
+#include "Async/EngineBase.hpp"
+#include "Async/SchedulerBase.hpp"
 
 
 namespace Async
@@ -16,11 +16,11 @@ namespace Async
 namespace EntryPoint
 {
 
-    class Engine : public IEngine
+    class Engine : public EngineBase
     {
     private:
 
-        std::map<std::string, ISchedulerPtr>    _schedulerMap;
+        std::map<std::string, SchedulerBasePtr> _schedulerMap;
         std::mutex                              _schedulerMapMutex;
         std::atomic<bool>                       _running;
 
@@ -28,9 +28,9 @@ namespace EntryPoint
 
         void Configure(std::string& configPath);
 
-        std::map<std::string, ISchedulerPtr>& GetSchedulerMap();
+        std::map<std::string, SchedulerBasePtr>& GetSchedulerMap();
 
-        ISchedulerPtr FindScheduler(std::string& schedulerId);
+        SchedulerBasePtr FindScheduler(std::string& schedulerId);
 
     public:
 
@@ -42,7 +42,7 @@ namespace EntryPoint
 
         void operator=(const Engine& other) = delete;
 
-        ISchedulerPtr GetScheduler(std::string& schedulerId) override;
+        SchedulerBasePtr GetScheduler(std::string& schedulerId) override;
 
         Types::Result_t ShutdownScheduler(std::string& schedulerId) override;
 

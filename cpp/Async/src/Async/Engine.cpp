@@ -72,8 +72,8 @@ namespace EntryPoint
                 vec.push_back(GetPriorityFromString(childNode->first_attribute(workerThreadPriorityXMLId)->value()));
                 childNode = childNode->next_sibling(workerThreadXMLId);
             }
-            ISchedulerPtr pScheduler = std::make_shared<Scheduler>(vec, name);
-            this->_schedulerMap.insert(std::pair<std::string, ISchedulerPtr>(name, pScheduler));
+            SchedulerBasePtr pScheduler = std::make_shared<Scheduler>(vec, name);
+            this->_schedulerMap.insert(std::pair<std::string, SchedulerBasePtr>(name, pScheduler));
 
             node = node->next_sibling(schedulerXMLNodeId);
         }
@@ -88,12 +88,12 @@ namespace EntryPoint
         */
     }
 
-    std::map<std::string, ISchedulerPtr>& Engine::GetSchedulerMap()
+    std::map<std::string, SchedulerBasePtr>& Engine::GetSchedulerMap()
     {
         return this->_schedulerMap;
     }
 
-    ISchedulerPtr Engine::FindScheduler(std::string& schedulerId)
+    SchedulerBasePtr Engine::FindScheduler(std::string& schedulerId)
     {
         auto index = this->GetSchedulerMap().find(schedulerId);
         if (index == this->GetSchedulerMap().end())
@@ -103,7 +103,7 @@ namespace EntryPoint
         return index->second;
     }
 
-    ISchedulerPtr Engine::GetScheduler(std::string& schedulerId)
+    SchedulerBasePtr Engine::GetScheduler(std::string& schedulerId)
     {
         if (this->_running)
         {
@@ -123,7 +123,7 @@ namespace EntryPoint
         if (this->_running)
         {
             std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
-            ISchedulerPtr pScheduler = this->FindScheduler(schedulerId);
+            SchedulerBasePtr pScheduler = this->FindScheduler(schedulerId);
             if (pScheduler)
             {
                 pScheduler->Shutdown();
@@ -137,11 +137,11 @@ namespace EntryPoint
     {
         if (this->_running)
         {
-            ISchedulerPtr pScheduler = std::make_shared<Scheduler>(config, schedulerId);
+            SchedulerBasePtr pScheduler = std::make_shared<Scheduler>(config, schedulerId);
 
             std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
             this->GetSchedulerMap().insert(std::pair<std::string&,
-                ISchedulerPtr>(schedulerId, pScheduler));
+                SchedulerBasePtr>(schedulerId, pScheduler));
             return Types::Result_t::SUCCESS;
         }
         return Types::Result_t::FAILURE;
@@ -153,7 +153,7 @@ namespace EntryPoint
         std::lock_guard<std::mutex> mapLock(this->_schedulerMapMutex);
         for (auto it = this->GetSchedulerMap().begin(); it != this->GetSchedulerMap().end(); ++it)
         {
-            std::cout << "Shutting down scheduler [" << it->first << "]" << std::endl;
+            // std::cout << "Shutting down scheduler [" << it->first << "]" << std::endl;
             it->second->Shutdown();
         }
         return Types::Result_t::SUCCESS;

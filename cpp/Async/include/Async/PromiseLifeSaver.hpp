@@ -38,6 +38,7 @@ namespace Async
 
         ~PromiseLifeSaver()
         {
+            this->_pPromise = nullptr;
         }
 
         virtual Types::Result_t Chain() override

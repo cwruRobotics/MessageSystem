@@ -9,8 +9,9 @@
 #include "Async/JobPriorities.hpp"
 #include "Async/unitTest/MockScheduler.hpp"
 #include "Async/unitTest/TestUtilities.hpp"
+#include "Async/WorkItemStates.hpp"
 #include "Async/Result.hpp"
-#include "Async/WorkItem.hpp"
+#include "Async/unitTest/MockWorkItem.hpp"
 
 namespace Async
 {
@@ -39,11 +40,11 @@ namespace Tests
         // test adding a bunch of work Items
         for (int i = 0; i < numberOfWorkItemsToSchedule; ++i)
         {
-            WorkItemPtr pWorkItem =
-                std::make_shared<WorkItem>();
-            pWorkItem->AttachMainFunction([]() -> Types::Result_t
+            MockWorkItemPtr pWorkItem =
+                std::make_shared<MockWorkItem>();
+            pWorkItem->AttachMainFunction([]() -> States::WorkItemState
             {
-                return Types::Result_t::SUCCESS;
+                return States::WorkItemState::DONE;
             });
         
             Types::Result_t result = pWorkItem->Schedule(pMockScheduler);
@@ -63,12 +64,12 @@ namespace Tests
             std::make_shared<MockScheduler>(Utilities::GetDefaultSchedulerConfig());
 
         // Execute workItem with only a Main Function
-        WorkItemPtr pWorkItem =
-            std::make_shared<WorkItem>();
+        MockWorkItemPtr pWorkItem =
+            std::make_shared<MockWorkItem>();
 
-        auto pFunction = []() -> Types::Result_t
+        auto pFunction = []() -> States::WorkItemState
         {
-            return Types::Result_t::SUCCESS;
+            return States::WorkItemState::DONE;
         };
 
         pWorkItem->AttachMainFunction(pFunction);
@@ -82,7 +83,7 @@ namespace Tests
         //-------------------------------------------
 
         // Execute workItem with Main Function AND Posterior Function
-        pWorkItem = std::make_shared<WorkItem>();
+        pWorkItem = std::make_shared<MockWorkItem>();
         pWorkItem->AttachMainFunction(pFunction);
         pWorkItem->AttachPosteriorFunction(pFunction);
 
@@ -105,21 +106,21 @@ namespace Tests
 
         std::vector<WorkItemPtr> workVector;
 
-        auto pThrowingFunction = []() -> Types::Result_t
+        auto pThrowingFunction = []() -> States::WorkItemState
         {
             throw std::exception();
         };
-        auto pSuccessfulFunction = []() -> Types::Result_t
+        auto pSuccessfulFunction = []() -> States::WorkItemState
         {
-            return Types::Result_t::SUCCESS;
+            return States::WorkItemState::DONE;
         };
 
-        WorkItemPtr pDoubleThrowWorkItem =
-            std::make_shared<WorkItem>();
-        WorkItemPtr pThrowMainWorkItem =
-            std::make_shared<WorkItem>();
-        WorkItemPtr pThrowPostWorkItem =
-            std::make_shared<WorkItem>();
+        MockWorkItemPtr pDoubleThrowWorkItem =
+            std::make_shared<MockWorkItem>();
+        MockWorkItemPtr pThrowMainWorkItem =
+            std::make_shared<MockWorkItem>();
+        MockWorkItemPtr pThrowPostWorkItem =
+            std::make_shared<MockWorkItem>();
 
         pDoubleThrowWorkItem->AttachMainFunction(pThrowingFunction);
         pDoubleThrowWorkItem->AttachPosteriorFunction(pThrowingFunction);

@@ -8,8 +8,7 @@
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
-#include "Async/IWorkItem.hpp"
-// #include "Async/WorkerThread.hpp"
+#include "Async/WorkItemBase.hpp"
 
 // project namespace
 namespace Async
@@ -20,7 +19,7 @@ namespace Concurrency
 }
     // interface to allow IWorkItems to be executable by Schedulers.
     // This interface is exported to clients.
-    class ASYNC_API IExecutableWorkItem : public IWorkItem
+    class ASYNC_API ExecutableWorkItemBase : public WorkItemBase
     {
         friend class Concurrency::WorkerThread;
     private:
@@ -35,11 +34,7 @@ namespace Concurrency
         // functionality AND we want to force the client to
         // make an IScheduler (either client created or built in)
         // to be a "friend."
-        virtual Types::Result_t Execute() = 0;
-
-    public:
-
-        virtual ~IExecutableWorkItem() = default;
+        virtual States::WorkItemState Execute() = 0;
 
         // attach a function to be executed. This function is used to
         // resolve this IExecutableWorkItem
@@ -51,12 +46,16 @@ namespace Concurrency
         // and should execute small follow up logic, or cleanup logic.
         virtual void AttachPosteriorFunction(FunctionPtr pFunc) = 0;
 
+    public:
+
+        virtual ~ExecutableWorkItemBase() = default;
+
         virtual std::exception_ptr GetException() const = 0;
 
     };
 
     // alias for shared pointer to an IExecutableWorkItem instance
-    using IExecutableWorkItemPtr = std::shared_ptr<IExecutableWorkItem>;
+    using ExecutableWorkItemBasePtr = std::shared_ptr<ExecutableWorkItemBase>;
 
 } // end of namespace Async
 

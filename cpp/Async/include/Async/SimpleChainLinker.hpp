@@ -6,8 +6,8 @@
 #include <iostream>
 
 // C++ PROJECT INCLUDES
-#include "Async/IChainLinker.hpp"
-#include "Async/IEngine.hpp"
+#include "Async/ChainLinkerBase.hpp"
+#include "Async/EngineBase.hpp"
 
 namespace Async
 {
@@ -17,14 +17,14 @@ namespace Async
 
 
     template<typename PARENT_TYPE, typename CHILD_TYPE>
-    class SimpleChainLinker : public IChainLinker,
+    class SimpleChainLinker : public ChainLinkerBase,
         public std::enable_shared_from_this<SimpleChainLinker<PARENT_TYPE, CHILD_TYPE> >
     {
     private:
 
-        // std::function<std::function<CHILD_TYPE()>()>    _pResolutionFunction;
-        std::function<CHILD_TYPE(PARENT_TYPE)>          _pChildFunction;
-        std::shared_ptr<Promise<PARENT_TYPE> >          _pParent;
+        std::function<std::function<CHILD_TYPE()>()>    _pResolutionFunction;
+        // std::function<CHILD_TYPE(PARENT_TYPE)>          _pChildFunction;
+        // std::shared_ptr<Promise<PARENT_TYPE> >          _pParent;
         std::shared_ptr<Promise<CHILD_TYPE> >           _pChild;
         std::string                                     _childSchedulerId;
 
@@ -34,13 +34,13 @@ namespace Async
 
     public:
 
-        SimpleChainLinker(// std::function<std::function<CHILD_TYPE()>()> pResolutionFunction,
-            std::shared_ptr<Promise<PARENT_TYPE> > pParent,
-            std::function<CHILD_TYPE(PARENT_TYPE)> pChildFunction,
+        SimpleChainLinker(std::function<std::function<CHILD_TYPE()>()> pResolutionFunction,
+            // std::shared_ptr<Promise<PARENT_TYPE> > pParent,
+            // std::function<CHILD_TYPE(PARENT_TYPE)> pChildFunction,
             std::shared_ptr<Promise<CHILD_TYPE> > pChild, std::string id) : _pChild(pChild),
-            // _pResolutionFunction(pResolutionFunction),
-            _childSchedulerId(id),
-            _pParent(pParent), _pChildFunction(pChildFunction)
+            _pResolutionFunction(pResolutionFunction),
+            _childSchedulerId(id)
+            // _pParent(pParent), _pChildFunction(pChildFunction)
         {
         }
 
@@ -59,12 +59,11 @@ namespace Async
     template<typename PARENT_TYPE, typename CHILD_TYPE>
     Types::Result_t SimpleChainLinker<PARENT_TYPE, CHILD_TYPE>::ApplyFunctionToChild()
     {
-        std::cout << "Chaining continuation" << std::endl;
-        //this->_pChild->AttachMainFunction(this->_pResolutionFunction());
-        this->_pChild->AttachMainFunction(std::bind(this->_pChildFunction, this->_pParent->GetResult()));
+        this->_pChild->AttachMainFunction(this->_pResolutionFunction());
+        // this->_pChild->AttachMainFunction(std::bind(this->_pChildFunction, this->_pParent->GetResult()));
         Types::Result_t result = SubmitEngineSingletonServiceRequest(this->_pChild,
                                                                      this->_childSchedulerId);
-        this->_pParent = nullptr;
+        // this->_pParent = nullptr;
         return result;
     }
 

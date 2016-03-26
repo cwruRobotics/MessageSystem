@@ -10,7 +10,7 @@ namespace Async
 namespace Tests
 {
 
-    std::map<Types::JobPriority, Concurrency::IThreadPtr>& MockScheduler::GetThreadMap()
+    std::map<Types::JobPriority, Concurrency::ThreadBasePtr>& MockScheduler::GetThreadMap()
     {
         return this->Scheduler::GetThreadMap();
     }

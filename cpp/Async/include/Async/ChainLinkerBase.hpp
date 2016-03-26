@@ -25,7 +25,7 @@ namespace Async
     // So, this interface will be derived into classes that store successor
     // and parent Promise instances. This resolves the storing issue, as well
     // as solves some continuation semantics.
-	class IChainLinker
+	class ChainLinkerBase
 	{
 	protected:
 
@@ -33,7 +33,7 @@ namespace Async
 		virtual Types::Result_t ApplyFunctionToChild() = 0;
 	public:
 
-		virtual ~IChainLinker() = default;
+		virtual ~ChainLinkerBase() = default;
 
         // will actually populate the successor.
 		virtual Types::Result_t Chain() = 0;
@@ -41,7 +41,7 @@ namespace Async
 	};
 
     // alias for shared pointer to a ChainLinker instance.
-	using IChainLinkerPtr = std::shared_ptr<IChainLinker>;
+	using ChainLinkerBasePtr = std::shared_ptr<ChainLinkerBase>;
 
 } // end of namespace Async
 

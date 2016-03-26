@@ -40,6 +40,7 @@ namespace Async
 	{
         std::lock_guard<std::mutex> executionLock(this->GetExecutionMutex());
 		Types::Result_t result = this->WorkItem::Execute();
+        this->_pLifeSaver = nullptr;
 		if (result == Types::Result_t::FAILURE)
 		{
             if (this->GetException())
@@ -60,11 +61,6 @@ namespace Async
 				successor->Chain();
 			}
 		}
-
-        if(this->_pLifeSaver)
-        {
-            this->_pLifeSaver = nullptr;
-        }
 		// this->SetExternalState(States::PromiseState::UNTOUCHED);
 		// this logic is called!!! If we set the External State to States::PromiseStates::UNTOUCHED
 		// it will return the value we set as well as 

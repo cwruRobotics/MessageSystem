@@ -10,7 +10,7 @@
 
 #include "Async/Result.hpp"
 #include "Async/JobPriorities.hpp"
-#include "Async/IEngine.hpp"
+#include "Async/EngineBase.hpp"
 #include "Async/Engine.hpp"
 #include "Async/Async.hpp"
 
@@ -98,7 +98,7 @@ namespace Tests
     TEST_CASE("Testing Engine::StartScheduler() and Engine::GetScheduler()", "[Engine_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("Engine_unit test 3");
-        ISchedulerPtr pScheduler = nullptr;
+        SchedulerBasePtr pScheduler = nullptr;
         {
             std::string configFilePath = OSUtils::GetCurrentDirectory(__FILE__) +
                 OSUtils::GetPathSep() + "TestEngineConfig.xml";

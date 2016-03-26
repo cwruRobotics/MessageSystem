@@ -87,13 +87,13 @@ if( RUN_UNIT_TESTS )
             # Async sources
             ${SRC_ROOT}/../Result.cpp
             ${SRC_ROOT}/../WorkItemStates.cpp
-            ${SRC_ROOT}/../WorkItemStateMachine.cpp
+            # ${SRC_ROOT}/../WorkItemStateMachine.cpp
             ${SRC_ROOT}/../Scheduler.cpp
             ${SRC_ROOT}/../WorkItem.cpp
             ${SRC_ROOT}/../SettlementStates.cpp
-            ${SRC_ROOT}/../ContinuableWorkItem.cpp
+            # ${SRC_ROOT}/../ContinuableWorkItem.cpp
             ${SRC_ROOT}/../JobPriorities.cpp
-            ${SRC_ROOT}/../PromiseBase.cpp
+            ${SRC_ROOT}/../PromiseBaseImpl.cpp
             ${SRC_ROOT}/../WorkerThread.cpp
             ${SRC_ROOT}/../Engine.cpp
             ${SRC_ROOT}/../Factories/EngineFactory.cpp
@@ -101,12 +101,13 @@ if( RUN_UNIT_TESTS )
             # AsyncUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/TestUtilities.cpp
-            ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.cpp
+            ${SRC_ROOT}/MockWorkItem.cpp
+            # ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.cpp
             ${SRC_ROOT}/MockScheduler.cpp
-            ${SRC_ROOT}/WorkItemStateMachine_unit.cpp
+            # ${SRC_ROOT}/WorkItemStateMachine_unit.cpp
             ${SRC_ROOT}/WorkItem_unit.cpp
             ${SRC_ROOT}/WorkItemAndScheduler_unit.cpp
-            ${SRC_ROOT}/ContinuableWorkItem_unit.cpp
+            # ${SRC_ROOT}/ContinuableWorkItem_unit.cpp
             ${SRC_ROOT}/Promise_unit.cpp
             ${SRC_ROOT}/WorkerThread_unit.cpp
             ${SRC_ROOT}/Engine_unit.cpp
@@ -120,8 +121,9 @@ if( RUN_UNIT_TESTS )
             # I assume its because we are not exporting them.
 
             # AsyncUnitTests headers
-            ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
+            # ${SRC_ROOT}/WorkItemStateMachineUnitTestInterface.hpp
             ${SRC_ROOT}/TestUtilities.hpp
+            ${SRC_ROOT}/MockWorkItem.hpp
             ${SRC_ROOT}/MockScheduler.hpp
         )
 

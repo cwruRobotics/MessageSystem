@@ -57,7 +57,7 @@ namespace Concurrency
         return this->_state;
     }
 
-    Types::Result_t WorkerThread::Queue(IExecutableWorkItemPtr workItem)
+    Types::Result_t WorkerThread::Queue(ExecutableWorkItemBasePtr workItem)
     {
         // modifying queue so need to aquire lock on it
         std::unique_lock<std::mutex> queueLock(this->_queueMutex);
@@ -77,7 +77,7 @@ namespace Concurrency
         // synchronization! This prevents a algorithmic hole in
         // the second while loop in WorkerThread::Run
         std::unique_lock<std::mutex> queueLock(this->_queueMutex);
-        std::cout << "WorkerThread shutting down...";
+        // std::cout << "WorkerThread shutting down...";
 
         this->_threadCV.notify_all();
 
@@ -93,7 +93,7 @@ namespace Concurrency
             this->_thread.join();
         }
         this->_state = States::ConcurrencyState::DONE;
-        std::cout << "WorkerThread shut down" << std::endl;
+        // std::cout << "WorkerThread shut down" << std::endl;
 
     }
 
@@ -109,7 +109,7 @@ namespace Concurrency
     void WorkerThread::Run()
     {
         // the work item we will be executing
-        IExecutableWorkItemPtr workItem = nullptr;
+        ExecutableWorkItemBasePtr workItem = nullptr;
 
         while (this->_run)
         {

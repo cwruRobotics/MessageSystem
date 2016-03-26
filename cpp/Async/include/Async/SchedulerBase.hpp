@@ -10,8 +10,8 @@
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
-#include "Async/IExecutableWorkItem.hpp"
-#include "Async/IThread.hpp"
+#include "Async/ExecutableWorkItemBase.hpp"
+#include "Async/ThreadBase.hpp"
 #include "Async/JobPriorities.hpp"
 
 // project namespace
@@ -19,24 +19,24 @@ namespace Async
 {
 
     // FORWARD DECLARATION
-	class IScheduler;
-	using ISchedulerPtr = std::shared_ptr<IScheduler>;
+	class SchedulerBase;
+	using SchedulerBasePtr = std::shared_ptr<SchedulerBase>;
 
     // inteface for a Scheduler. A Scheduler will actually
     // execute IExecutableWorkItems. Currently, it accepts
     // IWorkItems, but this will change, as IExecutableWorkItems
     // actually have the Execute() method.
-	class ASYNC_API IScheduler
+	class ASYNC_API SchedulerBase
 	{
 	protected:
 
-		virtual std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() = 0;
+		virtual std::map<Types::JobPriority, Concurrency::ThreadBasePtr>& GetThreadMap() = 0;
 
 	public:
 
-		virtual ~IScheduler() = default;
+		virtual ~SchedulerBase() = default;
 
-		virtual bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) = 0;
+		virtual bool ScheduleWorkItem(ExecutableWorkItemBasePtr workItem) = 0;
 
         virtual void Shutdown() = 0;
 

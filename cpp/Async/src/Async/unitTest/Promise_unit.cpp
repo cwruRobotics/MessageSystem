@@ -20,10 +20,11 @@ namespace Tests
         Promise<int> p;
 
         // REQUIRE( !p.PreconditionsMet() );
-        REQUIRE( p.GetError() == nullptr );
+        REQUIRE( p.GetException() == nullptr );
         REQUIRE( p.GetState() == States::SettlementState::PENDING );
     }
 
+    /*
     TEST_CASE("Testing Promise PreconditionsMet()", "[Promise_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("Promise_unit test 2");
@@ -38,13 +39,13 @@ namespace Tests
         REQUIRE( p.PreconditionsMet() );
         REQUIRE( p.GetState() == States::SettlementState::PENDING );
     }
+    */
 
     TEST_CASE("Testing Promise Execution on Schedulers", "[Promise_unit]")
     {
         Utilities::WriteUnitTestNameToConsole("Promise_unit test 3");
         PromisePtr<int> pPromise =
             std::make_shared<Promise<int> >();
-        pPromise->MakeSafe();
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>(Utilities::GetDefaultSchedulerConfig());
 
@@ -69,7 +70,6 @@ namespace Tests
         Utilities::WriteUnitTestNameToConsole("Promise_unit test 4");
         PromisePtr<int> pPromise =
             std::make_shared<Promise<int> >();
-        pPromise->MakeSafe();
         MockSchedulerPtr pMockScheduler =
             std::make_shared<MockScheduler>(Utilities::GetDefaultSchedulerConfig());
 
@@ -86,7 +86,7 @@ namespace Tests
         REQUIRE( pPromise->GetState() ==
             States::SettlementState::FAILURE );
 
-        REQUIRE( pPromise->GetError() != nullptr );
+        REQUIRE( pPromise->GetException() != nullptr );
 
         try
         {

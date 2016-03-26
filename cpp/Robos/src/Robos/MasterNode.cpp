@@ -1,6 +1,7 @@
 // SYSTEM INCLUDES
 #include <algorithm>                    // std::find_if
 #include <stdexcept>                    // std::logic_error
+#include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Logging/Factory.hpp"          // Logging::Factory::MakeLogger
@@ -15,7 +16,7 @@ namespace Internal
 {
 
     MasterNode::MasterNode() : _pUnprotectedNodeDB(std::make_shared<NodeDatabase>()), _readCount(0),
-        _resourceAccess(1), _readCountAccess(1), _serviceQueue(1)
+        _resourceAccess(1), _readCountAccess(1), _serviceQueue(1), _initNodes(), _initFlag(false)
     {
     }
 
@@ -34,7 +35,26 @@ namespace Internal
         return hash;
     }
 
-    bool MasterNode::Register(const NodeBasePtr pNode)
+    void MasterNode::Start()
+    {
+        if(!this->_initFlag)
+        {
+            this->_initFlag = true;
+            for(InitNodeBasePtr& pInitNodeBase : this->_initNodes)
+            {
+                Async::Execute<MessageBasePtr>([pInitNodeBase]() -> MessageBasePtr
+                {
+                    return pInitNodeBase->MainCallback();
+                }, pInitNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
+                {
+                    this->InvokeSubscribers(pMessage);
+                    return true;
+                }, pInitNodeBase->GetExecutionTopic());
+            }
+        }
+    }
+
+    bool MasterNode::Register(const NodeBasePtr& pNode)
     {
         std::string loggingPath = Robos::LoggingConfig::LOGGING_ROOT + "/MasterNodeLog.txt";
         Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("MasterNode::Register()",
@@ -61,7 +81,7 @@ namespace Internal
                it != this->_pUnprotectedNodeDB->map.end())
             {
                 LOG_DEBUG(pLogger, "subscription: [%s] already exists! Checking if node already exists", subscription.c_str());
-                std::vector<NodeBasePtr> subscribers = it->second;//.data();
+                std::vector<NodeBasePtr>& subscribers = it->second;//.data();
 
                 // check if pNode already is already existing as a subscriber here.
                 if(std::find_if(subscribers.begin(), subscribers.end(),
@@ -70,7 +90,13 @@ namespace Internal
                     return pNode->GetName() == nodeName;
                 }) != subscribers.end())
                 {
+                    std::cout << "Node with name [" << pNode->GetName() << "] already has been registered" << std::endl;
                     modification = false;
+                }
+                else
+                {
+                    std::cout << "Node with name [" << pNode->GetName() << "] does not exist. Registering..." << std::endl;
+                    subscribers.push_back(pNode);
                 }
             }
             else
@@ -96,6 +122,16 @@ namespace Internal
         return modification;
     }
 
+    bool MasterNode::RegisterInitNode(const InitNodeBasePtr& pNode)
+    {
+        if(!this->_initFlag)
+        {
+            this->_initNodes.push_back(pNode);
+            return true;
+        }
+        return false;
+    }
+
     void MasterNode::InvokeSubscribers(const MessageBasePtr pMessage)
     {
         this->_serviceQueue.wait();
@@ -109,20 +145,27 @@ namespace Internal
         this->_readCountAccess.signal();
 
         //--------------CRITICAL SECTION----------------
+        std::cout << "MasterNode::InvokeSubscribers() Entering Critical Section" << std::endl;
         auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
         if(iterator != this->_pUnprotectedNodeDB->map.end())
         {
             for(NodeBasePtr pNodeBase : iterator->second)
             {
+                std::cout << "Executing Subscriber [" << pNodeBase->GetName().c_str() << "]" << std::endl;
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
                     return pNodeBase->MainCallback(pMessage);
                 }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
                 {
+                    std::cout << "Executing Continuation" << std::endl;
                     this->InvokeSubscribers(pMessage);
                     return true;
                 }, pNodeBase->GetExecutionTopic());
             }
+        }
+        else
+        {
+            std::cout << "No subscriptions for Message Topic [" << pMessage->topic.c_str() <<  "]" << std::endl;
         }
         //----------------------------------------------
 
@@ -133,11 +176,6 @@ namespace Internal
             this->_resourceAccess.signal();
         }
         this->_readCountAccess.signal();
-    }
-
-    bool MasterNode::Shutdown()
-    {
-        return false;
     }
 
 } // end of namespace Internal

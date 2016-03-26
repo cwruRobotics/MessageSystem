@@ -1,5 +1,6 @@
 // SYSTEM INCLUDES
 // #include <Utilities/VectorUtils.hpp>
+#include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Robos/unitTest/TestNodeNameTemplate.hpp"
@@ -10,7 +11,7 @@ namespace Robos
 namespace Tests
 {
 
-    TestNodeNameTemplate::TestNodeNameTemplate(const std::string name) : NodeBase(name, "testScheduler",
+    TestNodeNameTemplate::TestNodeNameTemplate(const std::string name) : NodeBase(name, "TestScheduler",
         std::vector<std::string>{"testTopicA"})
     {
     }
@@ -29,6 +30,7 @@ namespace Tests
 
     MessageBasePtr TestNodeNameTemplate::MainCallbackImpl(const MessageBasePtr& pMessage)
     {
+        std::cout << "Executing TestNodeNameTemplate" << this->GetName() << std::endl;
         if(pMessage->topic == "testTopicA")
         {
             return this->TestNodeCallback(std::dynamic_pointer_cast<TestMessageA>(pMessage));

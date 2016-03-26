@@ -4,12 +4,14 @@
 // SYSTEM INCLUDES
 #include <atomic>   // std::atomic
 #include <memory>   // std::shared_ptr
+#include <vector>
 #include <Async/AsyncExecution.hpp>     // Async::Execute
 #include <Async/Promise.hpp>            // Async::PromisePtr<...>::Then
 
 // C++ PROJECT INCLUDES
 #include "Utilities/Semaphore.hpp"
 #include "Robos/MessageBase.hpp"
+#include "Robos/InitNodeBase.hpp"
 #include "Robos/NodeBase.hpp"
 #include "Robos/NodeDatabase.hpp"
 
@@ -26,14 +28,17 @@ namespace Internal
     private:
 
         // the database
-        NodeDatabasePtr         _pUnprotectedNodeDB;
+        NodeDatabasePtr                 _pUnprotectedNodeDB;
 
         // the reader-writer problem reader count
-        std::atomic<int>        _readCount;
+        std::atomic<int>                _readCount;
         // the reader-writer problem semaphores
-        Utilities::Semaphore    _resourceAccess;    // access to shared resource
-        Utilities::Semaphore    _readCountAccess;   // access to readCount
-        Utilities::Semaphore    _serviceQueue;      // fairness between readers and writers
+        Utilities::Semaphore            _resourceAccess;    // access to shared resource
+        Utilities::Semaphore            _readCountAccess;   // access to readCount
+        Utilities::Semaphore            _serviceQueue;      // fairness between readers and writers
+
+        std::atomic<bool>               _initFlag;          // true when MasterNode has started
+        std::vector<InitNodeBasePtr>    _initNodes;         // the nodes that have no subscriptions
 
     private:
 
@@ -45,11 +50,14 @@ namespace Internal
 
         ~MasterNode();
 
-        bool Register(const NodeBasePtr pNodeBase);
+        void Start();
+
+        bool Register(const NodeBasePtr& pNodeBase);
+
+        bool RegisterInitNode(const InitNodeBasePtr& pInitNodeBase);
 
         void InvokeSubscribers(const MessageBasePtr pMessage);
 
-        bool Shutdown();
     };
 
     using MasterNodePtr = std::shared_ptr<MasterNode>;

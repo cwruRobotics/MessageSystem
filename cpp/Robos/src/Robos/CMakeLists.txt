@@ -51,6 +51,7 @@ set( ROBOS_SRCS
 
     ${SRC_ROOT}/Robos/MessageBase.cpp
     ${SRC_ROOT}/Robos/NodeBase.cpp
+    ${SRC_ROOT}/Robos/InitNodeBase.cpp
     ${SRC_ROOT}/Robos/NodeDatabase.cpp
     ${SRC_ROOT}/Robos/MasterNode.cpp
 
@@ -63,6 +64,7 @@ set( ROBOS_PUBLIC_HEADERS
     ${INC_ROOT}/Robos/LibraryExport.hpp
     ${INC_ROOT}/Robos/MessageBase.hpp
     ${INC_ROOT}/Robos/NodeBase.hpp
+    ${INC_ROOT}/Robos/InitNodeBase.hpp
 )
 
 set( ROBOS_PRIVATE_HEADERS

@@ -1,5 +1,5 @@
-#ifndef ROBOS_INODE_HPP
-#define ROBOS_INODE_HPP
+#ifndef ROBOS_NODEBASE_HPP
+#define ROBOS_NODEBASE_HPP
 
 // SYSTEM INCLUDES
 #include <memory>   // std::shared_ptr, std::enable_shared_from_this
@@ -47,4 +47,4 @@ namespace Robos
 
 }
 
-#endif // end of ROBOS_INODE_HPP
+#endif // end of ROBOS_NODEBASE_HPP

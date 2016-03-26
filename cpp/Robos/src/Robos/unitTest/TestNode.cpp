@@ -1,5 +1,6 @@
 // SYSTEM INCLUDES
 // #include <Utilities/VectorUtils.hpp>
+#include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Robos/unitTest/TestNode.hpp"
@@ -21,6 +22,7 @@ namespace Tests
 
     MessageBasePtr TestNode::TestNodeCallback(const TestMessageAPtr& pMessage)
     {
+        std::cout << "Executing TestNode" << std::endl;
         TestMessageBPtr producedMessage = std::make_shared<TestMessageB>();
         REQUIRE( pMessage->data == 10 );
         producedMessage->data = pMessage->data + 5;

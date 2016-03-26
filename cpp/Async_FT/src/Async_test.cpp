@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <Utilities/OSUtils.hpp>
 #include <Async/Async.hpp>
-#include <Async/IEngine.hpp>
+#include <Async/EngineBase.hpp>
 
 // C++ PROJECT INCLUDES
 

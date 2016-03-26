@@ -9,7 +9,7 @@
 
 #include "Async/SettlementStates.hpp"
 #include "Async/Promise.hpp"
-#include "Async/IEngine.hpp"
+#include "Async/EngineBase.hpp"
 #include "Async/Scheduler.hpp"
 #include "Async/Async.hpp"
 #include "Async/AsyncExecution.hpp"
@@ -33,7 +33,9 @@ namespace Tests
         {
             return 10;
         }, schedulerId);
-        EntryPoint::IEnginePtr pEngine = GetEngineSingleton();
+
+        std::cout << "Checking Engine Singleton" << std::endl;
+        EntryPoint::EngineBasePtr pEngine = GetEngineSingleton();
         REQUIRE( pEngine != nullptr );
         REQUIRE( pEngine->GetScheduler(schedulerId) != nullptr );
         REQUIRE( pEngine->GetScheduler(schedulerId)->IsRunning() );

@@ -1,5 +1,7 @@
 // SYSTEM INCLUDES
 #include <iostream>
+#include <Utilities/OSUtils.hpp>
+#include <Async/Async.hpp>          // Async::Start(), Async::Stop()
 
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
@@ -10,6 +12,9 @@
 #include "Robos/unitTest/TestNode.hpp"
 #include "Robos/unitTest/TestNodeNameTemplate.hpp"
 #include "Robos/unitTest/TestNodeSubscriberTemplate.hpp"
+
+
+namespace OSUtils = Utilities::OS;
 
 namespace Robos
 {
@@ -97,6 +102,7 @@ namespace Tests
 
     TEST_CASE("Invoking a TestNode with a Message", "[MasterNode_unit]")
     {
+        Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
         TestMessageAPtr pTestMessageA = std::make_shared<TestMessageA>();
         pTestMessageA->data = 10;
 
@@ -111,9 +117,11 @@ namespace Tests
         }
         catch(std::exception e)
         {
+            Async::Stop();
             std::cout << "[Caught exception]: " << e.what() << std::endl;
             REQUIRE( false );
         }
+        Async::Stop();
     }
 
     TEST_CASE("Invoking multiple nodes with a Message", "[MasterNode_unit]")
@@ -123,6 +131,7 @@ namespace Tests
 
         for(int numNodes = 10; numNodes <= 1000; numNodes *= 10)
         {
+            Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
             // std::cout << "Registering [" << numNodes << "] nodes with Master" << std::endl;
             Internal::MasterNode mn;
             for(int i = 0; i < numNodes; ++i)
@@ -139,10 +148,12 @@ namespace Tests
                 }
                 catch(std::exception e)
                 {
+                    Async::Stop();
                     std::cout << "[Caught exception]: " << e.what() << std::endl;
                     REQUIRE( false );
                 }
             }
+            Async::Stop();
         }
     }
 

@@ -51,13 +51,13 @@ set( ASYNC_SRCS
 
     ${SRC_ROOT}/Async/Result.cpp
     ${SRC_ROOT}/Async/WorkItemStates.cpp
-    ${SRC_ROOT}/Async/WorkItemStateMachine.cpp
+    # ${SRC_ROOT}/Async/WorkItemStateMachine.cpp
     ${SRC_ROOT}/Async/Scheduler.cpp
     ${SRC_ROOT}/Async/WorkItem.cpp
     ${SRC_ROOT}/Async/SettlementStates.cpp
-    ${SRC_ROOT}/Async/ContinuableWorkItem.cpp
+    # ${SRC_ROOT}/Async/ContinuableWorkItem.cpp
     ${SRC_ROOT}/Async/JobPriorities.cpp
-    ${SRC_ROOT}/Async/PromiseBase.cpp
+    ${SRC_ROOT}/Async/PromiseBaseImpl.cpp
     ${SRC_ROOT}/Async/ConcurrencyStates.cpp
     ${SRC_ROOT}/Async/WorkerThread.cpp
     ${SRC_ROOT}/Async/Engine.cpp
@@ -70,19 +70,20 @@ set( ASYNC_SRCS
 set( ASYNC_PUBLIC_HEADERS
     ${INC_ROOT}/Async/LibraryExport.hpp
     ${INC_ROOT}/Async/Result.hpp
+    ${INC_ROOT}/Async/WorkItemStates.hpp
     ${INC_ROOT}/Async/SettlementStates.hpp
-    ${INC_ROOT}/Async/IWorkItem.hpp
-    ${INC_ROOT}/Async/IExecutableWorkItem.hpp
-    ${INC_ROOT}/Async/IScheduler.hpp
-    ${INC_ROOT}/Async/IChainLinker.hpp
-    ${INC_ROOT}/Async/IContinuableWorkItem.hpp
-    ${INC_ROOT}/Async/IPromise.hpp
+    ${INC_ROOT}/Async/WorkItemBase.hpp
+    ${INC_ROOT}/Async/ExecutableWorkItemBase.hpp
+    ${INC_ROOT}/Async/SchedulerBase.hpp
+    ${INC_ROOT}/Async/ChainLinkerBase.hpp
+    ${INC_ROOT}/Async/ContinuableWorkItemBase.hpp
     ${INC_ROOT}/Async/PromiseBase.hpp
+    ${INC_ROOT}/Async/PromiseBaseImpl.hpp
     ${INC_ROOT}/Async/Promise.hpp
     ${INC_ROOT}/Async/ConcurrencyStates.hpp
     ${INC_ROOT}/Async/JobPriorities.hpp
-    ${INC_ROOT}/Async/IThread.hpp
-    ${INC_ROOT}/Async/IEngine.hpp
+    ${INC_ROOT}/Async/ThreadBase.hpp
+    ${INC_ROOT}/Async/EngineBase.hpp
     ${INC_ROOT}/Async/PromiseLifeSaver.hpp
     ${INC_ROOT}/Async/SimpleChainLinker.hpp
     ${INC_ROOT}/Async/AsyncExecution.hpp
@@ -93,11 +94,10 @@ set( ASYNC_PRIVATE_HEADERS
     # logging
     ${CONFIG_ROOT}/AsyncLoggingConfig.hpp
 
-    ${INC_ROOT}/Async/WorkItemStates.hpp
-    ${INC_ROOT}/Async/WorkItemStateMachine.hpp
-    ${INC_ROOT}/Async/Scheduler.hpp
+    # ${INC_ROOT}/Async/WorkItemStateMachine.hpp
     ${INC_ROOT}/Async/WorkItem.hpp
-    ${INC_ROOT}/Async/ContinuableWorkItem.hpp
+    ${INC_ROOT}/Async/Scheduler.hpp
+    # ${INC_ROOT}/Async/ContinuableWorkItem.hpp
     ${INC_ROOT}/Async/WorkerThread.hpp
     ${INC_ROOT}/Async/Engine.hpp
 )

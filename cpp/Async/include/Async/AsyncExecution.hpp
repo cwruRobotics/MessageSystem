@@ -10,8 +10,8 @@
 #include "Async/Result.hpp"
 #include "Async/JobPriorities.hpp"
 #include "Async/Promise.hpp"
-#include "Async/IScheduler.hpp"
-#include "Async/IEngine.hpp"
+#include "Async/SchedulerBase.hpp"
+#include "Async/EngineBase.hpp"
 
 namespace Async
 {
@@ -26,10 +26,6 @@ namespace Async
         pPromise->AttachMainFunction(pFunc);
         Types::Result_t result = SubmitEngineSingletonServiceRequest(pPromise,
                                                                      schedulerId);
-        if(result == Types::Result_t::SUCCESS)
-        {
-            pPromise->MakeSafe();
-        }
         return pPromise;
     }
 

@@ -10,8 +10,8 @@
 #include <vector>
 
 // C++ PROJECT INCLUDES
-#include "Async/IExecutableWorkItem.hpp"
-#include "Async/IScheduler.hpp"
+#include "Async/ExecutableWorkItemBase.hpp"
+#include "Async/SchedulerBase.hpp"
 #include "Async/WorkerThread.hpp"
 
 // project namespace
@@ -24,21 +24,21 @@ namespace Async
 
     // a Scheduler. An instance of this will execute IExecutableWorkItems
     // (for now IWorkItems).
-	class Scheduler : public IScheduler,
+	class Scheduler : public SchedulerBase,
         public std::enable_shared_from_this<Scheduler>
 	{
 	private:
 
 		// thread pool variables
-		std::map<Types::JobPriority, Concurrency::IThreadPtr>   _threadMap;
+		std::map<Types::JobPriority, Concurrency::ThreadBasePtr>    _threadMap;
 
-		uint64_t								                _currentWorkItemId;
-        std::atomic<bool>                                       _running;
-        std::string                                             _id;
+		uint64_t								                    _currentWorkItemId;
+        std::atomic<bool>                                           _running;
+        std::string                                                 _id;
 
 	protected:
 
-		std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap() override;
+		std::map<Types::JobPriority, Concurrency::ThreadBasePtr>& GetThreadMap() override;
 
 	public:
 
@@ -46,7 +46,7 @@ namespace Async
 
 		virtual ~Scheduler();
 
-		bool ScheduleWorkItem(IExecutableWorkItemPtr workItem) override;
+		bool ScheduleWorkItem(ExecutableWorkItemBasePtr workItem) override;
 
         void Shutdown() override;
 

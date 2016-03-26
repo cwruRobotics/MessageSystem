@@ -10,7 +10,7 @@ namespace Robos
 namespace Tests
 {
 
-    TestNode::TestNode() : NodeBase("testNode", "testScheduler",
+    TestNode::TestNode() : NodeBase("testNode", "TestScheduler",
         std::vector<std::string>{"testTopicA"})
     {
     }

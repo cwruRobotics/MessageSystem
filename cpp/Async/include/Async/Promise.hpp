@@ -10,10 +10,10 @@
 // C++ PROJECT INCLUDES
 #include "Async/JobPriorities.hpp"
 #include "Async/SimpleChainLinker.hpp"
-#include "Async/PromiseLifeSaver.hpp"
-#include "Async/IPromise.hpp"
-// #include "Async/LibraryExport.hpp"
+//#include "Async/PromiseLifeSaver.hpp"
 #include "Async/PromiseBase.hpp"
+// #include "Async/LibraryExport.hpp"
+#include "Async/PromiseBaseImpl.hpp"
 // #include "Async/ValueHolder.hpp"
 
 namespace Async
@@ -26,15 +26,14 @@ namespace Async
     using PromisePtr = std::shared_ptr<Promise<PROMISE_RESULT> >;
 
     template<typename PROMISE_RESULT>
-    class /*ASYNC_API*/ Promise : public IPromise<PROMISE_RESULT>, public PromiseBase,
-        public std::enable_shared_from_this<Promise<PROMISE_RESULT> >
+    class /*ASYNC_API*/ Promise : public PromiseBase<PROMISE_RESULT>, public PromiseBaseImpl
     {
     private:
 
         PROMISE_RESULT     _result;
 
     public:
-        Promise(Types::JobPriority priority=Types::JobPriority::OTHER) : PromiseBase(priority)
+        Promise(Types::JobPriority priority=Types::JobPriority::OTHER) : PromiseBaseImpl(priority)
         {
         }
 
@@ -42,15 +41,9 @@ namespace Async
         {
         }
 
-        void MakeSafe()
-        {
-            this->SetLifeSaver(
-                std::make_shared<PromiseLifeSaver<PROMISE_RESULT> >(this->shared_from_this()));
-        }
-
         void Fulfill(PROMISE_RESULT result)
         {
-            this->_internalWorkItem->SetSuccess();
+            this->SetSuccess();
             this->_result = result;
         }
 
@@ -58,7 +51,7 @@ namespace Async
         {
             if (this->GetState() != States::SettlementState::SUCCESS)
             {
-                std::exception_ptr pException = this->GetError();
+                std::exception_ptr pException = this->GetException();
                 if (pException)
                 {
                     std::rethrow_exception(pException);
@@ -69,12 +62,6 @@ namespace Async
                 }
             }
             return this->_result;
-        }
-
-        std::exception_ptr GetError() override
-        {
-            return std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                ->GetException();
         }
 
         void AttachMainFunction(std::function<PROMISE_RESULT()> pFunc)
@@ -94,13 +81,12 @@ namespace Async
             // get a copy to the Promise that is being executed here. This should prevent
             // the Promise instance from destructing (because the counter increments by 1)...I think
             // PromisePtr<PROMISE_RESULT> thisCopy = this->shared_from_this();
-            std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                ->AttachMainFunction([this, pFunc]() -> Types::Result_t
+            this->PromiseBaseImpl::AttachMainFunction([this, pFunc]() -> States::WorkItemState
             {
                 // convert it to a Promise. This should prevent the Promise instance from being
                 // destructed.
                 this->Fulfill(pFunc());
-                return Types::Result_t::SUCCESS;
+                return States::WorkItemState::DONE;
             });
         }
 
@@ -109,11 +95,9 @@ namespace Async
             std::string& childSchedulerId)
         {
             PromisePtr<NEXT_RESULT> pSuccessor = std::make_shared<Promise<NEXT_RESULT> >(this->GetPriority());
-            pSuccessor->MakeSafe();
 
             // this is a safe way to transfer the result of the parent Promise to
             // the child Promise
-            /*
             auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
             {
                 auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
@@ -121,23 +105,24 @@ namespace Async
             };
 
             // create the linker to be executed on success of this Promise
-            IChainLinkerPtr pChain =
+            ChainLinkerBasePtr pChain =
                 std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
                     pContinuationFunction,
                     pSuccessor,
                     childSchedulerId
                 );
-            */
+            /*
             IChainLinkerPtr pChain =
                 std::make_shared<SimpleChainLinker<PROMISE_RESULT, NEXT_RESULT> >(
-                    this->shared_from_this(),
+                    this,
                     pFunc,
                     pSuccessor->shared_from_this(),
                     childSchedulerId
                 );
+            */
 
             // "true" for "execute on success"
-            this->AddSuccessor(pChain, true);
+            this->AddContinuation(pChain, true);
 
             // if the Promise has already resolved successfully, execute the chain
             if (this->GetState() == States::SettlementState::SUCCESS)
@@ -148,9 +133,9 @@ namespace Async
         }
     };
 
-    
+    /*
     template<typename PROMISE_RESULT, typename ARG1, typename ... ARGS>
-    class /*ASYNC_API*/ Promise<PROMISE_RESULT(ARG1, ARGS...)> : public IPromise<PROMISE_RESULT>,
+    class Promise<PROMISE_RESULT(ARG1, ARGS...)> : public IPromise<PROMISE_RESULT>,
         public PromiseBase,
         public std::enable_shared_from_this<Promise<PROMISE_RESULT(ARG1, ARGS...)> >
     {
@@ -174,7 +159,7 @@ namespace Async
 
         void Fulfill(PROMISE_RESULT result) override
         {
-            this->_internalWorkItem->SetSuccess();
+            this->SetSuccess();
             this->_result = result;
         }
 
@@ -182,7 +167,7 @@ namespace Async
         {
             if (this->GetState() != States::SettlementState::SUCCESS)
             {
-                std::exception_ptr toThrow = this->GetError();
+                std::exception_ptr toThrow = this->GetException();
                 if (toThrow)
                 {
                     std::rethrow_exception(toThrow);
@@ -193,12 +178,6 @@ namespace Async
                 }
             }
             return this->_result;
-        }
-
-        std::exception_ptr GetError() override
-        {
-            return std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                ->GetException();
         }
 
         bool PreconditionsMet()
@@ -227,15 +206,14 @@ namespace Async
 
                 auto boundFunction = std::bind(this->_unboundFunction, arg1,
                     std::forward<ARGS>(args)...);
-                std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                    ->AttachMainFunction([this, boundFunction]() -> Types::Result_t
+                this->AttachMainFunction([this, boundFunction]() -> States::WorkItemState
                 {
                     if (this->PreconditionsMet())
                     {
                         this->Fulfill(boundFunction());
-                        return Types::Result_t::SUCCESS;
+                        return States::WorkItemState::DONE;
                     }
-                    return Types::Result_t::FAILURE;
+                    return States::WorkItemState::DONE;
                 });
             }
         }
@@ -244,16 +222,16 @@ namespace Async
         {
             if (!this->_unboundFunction)
             {
-                std::dynamic_pointer_cast<IExecutableWorkItem>(this->_internalWorkItem)
-                    ->AttachMainFunction([this]() -> Types::Result_t
+                this->AttachMainFunction([this]() -> States::WorkItemState
                 {
-                    return Types::Result_t::FAILURE;
+                    return States::WorkItemState::DONE;
                 });
                 this->_unboundFunction = std::move(pFunc);
             }
         }        
 
     };
+    */
     
 }
 

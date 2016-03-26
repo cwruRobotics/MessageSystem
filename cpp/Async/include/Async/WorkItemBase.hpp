@@ -11,6 +11,8 @@
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
+#include "Async/WorkItemStates.hpp"
+#include "Async/JobPriorities.hpp"
 
 namespace Async
 {
@@ -28,14 +30,14 @@ namespace Async
     // to do. So, if we declare IScheduler here, and then "#include IWorkItem.hpp"
     // in IScheduler.hpp, then the compiler can resolve how much space IScheduler
     // needs when defining IWorkItem.
-    class IScheduler;
+    class SchedulerBase;
 
     // alias. Whenever the compiler sees "ISchedulerPtr" it will replace
     // it with  std::shared_ptr<IScheduler>. This saves us keystrokes.
-    using ISchedulerPtr = std::shared_ptr<IScheduler>;
+    using SchedulerBasePtr = std::shared_ptr<SchedulerBase>;
 
     // another alias.
-    using FunctionPtr = std::function<Types::Result_t()>;
+    using FunctionPtr = std::function<States::WorkItemState()>;
 
     // see file LibraryExport.hpp. The tag ASYNC_API
     // is a preprocessor variable that is used to either
@@ -45,19 +47,23 @@ namespace Async
     // asynchronously. This is the base type that the clients can derive from,
     // and provides no other functionality than the ability for itself to be
     // executed on an IScheduler.
-    class ASYNC_API IWorkItem
+    class ASYNC_API WorkItemBase
     {
     public:
 
-        virtual ~IWorkItem() = default;
+        virtual ~WorkItemBase() = default;
 
-        virtual Types::Result_t Schedule(ISchedulerPtr pScheduler) = 0;
+        virtual Types::Result_t Schedule(SchedulerBasePtr pScheduler) = 0;
+
+        virtual void SetId(uint64_t id) = 0;
 
         virtual const uint64_t GetId() = 0;
 
+        virtual const Types::JobPriority GetPriority() = 0;
+
     };
 
-    using IWorkItemPtr = std::shared_ptr<IWorkItem>;
+    using WorkItemBasePtr = std::shared_ptr<WorkItemBase>;
 
 }
 

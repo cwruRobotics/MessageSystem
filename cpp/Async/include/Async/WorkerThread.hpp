@@ -12,7 +12,7 @@
 #include <thread>
 
 // C++ PROJECT INCLUDES
-#include "Async/IThread.hpp"
+#include "Async/ThreadBase.hpp"
 #include "Async/JobPriorities.hpp"
 
 namespace Async
@@ -20,7 +20,7 @@ namespace Async
 namespace Concurrency
 {
 
-    class WorkerThread : public IThread,
+    class WorkerThread : public ThreadBase,
         public std::enable_shared_from_this<WorkerThread>
     {
     private:
@@ -36,7 +36,7 @@ namespace Concurrency
                                                            // is this racey having this "unprotected"?
 
         std::mutex                              _queueMutex; // protects queue
-        std::queue<IExecutableWorkItemPtr>      _queue; // execution queue
+        std::queue<ExecutableWorkItemBasePtr>   _queue; // execution queue
 
     private:
 
@@ -52,7 +52,7 @@ namespace Concurrency
 
         States::ConcurrencyState GetState() override;
 
-        Types::Result_t Queue(IExecutableWorkItemPtr workItem) override;
+        Types::Result_t Queue(ExecutableWorkItemBasePtr workItem) override;
 
         void Join() override;
 

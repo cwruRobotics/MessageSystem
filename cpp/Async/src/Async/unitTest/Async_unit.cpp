@@ -8,7 +8,7 @@
 #include "Async/unitTest/TestUtilities.hpp"
 
 #include "Async/Result.hpp"
-#include "Async/IEngine.hpp"
+#include "Async/EngineBase.hpp"
 #include "Async/Engine.hpp"
 #include "Async/Async.hpp"
 

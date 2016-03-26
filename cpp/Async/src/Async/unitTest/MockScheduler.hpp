@@ -27,7 +27,7 @@ namespace Tests
         {
         }
 
-        std::map<Types::JobPriority, Concurrency::IThreadPtr>& GetThreadMap();
+        std::map<Types::JobPriority, Concurrency::ThreadBasePtr>& GetThreadMap();
     };
 
 } // end of namespace Tests

@@ -8,25 +8,22 @@
 
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
-#include "Async/IChainLinker.hpp"
+#include "Async/ChainLinkerBase.hpp"
 
 // project namespace
 namespace Async
 {
 
     // FORWARD DECLARATIONS
-    class IContinuableWorkItem;
-    using IContinuableWorkItemPtr =
-        std::shared_ptr<IContinuableWorkItem>;
+    class ContinuableWorkItemBase;
+    using ContinuableWorkItemBasePtr =
+        std::shared_ptr<ContinuableWorkItemBase>;
 
     // the interface for a WorkItem that can have
     // successors. This interface is exposed to clients.
-    class ASYNC_API IContinuableWorkItem
+    class ASYNC_API ContinuableWorkItemBase
     {
-
-    public:
-
-        virtual ~IContinuableWorkItem() = default;
+    protected:
 
         // successfully resolve this IContinuableWorkItem
         virtual void SetSuccess() = 0;
@@ -34,12 +31,15 @@ namespace Async
         // unsuccessfully resolve this IContinuableWorkItem
         virtual void SetFailure() = 0;
 
-        virtual bool IsCurrentlyExecuting() = 0;
-
         // add a successor to this IContinuableWorkItem. A successor
         // will be constructed when this IContinuableWorkItem is resolved.
-        virtual void AddContinuation(IChainLinkerPtr pContinuation,
+        virtual void AddContinuation(ChainLinkerBasePtr pContinuation,
             bool onSuccess=true) = 0;
+
+
+    public:
+
+        virtual ~ContinuableWorkItemBase() = default;
 
     };
 

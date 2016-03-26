@@ -11,24 +11,24 @@
 // C++ PROJECT INCLUDES
 #include "Async/LibraryExport.hpp"
 #include "Async/Result.hpp"
-#include "Async/IScheduler.hpp"
-#include "Async/IWorkItem.hpp"
+#include "Async/SchedulerBase.hpp"
+#include "Async/WorkItemBase.hpp"
 
 namespace Async
 {
 namespace EntryPoint
 {
 
-    class IEngine;
-    using IEnginePtr = std::shared_ptr<IEngine>;
+    class EngineBase;
+    using EngineBasePtr = std::shared_ptr<EngineBase>;
 
-    class IEngine
+    class EngineBase
     {
     public:
 
-        virtual ~IEngine() = default;
+        virtual ~EngineBase() = default;
 
-        virtual ISchedulerPtr GetScheduler(std::string& schedulerId) = 0;
+        virtual SchedulerBasePtr GetScheduler(std::string& schedulerId) = 0;
 
         virtual Types::Result_t ShutdownScheduler(std::string& schedulerId) = 0;
 
@@ -43,9 +43,9 @@ namespace EntryPoint
 
 } // end of namespace EntryPoint
 
-    ASYNC_API EntryPoint::IEnginePtr GetEngineSingleton();
+    ASYNC_API EntryPoint::EngineBasePtr GetEngineSingleton();
 
-    ASYNC_API Types::Result_t SubmitEngineSingletonServiceRequest(IWorkItemPtr pWorkItem,
+    ASYNC_API Types::Result_t SubmitEngineSingletonServiceRequest(WorkItemBasePtr pWorkItem,
                                                                   std::string schedulerName);
 
 } // end of namespace Async

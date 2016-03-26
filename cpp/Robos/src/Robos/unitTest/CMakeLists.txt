@@ -89,6 +89,7 @@ if( RUN_UNIT_TESTS )
             # Robos sources
             ${SRC_ROOT}/../MessageBase.cpp
             ${SRC_ROOT}/../NodeBase.cpp
+            ${SRC_ROOT}/../InitNodeBase.cpp
             ${SRC_ROOT}/../NodeDatabase.cpp
             ${SRC_ROOT}/../MasterNode.cpp
 
@@ -98,6 +99,7 @@ if( RUN_UNIT_TESTS )
 
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/TestNode.cpp
+            ${SRC_ROOT}/TestInitNode.cpp
             ${SRC_ROOT}/TestNodeNameTemplate.cpp
             ${SRC_ROOT}/TestNodeSubscriberTemplate.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
@@ -113,6 +115,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/TestMessageA.hpp
             ${SRC_ROOT}/TestMessageB/hpp
             ${SRC_ROOT}/TestNode.hpp
+            ${SRC_ROOT}/TestInitNode.hpp
             ${SRC_ROOT}/TestNodeNameTemplate.hpp
             ${SRC_ROOT}/TestNodeSubscriberTemplate.hpp
         )

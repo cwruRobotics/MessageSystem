@@ -1,7 +1,7 @@
 // SYSTEM INCLUDES
 #include <algorithm>                    // std::find_if
 #include <stdexcept>                    // std::logic_error
-#include <iostream>
+// #include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Logging/Factory.hpp"          // Logging::Factory::MakeLogger
@@ -90,12 +90,12 @@ namespace Internal
                     return pNode->GetName() == nodeName;
                 }) != subscribers.end())
                 {
-                    std::cout << "Node with name [" << pNode->GetName() << "] already has been registered" << std::endl;
+                    // std::cout << "Node with name [" << pNode->GetName() << "] already has been registered" << std::endl;
                     modification = false;
                 }
                 else
                 {
-                    std::cout << "Node with name [" << pNode->GetName() << "] does not exist. Registering..." << std::endl;
+                    // std::cout << "Node with name [" << pNode->GetName() << "] does not exist. Registering..." << std::endl;
                     subscribers.push_back(pNode);
                 }
             }
@@ -145,28 +145,28 @@ namespace Internal
         this->_readCountAccess.signal();
 
         //--------------CRITICAL SECTION----------------
-        std::cout << "MasterNode::InvokeSubscribers() Entering Critical Section" << std::endl;
+        // std::cout << "MasterNode::InvokeSubscribers() Entering Critical Section" << std::endl;
         auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
         if(iterator != this->_pUnprotectedNodeDB->map.end())
         {
             for(NodeBasePtr pNodeBase : iterator->second)
             {
-                std::cout << "Executing Subscriber [" << pNodeBase->GetName().c_str() << "]" << std::endl;
+                // std::cout << "Executing Subscriber [" << pNodeBase->GetName().c_str() << "]" << std::endl;
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
                     return pNodeBase->MainCallback(pMessage);
                 }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
                 {
-                    std::cout << "Executing Continuation" << std::endl;
+                    // std::cout << "Executing Continuation" << std::endl;
                     this->InvokeSubscribers(pMessage);
                     return true;
                 }, pNodeBase->GetExecutionTopic());
             }
         }
-        else
-        {
-            std::cout << "No subscriptions for Message Topic [" << pMessage->topic.c_str() <<  "]" << std::endl;
-        }
+        // else
+        // {
+        //     std::cout << "No subscriptions for Message Topic [" << pMessage->topic.c_str() <<  "]" << std::endl;
+        // }
         //----------------------------------------------
 
         this->_readCountAccess.wait();

@@ -8,6 +8,7 @@
 #include "Robos/NodeBase.hpp"
 #include "Robos/unitTest/TestMessageA.hpp"
 #include "Robos/unitTest/TestMessageB.hpp"
+#include "Robos/unitTest/TestMessageC.hpp"
 
 namespace Robos
 {
@@ -21,6 +22,8 @@ namespace Tests
         virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr& pMessage) override;
 
         MessageBasePtr TestNodeCallback(const TestMessageAPtr& pMessage);
+
+        MessageBasePtr TestNodeCallbackB(const TestMessageBPtr& pMessage);
 
     public:
 

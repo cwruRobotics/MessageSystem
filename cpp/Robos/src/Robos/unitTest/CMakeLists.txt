@@ -96,6 +96,7 @@ if( RUN_UNIT_TESTS )
             # RobosUnitTests sources
             ${SRC_ROOT}/TestMessageA.cpp
             ${SRC_ROOT}/TestMessageB.cpp
+            ${SRC_ROOT}/TestMessageC.cpp
 
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/TestNode.cpp
@@ -113,7 +114,8 @@ if( RUN_UNIT_TESTS )
 
             # RobosUnitTests headers
             ${SRC_ROOT}/TestMessageA.hpp
-            ${SRC_ROOT}/TestMessageB/hpp
+            ${SRC_ROOT}/TestMessageB.hpp
+            ${SRC_ROOT}/TestMessageC.hpp
             ${SRC_ROOT}/TestNode.hpp
             ${SRC_ROOT}/TestInitNode.hpp
             ${SRC_ROOT}/TestNodeNameTemplate.hpp

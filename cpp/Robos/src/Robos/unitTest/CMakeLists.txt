@@ -84,7 +84,7 @@ if( RUN_UNIT_TESTS )
         # source files
         set( ROBOS_UNITTEST_SOURCES
             # Logging sources
-            ${CONFIG_ROOT}/RobosLoggingConfig.cpp
+            ${CONFIG_ROOT}/RobosConfig.cpp
 
             # Robos sources
             ${SRC_ROOT}/../MessageBase.cpp
@@ -92,20 +92,25 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/../InitNodeBase.cpp
             ${SRC_ROOT}/../NodeDatabase.cpp
             ${SRC_ROOT}/../MasterNode.cpp
+            ${SRC_ROOT}/../Robos.cpp
 
             # RobosUnitTests sources
             ${SRC_ROOT}/TestMessageA.cpp
             ${SRC_ROOT}/TestMessageB.cpp
             ${SRC_ROOT}/TestMessageC.cpp
+            ${SRC_ROOT}/TestCountMessage.cpp
 
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/TestNode.cpp
             ${SRC_ROOT}/TestInitNode.cpp
             ${SRC_ROOT}/TestNodeNameTemplate.cpp
             ${SRC_ROOT}/TestNodeSubscriberTemplate.cpp
+            ${SRC_ROOT}/CountTestNode.cpp
+            ${SRC_ROOT}/TestCountInitNode.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
             ${SRC_ROOT}/NodeDatabase_unit.cpp
             ${SRC_ROOT}/MasterNode_unit.cpp
+            ${SRC_ROOT}/Robos_unit.cpp
         )
 
         set( ROBOS_UNITTEST_HEADERS
@@ -116,10 +121,13 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/TestMessageA.hpp
             ${SRC_ROOT}/TestMessageB.hpp
             ${SRC_ROOT}/TestMessageC.hpp
+            ${SRC_ROOT}/TestCountMessage.hpp
             ${SRC_ROOT}/TestNode.hpp
             ${SRC_ROOT}/TestInitNode.hpp
             ${SRC_ROOT}/TestNodeNameTemplate.hpp
             ${SRC_ROOT}/TestNodeSubscriberTemplate.hpp
+            ${SRC_ROOT}/CountTestNode.hpp
+            ${SRC_ROOT}/TestCountInitNode.hpp
         )
 
         # directories to search for header files

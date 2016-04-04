@@ -14,7 +14,7 @@
 #include "Async/Engine.hpp"
 #include "Async/Async.hpp"
 
-#include "AsyncLoggingConfig.hpp"
+#include "AsyncConfig.hpp"
 
 namespace OSUtils = Utilities::OS;
 
@@ -25,7 +25,7 @@ namespace Tests
 
     TEST_CASE("Testing default Engine constructor and destructor", "[Engine_unit]")
     {
-        std::string loggingPath = Async::LoggingConfig::LOGGING_ROOT + "/Engine_unitLog.txt";
+        std::string loggingPath = Async::Config::LOGGING_ROOT + "/Engine_unitLog.txt";
         Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("Engine_unitLogger",
             loggingPath.c_str());
         LOG_DEBUG(pLogger, "Testing default Engine constructor and destructor");

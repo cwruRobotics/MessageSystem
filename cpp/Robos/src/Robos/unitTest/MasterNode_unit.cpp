@@ -69,6 +69,24 @@ namespace Tests
         return s;
     }
 
+    void InvokeNodes(int n)
+    {
+        Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
+        TestMessageAPtr pTestMessageA = std::make_shared<TestMessageA>();
+        pTestMessageA->data = 10;
+
+        Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
+
+        for(int i = 0; i < n; ++i)
+        {
+            REQUIRE( pMaster->Register(std::make_shared<TestNodeNameTemplate>("TestNode" + IntToString(i))) );
+        }
+        pMaster->InvokeSubscribers(pTestMessageA);
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Calling Async::Stop()" << std::endl;
+        Async::Stop();
+    }
+
     TEST_CASE("Instantiating MasterNode", "[MasterNode_unit]")
     {
         std::cout << "Executing MasterNode_unit [" << 1 << "]" << std::endl;
@@ -173,138 +191,25 @@ namespace Tests
             std::cout << "[Caught exception]: " << e.what() << std::endl;
             REQUIRE( false );
         }
-        std::cout << "Calling Async::Stop()" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Calling Async::Stop()" << std::endl;
         Async::Stop();
     }
 
-    TEST_CASE("Invoking multiple nodes with a Message", "[MasterNode_unit]")
+    TEST_CASE("Invoking multiple nodes with a message", "[MasterNode_unit]")
     {
         std::cout << "Executing MasterNode_unit [" << 7 << "]" << std::endl;
-        TestMessageAPtr pTestMessageA = std::make_shared<TestMessageA>();
-        pTestMessageA->data = 10;
-
-        std::vector<NodeBasePtr> vec;
-        // test 2
+        std::cout << "Invoking [2] nodes" << std::endl;
+        InvokeNodes(2);
+        for(int i = 10; i <= 1000; i *= 10)
         {
-            vec.reserve(2);
-            Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
-            Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
-            for(int i = 0; i < 2; ++i)
-            {
-                TestNodeNameTemplatePtr pNode = std::make_shared<TestNodeNameTemplate>("TestNode" + IntToString(i));
-                vec.push_back(pNode);
-                pMaster->Register(pNode);
-            }
-            try
-            {
-                pMaster->InvokeSubscribers(pTestMessageA);
-                REQUIRE( true );
-            }
-            catch(std::exception e)
-            {
-                std::cout << "Calling Async::Stop()" << std::endl;
-                Async::Stop();
-                std::cout << "[Caught exception]: " << e.what() << std::endl;
-                REQUIRE( false );
-            }
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            std::cout << "Calling Async::Stop()" << std::endl;
-            Async::Stop();
+            std::cout << "Invoking [" << i << "] nodes" << std::endl;
+            InvokeNodes(i);
         }
-        vec.clear();
-
-        // test 3
-        {
-            vec.reserve(3);
-            Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
-            Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
-            for(int i = 0; i < 3; ++i)
-            {
-                TestNodeNameTemplatePtr pNode = std::make_shared<TestNodeNameTemplate>("TestNode" + IntToString(i));
-                vec.push_back(pNode);
-                pMaster->Register(pNode);
-            }
-            try
-            {
-                pMaster->InvokeSubscribers(pTestMessageA);
-                REQUIRE( true );
-            }
-            catch(std::exception e)
-            {
-                std::cout << "Calling Async::Stop()" << std::endl;
-                Async::Stop();
-                std::cout << "[Caught exception]: " << e.what() << std::endl;
-                REQUIRE( false );
-            }
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            std::cout << "Calling Async::Stop()" << std::endl;
-            Async::Stop();
-        }
-        vec.clear();
-
-        // test 10 many
-        {
-            vec.reserve(10);
-            Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
-            Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
-            for(int i = 0; i < 10; ++i)
-            {
-                TestNodeNameTemplatePtr pNode = std::make_shared<TestNodeNameTemplate>("TestNode" + IntToString(i));
-                vec.push_back(pNode);
-                pMaster->Register(pNode);
-            }
-            try
-            {
-                pMaster->InvokeSubscribers(pTestMessageA);
-                REQUIRE( true );
-            }
-            catch(std::exception e)
-            {
-                std::cout << "Calling Async::Stop()" << std::endl;
-                Async::Stop();
-                std::cout << "[Caught exception]: " << e.what() << std::endl;
-                REQUIRE( false );
-            }
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            std::cout << "Calling Async::Stop()" << std::endl;
-            Async::Stop();
-        }
-        vec.clear();
-
-        // test 1000
-        {
-            vec.reserve(10);
-            Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
-            Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
-            for(int i = 0; i < 1000; ++i)
-            {
-                TestNodeNameTemplatePtr pNode = std::make_shared<TestNodeNameTemplate>("TestNode" + IntToString(i));
-                vec.push_back(pNode);
-                pMaster->Register(pNode);
-            }
-            try
-            {
-                pMaster->InvokeSubscribers(pTestMessageA);
-                REQUIRE( true );
-            }
-            catch(std::exception e)
-            {
-                std::cout << "Calling Async::Stop()" << std::endl;
-                Async::Stop();
-                std::cout << "[Caught exception]: " << e.what() << std::endl;
-                REQUIRE( false );
-            }
-            std::this_thread::sleep_for(std::chrono::seconds(4));
-            std::cout << "Calling Async::Stop()" << std::endl;
-            Async::Stop();
-        }
-        vec.clear();
     }
 
     TEST_CASE("Invoking a Cycle of Nodes", "[MasterNode_unit]")
     {
-        std::cout << "\n\n\n" << std::endl;
         std::cout << "Executing MasterNode_unit [" << 8 << "]" << std::endl;
         Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
         REQUIRE( pMaster->RegisterInitNode(std::make_shared<TestInitNode>()) );

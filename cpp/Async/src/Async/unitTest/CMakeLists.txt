@@ -82,7 +82,7 @@ if( RUN_UNIT_TESTS )
         # source files
         set( ASYNC_UNITTEST_SOURCES
             # Logging sources
-            ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
+            ${CONFIG_ROOT}/AsyncConfig.cpp
 
             # Async sources
             ${SRC_ROOT}/../Result.cpp
@@ -108,6 +108,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/WorkItem_unit.cpp
             ${SRC_ROOT}/WorkItemAndScheduler_unit.cpp
             # ${SRC_ROOT}/ContinuableWorkItem_unit.cpp
+            ${SRC_ROOT}/ValueHolder_unit.cpp
             ${SRC_ROOT}/Promise_unit.cpp
             ${SRC_ROOT}/WorkerThread_unit.cpp
             ${SRC_ROOT}/Engine_unit.cpp

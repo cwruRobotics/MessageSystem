@@ -126,6 +126,17 @@ if( BUILD_ROBOS )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos" )
 endif()
 
+if( BUILD_ROBOS_FT )
+    # Async_FT executable
+    add_subdirectory( ${SRC_ROOT}/Robos_FT/src
+                      ${OUT_ROOT}/Robos_FT )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Robos_FT" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos_FT" )
+endif()
+
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 

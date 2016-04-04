@@ -7,13 +7,13 @@
 #include <vector>
 #include <Async/AsyncExecution.hpp>     // Async::Execute
 #include <Async/Promise.hpp>            // Async::PromisePtr<...>::Then
+#include <Utilities/Semaphore.hpp>
 
 // C++ PROJECT INCLUDES
-#include "Utilities/Semaphore.hpp"
 #include "Robos/MessageBase.hpp"
-#include "Robos/InitNodeBase.hpp"
-#include "Robos/NodeBase.hpp"
 #include "Robos/NodeDatabase.hpp"
+#include "Robos/NodeBase.hpp"
+#include "Robos/InitNodeBase.hpp"
 
 namespace Robos
 {
@@ -52,9 +52,9 @@ namespace Internal
 
         void Start();
 
-        bool Register(const NodeBasePtr& pNodeBase);
+        bool Register(const NodeBasePtr pNodeBase);
 
-        bool RegisterInitNode(const InitNodeBasePtr& pInitNodeBase);
+        bool RegisterInitNode(const InitNodeBasePtr pInitNodeBase);
 
         void InvokeSubscribers(const MessageBasePtr pMessage);
 

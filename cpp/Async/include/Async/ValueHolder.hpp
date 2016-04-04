@@ -3,7 +3,7 @@
 
 // SYSTEM INCLUDES
 #include <type_traits>
-
+#include <stdexcept>
 
 // C++ PROJECT INCLUDES
 
@@ -17,67 +17,25 @@ namespace Async
     {
     private:
 
-        struct ValueTriviallyDestructible
-        {
-            union
-            {
-                VALUE _value;
-            };
-            bool _hasValue;
-
-            ValueTriviallyDestructible() : _hasValue(false)
-            {}
-
-            void Clear()
-            {
-                this->_hasValue = false;
-            }
-        };
-
-        struct ValueNonTriviallyDestructible
-        {
-            union
-            {
-                VALUE _value;
-            };
-            bool _hasValue;
-
-            ValueNonTriviallyDestructible() : _hasValue(false)
-            {}
-
-            void Clear()
-            {
-                if(this->_hasValue)
-                {
-                    this->_hasValue = false;
-                    this->_value.~VALUE();
-                }
-            }
-        };
-
-        using ValueStored =
-            typename std::conditional<std::is_trivially_destructible<VALUE>::value,
-                                      ValueTriviallyDestructible,
-                                      ValueNonTriviallyDestructible>::type;
-
-        ValueStored _valueStored;
+        VALUE   _value;
+        bool    _hasValue;
 
     private:
 
         void RequireContents() const
         {
-            if (!this->_valueStored._hasValue)
+            if (!this->_value)
             {
-                throw AsyncValueHolderException();
+                throw std::logic_error("No Value in ValueHolder");
             }
         }
 
         template<typename... Args>
         void Construct(Args&&... args)
         {
-            const void* ptr = &this->_valueStored._value;
+            const void* ptr = &this->_value;
             new(const_cast<void*>(ptr)) VALUE(std::forward<Args>(args)...);
-            this->_valueStored._hasValue = true;
+            this->_hasValue = true;
         }
 
     public:
@@ -105,17 +63,17 @@ namespace Async
 
         bool HasValue() const
         {
-            return this->_valueStored._hasValue;
+            return this->_hasValue;
         }
 
         VALUE* GetPointer()
         {
-            return this->_valueStored._hasValue ? &this->_valueStored._value : nullptr;
+            return this->_hasValue ? &this->_value : nullptr;
         }
 
         const VALUE* GetPointer() const
         {
-            return this->_valueStored._hasValue ? &this->_valueStored._value : nullptr;
+            return this->_hasValue ? &this->_value : nullptr;
         }
 
         explicit operator bool() const
@@ -126,25 +84,25 @@ namespace Async
         VALUE GetValue()
         {
             this->RequireContents();
-            return this->_valueStored._value;
+            return this->_value;
         }
 
         const VALUE& GetValue() const
         {
             this->RequireContents();
-            return this->_valueStored._value;
+            return this->_value;
         }
 
         void Clear()
         {
-            this->_valueStored.Clear();
+            this->_hasValue = false;
         }
 
         void Assign(VALUE&& val)
         {
             if(this->HasValue())
             {
-                this->_valueStored._value = std::move(val);
+                this->_value = std::move(val);
             }
             else
             {
@@ -156,7 +114,7 @@ namespace Async
         {
             if(this->HasValue())
             {
-                this->_valueStored._value = val;
+                this->_value = val;
             }
             else
             {

@@ -47,7 +47,7 @@ set( PROJECT_VERSION_PATCH "0" )
 # Source files
 set( ASYNC_SRCS
     # logging
-    ${CONFIG_ROOT}/AsyncLoggingConfig.cpp
+    ${CONFIG_ROOT}/AsyncConfig.cpp
 
     ${SRC_ROOT}/Async/Result.cpp
     ${SRC_ROOT}/Async/WorkItemStates.cpp
@@ -80,6 +80,7 @@ set( ASYNC_PUBLIC_HEADERS
     ${INC_ROOT}/Async/PromiseBase.hpp
     ${INC_ROOT}/Async/PromiseBaseImpl.hpp
     ${INC_ROOT}/Async/Promise.hpp
+    ${INC_ROOT}/Async/ValueHolder.hpp
     ${INC_ROOT}/Async/ConcurrencyStates.hpp
     ${INC_ROOT}/Async/JobPriorities.hpp
     ${INC_ROOT}/Async/ThreadBase.hpp
@@ -92,7 +93,7 @@ set( ASYNC_PUBLIC_HEADERS
 
 set( ASYNC_PRIVATE_HEADERS
     # logging
-    ${CONFIG_ROOT}/AsyncLoggingConfig.hpp
+    ${CONFIG_ROOT}/AsyncConfig.hpp
 
     # ${INC_ROOT}/Async/WorkItemStateMachine.hpp
     ${INC_ROOT}/Async/WorkItem.hpp

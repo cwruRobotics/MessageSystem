@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Engine version="1.0" type="example">
+    <!--
+    This file is for the configuration of Robos's asynchronous execution.
+    All Robos Nodes are executed asynchronously and this environment must
+    be configured before compilation.
+
+    Robos asynchronous threads are identified by a "priority." The "priority"
+    of a thread should correspond with the level of importance of code that
+    executes on it have. There are three types of priorities:
+        1) IMMEDIATE -- This is for your most important code...the code that needs
+                        to be executed the quickest.
+        2) RELAXED   -- This is for your code that isn't quite high priority but
+                        is more important than the average code.
+        3) OTHER     -- This is for all other code.
+
+    The thought process is that, since each asynchronous thread can only execute
+    one service request at a time, the higher the priority thread, the fewer the
+    number of different service requests and the faster the execution.
+
+    Asynchronous threads are grouped together by the type of service requests they
+    execute. The data structure that handles this is called a "Scheduler."
+    A Scheduler is responsible for a type of execution, for example: RADAR
+    related sensor execution. This Scheduler holds a set of asynchronous threads that
+    are identified by priority. This file serves to let Robos know what schedulers
+    should exist, and what priority threads they should contain. These values
+    should be used when creating Nodes.
+
+    Below is an example of creating two schedulers with the following format:
+        1) MyTestScheduler will contain an IMMEDIATE thread and an OTHER thread.
+        2) MyTestScheduler2 will contain an IMMEDIATE thread and a RELAXED thread.
+
+    <Scheduler name="MyTestScheduler">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="OTHER"/>
+    </Scheduler>
+    <Scheduler name="MyTestScheduler2">
+        <threadPriority value="IMMEDIATE"/>
+        <threadPriority value="RELAXED"/>
+    </Scheduler>
+    -->
+</Engine>

@@ -25,7 +25,7 @@ namespace Robos
 
         const std::vector<std::string>  _subscriptions;
 
-        virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr& pMessage) = 0;
+        virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr pMessage) = 0;
 
     public:
 
@@ -40,7 +40,7 @@ namespace Robos
 
         const std::vector<std::string>& GetSubscriptions();
 
-        MessageBasePtr MainCallback(const MessageBasePtr& pMessage);
+        MessageBasePtr MainCallback(const MessageBasePtr pMessage);
     };
 
     using NodeBasePtr = std::shared_ptr<NodeBase>;

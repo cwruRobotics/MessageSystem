@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef ASYNC_VALUEHOLDER_HPP
 #define ASYNC_VALUEHOLDER_HPP
 
@@ -51,13 +53,11 @@ namespace Async
 
         ValueHolder(const VALUE& val)
         {
-            static_assert(std::is_nothrow_copy_constructible<VALUE>::value);
             this->Construct(val);
         }
 
         ValueHolder(VALUE&& val)
         {
-            static_assert(std::is_nothrow_move_constructible<VALUE>::value);
             this->Construct(std::move(val));
         }
 

@@ -47,13 +47,15 @@ set( PROJECT_VERSION_PATCH "0" )
 # Source files
 set( ROBOS_SRCS
     # logging
-    ${CONFIG_ROOT}/RobosLoggingConfig.cpp
+    # ${CONFIG_ROOT}/RobosLoggingConfig.cpp
+    ${CONFIG_ROOT}/RobosConfig.cpp
 
     ${SRC_ROOT}/Robos/MessageBase.cpp
     ${SRC_ROOT}/Robos/NodeBase.cpp
     ${SRC_ROOT}/Robos/InitNodeBase.cpp
     ${SRC_ROOT}/Robos/NodeDatabase.cpp
     ${SRC_ROOT}/Robos/MasterNode.cpp
+    ${SRC_ROOT}/Robos/Robos.cpp
 
     # factories
     # ${SRC_ROOT}/Robos/Factories/EngineFactory.cpp
@@ -65,11 +67,12 @@ set( ROBOS_PUBLIC_HEADERS
     ${INC_ROOT}/Robos/MessageBase.hpp
     ${INC_ROOT}/Robos/NodeBase.hpp
     ${INC_ROOT}/Robos/InitNodeBase.hpp
+    ${INC_ROOT}/Robos/Robos.hpp
 )
 
 set( ROBOS_PRIVATE_HEADERS
     # logging
-    ${CONFIG_ROOT}/RobosLoggingConfig.hpp
+    ${CONFIG_ROOT}/RobosConfig.hpp
 
     ${INC_ROOT}/Robos/NodeDatabase.hpp
     ${INC_ROOT}/Robos/MasterNode.hpp

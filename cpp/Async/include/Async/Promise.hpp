@@ -14,7 +14,7 @@
 #include "Async/PromiseBase.hpp"
 // #include "Async/LibraryExport.hpp"
 #include "Async/PromiseBaseImpl.hpp"
-// #include "Async/ValueHolder.hpp"
+#include "Async/ValueHolder.hpp"
 
 namespace Async
 {
@@ -30,10 +30,11 @@ namespace Async
     {
     private:
 
-        PROMISE_RESULT     _result;
+        ValueHolderPtr<PROMISE_RESULT>  _resultHolder;
 
     public:
-        Promise(Types::JobPriority priority=Types::JobPriority::OTHER) : PromiseBaseImpl(priority)
+        Promise(Types::JobPriority priority=Types::JobPriority::OTHER) :    PromiseBaseImpl(priority),
+            _resultHolder(std::make_shared<ValueHolder<PROMISE_RESULT> >())
         {
         }
 
@@ -44,7 +45,7 @@ namespace Async
         void Fulfill(PROMISE_RESULT result)
         {
             this->SetSuccess();
-            this->_result = result;
+            this->_resultHolder->Assign(std::forward<PROMISE_RESULT>(result));
         }
 
         PROMISE_RESULT GetResult() override
@@ -61,7 +62,7 @@ namespace Async
                     throw std::logic_error("Promise not settled yet");
                 }
             }
-            return this->_result;
+            return this->_resultHolder->GetValue();
         }
 
         void AttachMainFunction(std::function<PROMISE_RESULT()> pFunc)
@@ -100,8 +101,11 @@ namespace Async
             // the child Promise
             auto pContinuationFunction = [this, pFunc]() -> std::function<NEXT_RESULT()>
             {
-                auto pBoundChildFunction = std::bind(pFunc, this->GetResult());
-                return pBoundChildFunction;
+                auto pValueHolder = this->_resultHolder->shared_from_this();
+                return [pValueHolder, pFunc]() -> NEXT_RESULT
+                {
+                    return pFunc(pValueHolder->GetValue());
+                };
             };
 
             // create the linker to be executed on success of this Promise

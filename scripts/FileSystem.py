@@ -28,6 +28,9 @@ INSTALL_ROOT = 12           # the absolute path to the top level directory where
 INSTALL_DIR = 13            # the absolute path to the directory where public c++ headers go when built
 LOG_DIR = 14                # the absolute path to the directory where all log files will be written
 DEPENDENCIES = 15
+VISUAL_STUDIO_ROOT = 16
+CLIENT_ROOT = 17
+CLIENT_CONFIG = 18
 
 
 # a method to get the absolute path to a directory within the project based
@@ -63,5 +66,11 @@ def getDirectory(directoryEnum, configuration='', projectName=''):
         return os.path.join(getDirectory(WORKING, configuration, projectName), 'logs')
     elif directoryEnum == DEPENDENCIES:
         return os.path.join(getDirectory(ROOT), "dependencies")
+    elif directoryEnum == VISUAL_STUDIO_ROOT:
+        return os.path.join(getDirectory(OUT_ROOT, configuration, projectName), "VisualStudio")
+    elif directoryEnum == CLIENT_ROOT:
+        return os.path.join(getDirectory(ROOT), "client")
+    elif directoryEnum == CLIENT_CONFIG:
+        return os.path.join(getDirectory(CLIENT_ROOT), "config")
     else:
         Utilities.failExecution("Unknown directoryEnum: [%s]" % directoryEnum)

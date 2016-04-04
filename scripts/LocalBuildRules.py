@@ -52,12 +52,13 @@ class LocalBuild(GlobalBuild):
         else:
             Utilities.PFork(appToExecute="make", argsForApp=targets, wd=wd, failOnError=True)
 
-    def makeVisualStudioProjects(self):
-        wd = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)
+    def makeVisualStudioProjects(self, test="OFF", logging="OFF"):
+        wd = FileSystem.getDirectory(FileSystem.VISUAL_STUDIO_ROOT, self._config, self._project_name)
         Utilities.mkdir(wd)
-        CMakeArgs = self.getCMakeArgs("", wd)
+        CMakeArgs = self.getCMakeArgs("", wd, test, logging)
         if platform.system() == "Windows":
-            CMakeArgs.extend(["-G", "\"Visual Studio: %s\"" % Utilities.getMachineBits()])
+            visualStudioVersion = Utilities.formatVisualStudioVersion(Utilities.getVisualStudioVersion())
+            CMakeArgs.extend(["-G", "\"Visual Studio %s\"" % visualStudioVersion])
             Utilities.PForkWithVisualStudio(appToExecute="cmake",
                                             argsForApp=CMakeArgs,
                                             wd=wd)

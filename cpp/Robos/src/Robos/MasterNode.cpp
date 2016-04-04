@@ -1,13 +1,13 @@
 // SYSTEM INCLUDES
 #include <algorithm>                    // std::find_if
 #include <stdexcept>                    // std::logic_error
-// #include <iostream>
+#include <iostream>
 
 // C++ PROJECT INCLUDES
 #include "Logging/Factory.hpp"          // Logging::Factory::MakeLogger
 #include "Logging/ILogger.hpp"          // Logging macros
 
-#include "RobosLoggingConfig.hpp"
+#include "RobosConfig.hpp"
 #include "Robos/MasterNode.hpp"
 
 namespace Robos
@@ -15,8 +15,9 @@ namespace Robos
 namespace Internal
 {
 
-    MasterNode::MasterNode() : _pUnprotectedNodeDB(std::make_shared<NodeDatabase>()), _readCount(0),
-        _resourceAccess(1), _readCountAccess(1), _serviceQueue(1), _initNodes(), _initFlag(false)
+    MasterNode::MasterNode() : _readCount(0), _resourceAccess(1),
+        _readCountAccess(1), _serviceQueue(1), _initNodes(), _initFlag(false),
+        _pUnprotectedNodeDB(std::make_shared<NodeDatabase>())
     {
     }
 
@@ -54,75 +55,75 @@ namespace Internal
         }
     }
 
-    bool MasterNode::Register(const NodeBasePtr& pNode)
+    bool MasterNode::Register(const NodeBasePtr pNode)
     {
-        std::string loggingPath = Robos::LoggingConfig::LOGGING_ROOT + "/MasterNodeLog.txt";
-        Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("MasterNode::Register()",
-            loggingPath.c_str());
-        LOG_DEBUG(pLogger, "Entering %s", "MasterNode::Register()");
-
-        bool modification = true;
-        this->_serviceQueue.wait();
-        this->_resourceAccess.wait();
-        this->_serviceQueue.signal();
-
-        LOG_DEBUG(pLogger, "%s", "entering critical section");
-        //--------------CRITICAL SECTION----------------
-        ///*
-        const std::string& nodeName = pNode->GetName();
-        LOG_DEBUG(pLogger, "name of node: %s", nodeName.c_str());
-        unsigned int hash;
-        for(const std::string& subscription : pNode->GetSubscriptions())
+        if(!this->_initFlag)
         {
-            hash = this->HashTopic(subscription);
-            LOG_DEBUG(pLogger, "subscription: %s", subscription.c_str());
-            NodeDatabaseImpl::iterator it = this->_pUnprotectedNodeDB->map.find(hash);
-            if(!this->_pUnprotectedNodeDB->map.empty() &&
-               it != this->_pUnprotectedNodeDB->map.end())
-            {
-                LOG_DEBUG(pLogger, "subscription: [%s] already exists! Checking if node already exists", subscription.c_str());
-                std::vector<NodeBasePtr>& subscribers = it->second;//.data();
+            std::string loggingPath = Robos::Config::LOGGING_ROOT + "/MasterNodeLog.txt";
+            Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("MasterNode::Register()",
+                                                                      loggingPath.c_str());
+            LOG_DEBUG(pLogger, "Entering %s", "MasterNode::Register()");
 
-                // check if pNode already is already existing as a subscriber here.
-                if(std::find_if(subscribers.begin(), subscribers.end(),
-                    [nodeName](NodeBasePtr& pNode) -> bool
+            bool modification = true;
+            this->_serviceQueue.wait();
+            this->_resourceAccess.wait();
+            this->_serviceQueue.signal();
+
+            LOG_DEBUG(pLogger, "%s", "entering critical section");
+            //--------------CRITICAL SECTION----------------
+            ///*
+            const std::string& nodeName = pNode->GetName();
+            LOG_DEBUG(pLogger, "name of node: %s", nodeName.c_str());
+            unsigned int hash;
+            for(const std::string& subscription : pNode->GetSubscriptions())
+            {
+                hash = this->HashTopic(subscription);
+                LOG_DEBUG(pLogger, "subscription: %s", subscription.c_str());
+                NodeDatabaseImpl::iterator it = this->_pUnprotectedNodeDB->map.find(hash);
+                if(!this->_pUnprotectedNodeDB->map.empty() &&
+                   it != this->_pUnprotectedNodeDB->map.end())
                 {
-                    return pNode->GetName() == nodeName;
-                }) != subscribers.end())
-                {
-                    // std::cout << "Node with name [" << pNode->GetName() << "] already has been registered" << std::endl;
-                    modification = false;
+                    LOG_DEBUG(pLogger, "subscription: [%s] already exists! Checking if node already exists", subscription.c_str());
+                    std::vector<NodeBasePtr>& subscribers = it->second;//.data();
+
+                    // check if pNode already is already existing as a subscriber here.
+                    if(std::find_if(subscribers.begin(), subscribers.end(),
+                       [nodeName](NodeBasePtr& pNode) -> bool
+                    {
+                        return pNode->GetName() == nodeName;
+                    }) != subscribers.end())
+                    {
+                        modification = false;
+                    }
+                    else
+                    {
+                        subscribers.push_back(pNode);
+                    }
                 }
                 else
                 {
-                    // std::cout << "Node with name [" << pNode->GetName() << "] does not exist. Registering..." << std::endl;
+                    LOG_DEBUG(pLogger, "adding subscription: [%s] to database.", subscription.c_str());
+                    // add the <subscription, std::vector<NodeBasePtr>{pNode}>
+                    std::vector<NodeBasePtr> subscribers;
                     subscribers.push_back(pNode);
+                    /*
+                    if(!this->_pUnprotectedNodeDB->map.insert(hash, subscribers).second)
+                    {
+                    modification = false;
+                    }
+                    */
+                    this->_pUnprotectedNodeDB->map.insert(
+                        std::pair<unsigned int, std::vector<NodeBasePtr> >(hash, subscribers));
                 }
             }
-            else
-            {
-                LOG_DEBUG(pLogger, "adding subscription: [%s] to database.", subscription.c_str());
-                // add the <subscription, std::vector<NodeBasePtr>{pNode}>
-                std::vector<NodeBasePtr> subscribers;
-                subscribers.push_back(pNode);
-                /*
-                if(!this->_pUnprotectedNodeDB->map.insert(hash, subscribers).second)
-                {
-                   modification = false;
-                }
-                */
-                this->_pUnprotectedNodeDB->map.insert(
-                    std::pair<unsigned int, std::vector<NodeBasePtr> >(hash, subscribers));
-            }
-        }
-        //----------------------------------------------
-        //*/
 
-        this->_resourceAccess.signal();
-        return modification;
+            this->_resourceAccess.signal();
+            return modification;
+        }
+        return false;
     }
 
-    bool MasterNode::RegisterInitNode(const InitNodeBasePtr& pNode)
+    bool MasterNode::RegisterInitNode(const InitNodeBasePtr pNode)
     {
         if(!this->_initFlag)
         {
@@ -145,6 +146,7 @@ namespace Internal
         this->_readCountAccess.signal();
 
         //--------------CRITICAL SECTION----------------
+        //std::cout << "pMessage use count: " << pMessage.use_count() << std::endl;
         // std::cout << "MasterNode::InvokeSubscribers() Entering Critical Section" << std::endl;
         auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
         if(iterator != this->_pUnprotectedNodeDB->map.end())
@@ -154,10 +156,13 @@ namespace Internal
                 // std::cout << "Executing Subscriber [" << pNodeBase->GetName().c_str() << "]" << std::endl;
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
+                    //std::cout << "Async::Execute() pMessage use count: " << pMessage.use_count() << std::endl;
                     return pNodeBase->MainCallback(pMessage);
+                    // be careful about "this" in the next line.....I think it could be deleted and then accessed.
                 }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
                 {
-                    // std::cout << "Executing Continuation" << std::endl;
+                    //std::cout << "Executing Continuation: pMaster != null: " << (this != nullptr) << std::endl;
+                    //std::cout << "Async::Continuation() pMessage use count: " << pMessage.use_count() << std::endl;
                     this->InvokeSubscribers(pMessage);
                     return true;
                 }, pNodeBase->GetExecutionTopic());

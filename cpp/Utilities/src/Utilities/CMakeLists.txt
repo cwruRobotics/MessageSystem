@@ -47,7 +47,7 @@ set( PROJECT_VERSION_PATCH "0" )
 # Source files
 set( UTILITIES_SRCS
     # logging
-    ${CONFIG_ROOT}/UtilitiesLoggingConfig.cpp
+    ${CONFIG_ROOT}/UtilitiesConfig.cpp
 
     # utilities
     ${SRC_ROOT}/Utilities/Semaphore.cpp
@@ -81,7 +81,7 @@ set( UTILITIES_PUBLIC_HEADERS
 
 set( UTILITIES_PRIVATE_HEADERS
     # logging
-    ${CONFIG_ROOT}/UtilitiesLoggingConfig.hpp
+    ${CONFIG_ROOT}/UtilitiesConfig.hpp
 
     # factories
 )

@@ -28,7 +28,7 @@ namespace Tests
 
     MessageBasePtr TestInitNode::MainCallbackImpl()
     {
-        std::cout << "Executing TestInitNodes" << std::endl;
+        //std::cout << "Executing TestInitNodes" << std::endl;
         return this->TestInitNodeCallback();
     }
 

@@ -1,6 +1,7 @@
 // SYSTEM INCLUDES
 // #include <Utilities/VectorUtils.hpp>
 #include <iostream>
+#include <cassert>
 
 // C++ PROJECT INCLUDES
 #include "Robos/unitTest/TestNodeSubscriberTemplate.hpp"
@@ -20,7 +21,7 @@ namespace Tests
     {
     }
 
-    MessageBasePtr TestNodeSubscriberTemplate::TestNodeCallback(const TestMessageAPtr& pMessage)
+    MessageBasePtr TestNodeSubscriberTemplate::TestNodeCallback(const TestMessageAPtr pMessage)
     {
         TestMessageBPtr producedMessage = std::make_shared<TestMessageB>();
         REQUIRE( pMessage->data == 10 );
@@ -28,7 +29,7 @@ namespace Tests
         return producedMessage;
     }
 
-    MessageBasePtr TestNodeSubscriberTemplate::TestNodeCallbackB(const TestMessageBPtr& pMessage)
+    MessageBasePtr TestNodeSubscriberTemplate::TestNodeCallbackB(const TestMessageBPtr pMessage)
     {
         TestMessageAPtr producedMessage = std::make_shared<TestMessageA>();
         REQUIRE( pMessage->data == 15 );
@@ -36,9 +37,10 @@ namespace Tests
         return producedMessage;
     }
 
-    MessageBasePtr TestNodeSubscriberTemplate::MainCallbackImpl(const MessageBasePtr& pMessage)
+    MessageBasePtr TestNodeSubscriberTemplate::MainCallbackImpl(const MessageBasePtr pMessage)
     {
-        std::cout << "Executing TestNodeSubscriberTemplate with topic [" << pMessage->topic << "]" << std::endl;
+        assert(pMessage);
+        //std::cout << "Executing TestNodeSubscriberTemplate with topic [" << pMessage->topic << "]" << std::endl;
         if(pMessage->topic == "testTopicA")
         {
             return this->TestNodeCallback(std::dynamic_pointer_cast<TestMessageA>(pMessage));

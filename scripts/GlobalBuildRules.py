@@ -140,47 +140,86 @@ class GlobalBuild(object):
                        "#define VERSION_STR  \"" + self._project_build_number + "\"\n\n"
                        "#endif  // VERSION_H\n\n")
 
-    def generateLoggingConfig(self):
+    def checkConfigArgsAndFormat(self, offset, configArgs):
+        formattedHeader = ""
+        formattedSrc = ""
+        for arg in configArgs:
+            if arg[2] == "dir":
+                if os.path.exists(arg[3]):
+                    if os.path.isdir(arg[3]):
+                        Utilities.rmTree(arg[3])
+                    else:
+                        Utilities.failExecution("Path [%s] was assumed to be a directory" % arg[3])
+                Utilities.mkdir(arg[3])
+            elif arg[2] == "file":
+                if not os.path.exists(arg[3]) or not os.path.isfile(arg[3]):
+                    Utilities.failExecution("Path [%s] does not exist or is not a file" % arg[3])
+            elif arg[2] is not None:
+                Utilities.failExecution("unknown config variable value specifier [%s]" % arg[2])
+
+            formattedHeader += offset + "extern const " + arg[0] + " " + arg[1] + ";\n\n"
+            formattedSrc += offset + "const " + arg[0] + " " + \
+                            arg[1] + " = " + ("\"" + str(arg[3]) + "\"" if "string" in arg[0] else str(arg[3])) + \
+                            ";\n\n"
+
+        return formattedHeader, formattedSrc
+
+    def generateConfig(self, asyncConfigPath=None, asyncConfigFileName=None):
         outIncludeDir = os.path.join(FileSystem.getDirectory(FileSystem.OUT_ROOT),
                                      "include")
         projectLogDir = FileSystem.getDirectory(FileSystem.LOG_DIR, self._config, self._project_name)
+        asyncConfig = None
+        if asyncConfigPath is None:
+            asyncConfig = os.path.join(FileSystem.getDirectory(FileSystem.CLIENT_CONFIG),
+                                      (asyncConfigFileName if asyncConfigFileName is not None else "AsyncConfig.xml"))
+        else:
+            asyncConfig = asyncConfigPath
         Utilities.mkdir(outIncludeDir)
+
+        configArgs = []
+
+        configArgs.append(['std::string', 'LOGGING_ROOT', 'dir', projectLogDir.replace("\\", "/")])
+        if "Robos" in self._project_name:
+            configArgs.append(['std::string', 'ASYNC_CONFIG_PATH', 'file', asyncConfig.replace("\\", "/")])
+
+        (formattedConfigArgsHeader, formattedConfigArgsSrc) = self.checkConfigArgsAndFormat("\t", configArgs)
 
         if os.path.exists(projectLogDir):
             Utilities.rmTree(projectLogDir)
         Utilities.mkdir(projectLogDir)
-
-        with open(os.path.join(outIncludeDir, self._project_name + "LoggingConfig.hpp"), 'w') as file:
+        projNameUpper = self._project_name.upper()
+        with open(os.path.join(outIncludeDir, self._project_name + "Config.hpp"), 'w') as file:
             file.write("#pragma once\n"
-                       "#ifndef " + self._project_name.upper() + "_LOGGING_LOGGINGCONFIG_HPP\n"
-                       "#define " + self._project_name.upper() + "_LOGGING_LOGGINGCONFIG_HPP\n\n"
+                       "#ifndef " + projNameUpper + "_CONFIG_" + projNameUpper + "CONFIG_HPP\n"
+                       "#define " + projNameUpper + "_CONFIG_" + projNameUpper + "CONFIG_HPP\n\n"
                        "// SYSTEM INCLUDES\n"
                        "#include <string>\n\n"
                        "// C++ PROJECT INCLUDES\n\n"
                        "namespace " + self._project_name + "\n"
                        "{\n"
-                       "namespace LoggingConfig\n"
-                       "{\n\n"
-                       "    extern const std::string LOGGING_ROOT;\n\n"
-                       "} // end of namespace Logging\n"
+                       "namespace Config\n"
+                       "{\n\n" + \
+                       formattedConfigArgsHeader + \
+                       "} // end of namespace Config\n"
                        "} // end of namespace " + self._project_name + "\n"
-                       "#endif // end of " + self._project_name + "_LOGGING_LOGGINGCONFIG_HPP\n")
-        with open(os.path.join(outIncludeDir, self._project_name + "LoggingConfig.cpp"), 'w') as file:
+                       "#endif // end of " + projNameUpper  + "_CONFIG_" + projNameUpper + "CONFIG_HPP\n")
+        with open(os.path.join(outIncludeDir, self._project_name + "Config.cpp"), 'w') as file:
             file.write("// SYSTEM INCLUDES\n\n"
                        "// C++ PROJECT INCLUDES\n"
-                       "#include \"" + self._project_name + "LoggingConfig.hpp\"\n\n"
+                       "#include \"" + self._project_name + "Config.hpp\"\n\n"
                        "namespace " + self._project_name + "\n"
                        "{\n"
-                       "namespace LoggingConfig\n"
-                       "{\n\n"
-                       "    const std::string LOGGING_ROOT = \"" + projectLogDir.replace("\\", "/") + "\";\n\n"
-                       "} // end of namespace LoggingConfig\n"
-                       "} // end of namespace " + self._project_name + " \n")
+                       "namespace Config\n"
+                       "{\n\n" + \
+                       formattedConfigArgsSrc + \
+                       "} // end of namespace Config\n"
+                       "} // end of namespace " + self._project_name + "\n")
 
-    def preBuild(self):
+    def preBuild(self, asyncConfigPath=None, asyncConfigFileName=None):
         self.setupWorkspace()
         self.generateProjectVersion()
-        self.generateLoggingConfig()
+        if self._project_name != "Logging":
+            self.generateConfig(asyncConfigPath, asyncConfigFileName)
 
     def getCMakeArgs(self, pathPrefix, workingDirectory, test, logging):
         CMakeProjectDir = "projects"

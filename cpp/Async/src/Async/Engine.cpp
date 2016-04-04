@@ -10,7 +10,7 @@
 #include "Async/Scheduler.hpp"
 #include "Async/JobPriorities.hpp"
 
-#include "AsyncLoggingConfig.hpp"
+#include "AsyncConfig.hpp"
 
 namespace Async
 {
@@ -35,7 +35,7 @@ namespace EntryPoint
 
     void Engine::Configure(std::string& configPath)
     {
-        std::string loggingPath = Async::LoggingConfig::LOGGING_ROOT + "/EngineLog.txt";
+        std::string loggingPath = Async::Config::LOGGING_ROOT + "/EngineLog.txt";
         Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("EngineLogger",
             loggingPath.c_str());
         LOG_DEBUG(pLogger, "Entering %s", "Engine::Configure()");

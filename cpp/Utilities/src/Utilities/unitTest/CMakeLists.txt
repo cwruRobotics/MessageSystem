@@ -82,7 +82,7 @@ if( RUN_UNIT_TESTS )
         # source files
         set( UTILITIES_UNITTEST_SOURCES
             # Logging sources
-            ${CONFIG_ROOT}/UtilitiesLoggingConfig.cpp
+            ${CONFIG_ROOT}/UtilitiesConfig.cpp
 
             # Utilities sources
             ${SRC_ROOT}/../../Utilities/Semaphore.cpp

@@ -18,9 +18,9 @@ namespace Tests
     {
     private:
 
-        virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr& pMessage) override;
+        virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr pMessage) override;
 
-        MessageBasePtr TestNodeCallback(const TestMessageAPtr& pMessage);
+        MessageBasePtr TestNodeCallback(const TestMessageAPtr pMessage);
 
     public:
 

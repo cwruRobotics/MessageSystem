@@ -32,9 +32,9 @@ namespace Robos
         return this->_subscriptions;
     }
 
-    MessageBasePtr NodeBase::MainCallback(const MessageBasePtr& pMessage)
+    MessageBasePtr NodeBase::MainCallback(const MessageBasePtr pMessage)
     {
-        return this->MainCallbackImpl(std::forward<const MessageBasePtr&>(pMessage));
+        return this->MainCallbackImpl(std::forward<const MessageBasePtr>(pMessage));
     }
 
 }

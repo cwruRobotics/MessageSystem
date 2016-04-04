@@ -13,7 +13,7 @@
 #include "Async/Async.hpp"
 
 
-#include "AsyncLoggingConfig.hpp"
+#include "AsyncConfig.hpp"
 
 namespace OSUtils = Utilities::OS;
 

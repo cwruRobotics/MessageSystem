@@ -47,11 +47,11 @@ namespace Async
         static_assert(!std::is_abstract<VALUE>::value,
                       "ValueHolder cannot store Abstract types");
 
-        ValueHolder()
+        ValueHolder() : _hasValue(false)
         {
         }
 
-        ValueHolder(const VALUE& val)
+        ValueHolder(const VALUE& val) : _hasValue(false)
         {
             this->Construct(val);
         }

@@ -85,6 +85,10 @@ class GlobalBuild(object):
             if projectType is None or projectType.upper() == "SHARED":
                 # copy .so
                 baseRoot = os.path.join(rootToCopyFrom, "lib")
+                if not os.path.exists(baseRoot):
+                    baseRoot = os.path.join(rootToCopyFrom, "lib64")
+                if not os.path.exists(baseRoot):
+                    Utilities.failExecution("directories [%s, %s] do not exist" % (os.path.join(rootToCopyFrom, "lib"), baseRoot))
                 fileRegex = "lib" + projectToCopyFrom
                 currentFilePath = None
                 for entry in os.listdir(baseRoot):
@@ -267,8 +271,13 @@ class GlobalBuild(object):
         fullToolchainPath = None
         if platform.system() == "Windows":
             fullToolchainPath = os.path.join(toolchainDir, "toolchain_windows_%s.cmake" % Utilities.getMachineBits())
+            # "x86")
         else:
             fullToolchainPath = os.path.join(toolchainDir, "toolchain_unix_%s.cmake" % Utilities.getMachineBits())
+
+        monoPath = os.environ.get("MONO_BASE_PATH").replace("\\", "/") if os.environ.get("MONO_BASE_PATH") is not None else ""
+        pythonPath = os.environ.get("PYTHON_BASE_PATH").replace("\\", "/") if os.environ.get("PYTHON_BASE_PATH") is not None else ""
+        pythonVer = os.environ.get("PYTHON_VERSION") if os.environ.get("PYTHON_VERSION") is not None else 0
 
         # remember CMake paths need to be relative to the top level
         # directory that CMake is called (in this case projects/<project_name>)
@@ -288,6 +297,9 @@ class GlobalBuild(object):
             "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
             "-DRUN_UNIT_TESTS=%s" % test,
             "-DENABLE_LOGGING=%s" % logging,
+            "-DMONO_PATH=\"%s\"" % monoPath,
+            "-DPYTHON_PATH=\"%s\"" % pythonPath,
+            "-DPYTHON_VERSION=%s" % pythonVer,
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path

@@ -2,15 +2,16 @@
 #include <atomic>
 #include <mutex>
 #include <Async/Async.hpp>
+#include <iostream>
 
 
 // C++ PROJECT INCLUDES
 #include "Robos/Robos.hpp"
 #include "Robos/MasterNode.hpp"
+#include "Robos/MessageBase.hpp"
 
 namespace Robos
 {
-
     std::mutex              masterLock;
     std::atomic<bool>       masterInitFlag(false);
     Internal::MasterNodePtr pMaster = nullptr;
@@ -92,10 +93,26 @@ namespace Robos
         {
             return false;
         }
-        Async::Stop();
-        pMaster = nullptr;
         masterInitFlag = false;
+        Async::Stop();
+        pMaster->Stop();
+        pMaster = nullptr;
         return true;
+    }
+
+    bool IsRunning()
+    {
+        bool val = false;
+        {
+            std::lock_guard<std::mutex> lock(masterLock);
+            val = masterInitFlag;
+        }
+        return val && pMaster == nullptr;
+    }
+
+    void Publish(MessageBasePtr pMessage)
+    {
+        pMaster->InvokeSubscribers(pMessage);
     }
 
 } // end of namespace Robos

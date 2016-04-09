@@ -26,10 +26,10 @@ namespace Tests
         return producedMessage;
     }
 
-    MessageBasePtr TestInitNode::MainCallbackImpl()
+    void TestInitNode::MainCallbackImpl()
     {
-        //std::cout << "Executing TestInitNodes" << std::endl;
-        return this->TestInitNodeCallback();
+        // std::cout << "Executing TestInitNodes" << std::endl;
+        this->PublishMessage(this->TestInitNodeCallback());
     }
 
 } // end of namespace Tests

@@ -10,7 +10,7 @@ namespace Utilities
 namespace Tests
 {
 
-    void Signaler(CommonMemoryPtr& pCommon)
+    void Signaler(CommonMemoryPtr pCommon)
     {
         pCommon->_semaphore.signal();
     }

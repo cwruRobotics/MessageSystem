@@ -8,6 +8,7 @@
 #include "catch/catch.hpp"
 #include "Robos/unitTest/TestInitNode.hpp"
 #include "Robos/unitTest/TestNode.hpp"
+#include "Robos/unitTest/TestNodeSubscriberTemplate.hpp"
 #include "Robos/unitTest/TestCountInitNode.hpp"
 #include "Robos/unitTest/CountTestNode.hpp"
 #include "Robos/Robos.hpp"
@@ -58,6 +59,42 @@ namespace Tests
 
         REQUIRE( Stop() );
         
+    }
+
+    TEST_CASE("Invoking a Cycle of Nodes", "[MasterNode_unit]")
+    {
+        std::cout << "Executing Robos_unit [" << 4 << "]" << std::endl;
+
+        auto pInit = std::make_shared<TestInitNode>();
+        auto pTestNode = std::make_shared<TestNode>();
+        std::vector<std::string> vec = {"testTopicB"};
+        auto pTestSubscriber = std::make_shared<TestNodeSubscriberTemplate>(vec);
+        REQUIRE( Init(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml") );
+        REQUIRE( Register(pInit) );
+        REQUIRE( Register(pTestNode) );
+
+        REQUIRE( Register(pTestSubscriber) );
+
+        try
+        {
+            // note that this will execute a cycle. TestInitNode produces TestMessageB.
+            // TestNodeSubscriberTemplate is subscribing to testTopicB (testMessageB) and produces TestMessageA.
+            // TestNode subscribes to testTopicA (TestMessageA) and produces TestMessageB.
+            Start();
+
+            // allowing execution to go. It is ok to overestimate here because we want to guarantee execution.
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        catch(...)
+        {
+            std::exception_ptr pException = std::current_exception();
+            std::cout << "Calling Robos::Stop()" << std::endl;
+            REQUIRE( false );
+            REQUIRE( Stop() );
+            std::rethrow_exception(pException);
+        }
+        std::cout << "Calling Robos::Stop()" << std::endl;
+        REQUIRE( Stop() );
     }
 
 } // end of namespace Tests

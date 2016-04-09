@@ -4,4 +4,7 @@
         <threadPriority value="IMMEDIATE"/>
         <threadPriority value="OTHER"/>
     </Scheduler>
+    <Scheduler name="TestScheduler2">
+        <threadPriority value="OTHER"/>
+    </Scheduler>
 </Engine>

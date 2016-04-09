@@ -33,98 +33,33 @@ get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../build/o
 
 # get_filename_component( TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../TestingFrameworks ABSOLUTE )
 
-# ------------------------------------------------------------------------------
-# GTest
-#
+if( BUILD_ROBOS_CPP_FT_CLIENT OR (NOT BUILD_ROBOS_PYTHON_FT_CLIENT AND NOT BUILD_ROBOS_JAVA_FT_CLIENT) )
+    # Logger library
+    add_subdirectory( ${SRC_ROOT}/Robos_FT_Cpp_Client/src
+                      ${OUT_ROOT}/Robos_FT_Cpp_Client )
 
-if( RUN_UNIT_TESTS )
-    enable_testing()
-    
-    list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
-    # include(BringInPackages)  # NOT build in
-    # BringInPackages()
-    find_package( gtest REQUIRED )
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Robos_FT_Cpp_Client" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos_FT_Cpp_Client" )
+endif()
+if( BUILD_ROBOS_PYTHON_FT_CLIENT )
+    # Logger library
+    add_subdirectory( ${SRC_ROOT}/Robos_FT_Python_Client/src
+                      ${OUT_ROOT}/Robos_FT_Python_Client )
 
-    if( GTEST_FOUND )
-        message( "GTEST_LIBS: ${GTEST_LIBS}" )
-        # ---------------------------------------------------------------------
-        # Libararies
-        # ---------------------------------------------------------------------
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Robos_FT_Python_Client" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos_FT_Python_Client" )
+endif()
+if( BUILD_ROBOS_JAVA_FT_CLIENT )
+    # Logger library
+    add_subdirectory( ${SRC_ROOT}/Robos_FT_Java_Client/src
+                      ${OUT_ROOT}/Robos_FT_Java_Client )
 
-        # ---------------------------------------------------------------------
-        # Targets Setup
-        # ---------------------------------------------------------------------
-
-        # source files
-        set( ROBOS_FT_UNITTEST_SOURCES
-            # non test code
-
-            # test code
-            ${SRC_ROOT}/Robos_test.cpp
-            ${SRC_ROOT}/main.cpp
-        )
-
-        set( ROBOS_FT_UNITTEST_HEADERS
-            
-        )
-
-        # directories to search for header files
-        set( INCLUDE_DIRS
-            ${INC_ROOT}
-            ${SRC_ROOT}/../..
-            ${CONFIG_ROOT}
-            ${CMAKE_CURRENT_SOURCE_DIR}/..
-            ${CMAKE_PREFIX_PATH}/include
-        )
-
-        if( MSVC )
-            include( GNUInstallDirs )
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-            include( GNUInstallDirs )
-            set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "OSX")
-            include( GNUInstallDirs )
-            set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
-        else()
-            message(SEND_ERROR "OS [${CMAKE_SYSTEM_NAME}] not supported")
-        endif()
-
-        set( ${PROJECT_NAME}_IMPORTED_LIST
-            # all libraries to import when building Utilities_FT
-            "Utilities"
-            "Robos"
-            "gtest"
-        )
-        include( ProjectLinker )
-
-        include_directories( ${INCLUDE_DIRS} )
-
-        add_executable( ${PROJECT_NAME} ${ROBOS_FT_UNITTEST_SOURCES} ${ROBOS_FT_UNITTEST_HEADERS} )
-
-        # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
-        string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
-        if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
-            message( "Linking executable for Debug" )
-            target_link_libraries( ${PROJECT_NAME}
-                ${TARGET_PTHREADS_LIB}
-                ${${PROJECT_NAME}_IMPORTED_LIBS}
-                # ${GTEST_LIBS}
-                # ${TARGET_UUID_LIB}
-            )
-        else()
-            message( "Linking executable for Release" )
-            target_link_libraries( ${PROJECT_NAME}
-                ${TARGET_PTHREADS_LIB}
-                ${${PROJECT_NAME}_IMPORTED_LIBS}
-                # ${GTEST_LIBS}
-                # ${TARGET_UUID_LIB}
-            )
-        endif()
-
-    else()
-        message( WARNING "Catch library not found...skipping unit tests")
-    endif()
-
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Robos_FT_Java_Client" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos_FT_Java_Client" )
 endif()

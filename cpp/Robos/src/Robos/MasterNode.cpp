@@ -36,6 +36,31 @@ namespace Internal
         return hash;
     }
 
+    void MasterNode::Stop()
+    {
+        this->_initFlag = false;
+
+        this->_serviceQueue.wait();
+        this->_readCountAccess.wait();
+        if(this->_readCount == 0)
+        {
+            this->_resourceAccess.wait();
+        }
+        this->_readCount++;
+        this->_serviceQueue.signal();
+        this->_readCountAccess.signal();
+
+        this->_pUnprotectedNodeDB->map.clear();
+
+        this->_readCountAccess.wait();
+        this->_readCount--;
+        if(this->_readCount == 0)
+        {
+            this->_resourceAccess.signal();
+        }
+        this->_readCountAccess.signal();
+    }
+
     void MasterNode::Start()
     {
         if(!this->_initFlag)
@@ -43,13 +68,9 @@ namespace Internal
             this->_initFlag = true;
             for(InitNodeBasePtr& pInitNodeBase : this->_initNodes)
             {
-                Async::Execute<MessageBasePtr>([pInitNodeBase]() -> MessageBasePtr
+                Async::Execute<int>([pInitNodeBase]() -> int
                 {
                     return pInitNodeBase->MainCallback();
-                }, pInitNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
-                {
-                    this->InvokeSubscribers(pMessage);
-                    return true;
                 }, pInitNodeBase->GetExecutionTopic());
             }
         }
@@ -153,25 +174,16 @@ namespace Internal
         {
             for(NodeBasePtr pNodeBase : iterator->second)
             {
-                // std::cout << "Executing Subscriber [" << pNodeBase->GetName().c_str() << "]" << std::endl;
                 Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                 {
-                    //std::cout << "Async::Execute() pMessage use count: " << pMessage.use_count() << std::endl;
                     return pNodeBase->MainCallback(pMessage);
-                    // be careful about "this" in the next line.....I think it could be deleted and then accessed.
                 }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
                 {
-                    //std::cout << "Executing Continuation: pMaster != null: " << (this != nullptr) << std::endl;
-                    //std::cout << "Async::Continuation() pMessage use count: " << pMessage.use_count() << std::endl;
                     this->InvokeSubscribers(pMessage);
                     return true;
                 }, pNodeBase->GetExecutionTopic());
             }
         }
-        // else
-        // {
-        //     std::cout << "No subscriptions for Message Topic [" << pMessage->topic.c_str() <<  "]" << std::endl;
-        // }
         //----------------------------------------------
 
         this->_readCountAccess.wait();

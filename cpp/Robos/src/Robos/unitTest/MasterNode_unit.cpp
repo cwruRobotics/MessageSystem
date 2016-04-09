@@ -208,38 +208,5 @@ namespace Tests
         }
     }
 
-    TEST_CASE("Invoking a Cycle of Nodes", "[MasterNode_unit]")
-    {
-        std::cout << "Executing MasterNode_unit [" << 8 << "]" << std::endl;
-        Internal::MasterNodePtr pMaster = std::make_shared<Internal::MasterNode>();
-        REQUIRE( pMaster->RegisterInitNode(std::make_shared<TestInitNode>()) );
-        REQUIRE( pMaster->Register(std::make_shared<TestNode>()) );
-
-        std::vector<std::string> vec = {"testTopicB"};
-        REQUIRE( pMaster->Register(std::make_shared<TestNodeSubscriberTemplate>(vec)) );
-        Async::Start(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml");
-
-        try
-        {
-            // note that this will execute a cycle. TestInitNode produces TestMessageB.
-            // TestNodeSubscriberTemplate is subscribing to testTopicB (testMessageB) and produces TestMessageA.
-            // TestNode subscribes to testTopicA (TestMessageA) and produces TestMessageB.
-            pMaster->Start();
-
-            // allowing execution to go. It is ok to overestimate here because we want to guarantee execution.
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-        catch(...)
-        {
-            std::exception_ptr pException = std::current_exception();
-            std::cout << "Calling Async::Stop()" << std::endl;
-            Async::Stop();
-            REQUIRE( false );
-            std::rethrow_exception(pException);
-        }
-        std::cout << "Calling Async::Stop()" << std::endl;
-        Async::Stop();
-    }
-
 } // end of Tests
 } // end of Robos

@@ -161,7 +161,7 @@ if( RUN_UNIT_TESTS )
     if( BUILD_ROBOS )
         # Robos unit tests
         add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
-                          ${OUT_ROOT}/LoggerUnit )
+                          ${OUT_ROOT}/RobosUnit )
     endif()
 
 endif()

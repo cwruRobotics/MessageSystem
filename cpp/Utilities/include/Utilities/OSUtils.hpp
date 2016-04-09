@@ -19,6 +19,8 @@ namespace OS
 
     UTILITIES_API std::string GetPathSep();
 
+    UTILITIES_API std::string GetPathDelimiter();
+
 } // end of namespace OS
 } // end of namespace Utilities
 

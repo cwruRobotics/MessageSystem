@@ -23,6 +23,8 @@ namespace Robos
 
     ROBOS_API bool Stop();
 
+    ROBOS_API bool IsRunning();
+
 } // end of namespace Robos
 
 #endif // end of ROBOS_ROBOS_HPP

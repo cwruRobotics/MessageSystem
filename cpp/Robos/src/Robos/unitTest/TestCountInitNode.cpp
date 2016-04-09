@@ -11,7 +11,7 @@ namespace Robos
 namespace Tests
 {
 
-    TestCountInitNode::TestCountInitNode(int* pCount) : InitNodeBase("TestCountInitNode", "TestScheduler"), _pCount(pCount)
+    TestCountInitNode::TestCountInitNode(int* pCount) : InitNodeBase("TestCountInitNode", "TestScheduler2"), _pCount(pCount)
     {
     }
 
@@ -19,11 +19,11 @@ namespace Tests
     {
     }
 
-    MessageBasePtr TestCountInitNode::MainCallbackImpl()
+    void TestCountInitNode::MainCallbackImpl()
     {
         auto producedMessage = std::make_shared<TestCountMessage>();
         producedMessage->count = _pCount;
-        return producedMessage;
+        this->PublishMessage(producedMessage);
     }
 
 } // end of namespace Tests

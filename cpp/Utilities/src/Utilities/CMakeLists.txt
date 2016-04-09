@@ -52,6 +52,7 @@ set( UTILITIES_SRCS
     # utilities
     ${SRC_ROOT}/Utilities/Semaphore.cpp
     ${SRC_ROOT}/Utilities/OSUtils.cpp
+    ${SRC_ROOT}/Utilities/PythonBridge.cpp
 
     # factories
 
@@ -63,6 +64,8 @@ set( UTILITIES_PUBLIC_HEADERS
     ${INC_ROOT}/Utilities/LibraryExport.hpp
     ${INC_ROOT}/Utilities/Semaphore.hpp
     ${INC_ROOT}/Utilities/OSUtils.hpp
+    ${INC_ROOT}/Utilities/PythonInclude.hpp
+    ${INC_ROOT}/Utilities/PythonBridge.hpp
 
     # third party library data structures
     ${INC_ROOT}/Utilities/btree.h
@@ -95,6 +98,7 @@ set( INCLUDE_DIRS
     ${SRC_ROOT}
     ${CONFIG_ROOT}
     ${CMAKE_PREFIX_PATH}/include
+    ${PYTHON_PATH}/include
 )
 
 # load external modules
@@ -158,6 +162,10 @@ set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Async
     "Logging"
 )
+set( ${PROJECT_NAME}_STATIC_LIST
+    "Python"
+)
+
 include(ProjectLinker)
 
 if( NOT DEPENDENCY_CHECK )
@@ -184,6 +192,9 @@ include( GenerateExportHeader )
 add_library( ${UTILITIES_LIB_NAME} SHARED ${UTILITIES_SRCS} ${UTILITIES_PUBLIC_HEADERS} ${UTILITIES_PRIVATE_HEADERS})
 if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
     target_link_libraries( ${UTILITIES_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+endif()
+if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${UTILITIES_LIB_NAME} ${${PROJECT_NAME}_STATIC_LIBS} )
 endif()
 
 set_target_properties( ${UTILITIES_LIB_NAME} PROPERTIES

@@ -3,6 +3,7 @@
 
 // C++ PROJECT INCLUDES
 #include "Robos/InitNodeBase.hpp"
+#include "Robos/MasterNode.hpp"
 
 namespace Robos
 {
@@ -26,9 +27,15 @@ namespace Robos
         return this->_executionTopic;
     }
 
-    MessageBasePtr InitNodeBase::MainCallback()
+    int InitNodeBase::MainCallback()
     {
-        return this->MainCallbackImpl();
+        this->MainCallbackImpl();
+        return 0;
+    }
+
+    void InitNodeBase::PublishMessage(MessageBasePtr pMessage)
+    {
+        Publish(pMessage);
     }
 
 }

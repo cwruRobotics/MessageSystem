@@ -52,6 +52,8 @@ namespace Internal
 
         void Start();
 
+        void Stop();
+
         bool Register(const NodeBasePtr pNodeBase);
 
         bool RegisterInitNode(const InitNodeBasePtr pInitNodeBase);
@@ -62,7 +64,11 @@ namespace Internal
 
     using MasterNodePtr = std::shared_ptr<MasterNode>;
 
+
 } // end of namespace Internal
+
+    void Publish(MessageBasePtr pMessage);
+
 } // end of namespace Robos
 
 

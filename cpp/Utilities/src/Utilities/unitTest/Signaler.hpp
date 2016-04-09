@@ -12,7 +12,7 @@ namespace Utilities
 namespace Tests
 {
 
-    void Signaler(CommonMemoryPtr& pCommon);
+    void Signaler(CommonMemoryPtr pCommon);
 
 } // end of namespace Tests
 } // end of namespace Utilities

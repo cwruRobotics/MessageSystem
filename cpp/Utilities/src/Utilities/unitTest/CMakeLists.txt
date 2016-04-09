@@ -67,6 +67,9 @@ if( RUN_UNIT_TESTS )
         # all libraries to import when building Async
         "Logging"
     )
+    set( ${PROJECT_NAME}_STATIC_LIST
+        "Python"
+    )
     include(ProjectLinker)
     find_package( Catch REQUIRED )
 
@@ -85,7 +88,9 @@ if( RUN_UNIT_TESTS )
             ${CONFIG_ROOT}/UtilitiesConfig.cpp
 
             # Utilities sources
-            ${SRC_ROOT}/../../Utilities/Semaphore.cpp
+            ${SRC_ROOT}/../Semaphore.cpp
+            ${SRC_ROOT}/../OSUtils.cpp
+            ${SRC_ROOT}/../PythonBridge.cpp
 
             # UtilitiesUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
@@ -94,6 +99,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/Signaler.cpp
             ${SRC_ROOT}/SimpleSemaphoreTest.cpp
             ${SRC_ROOT}/Semaphore_unit.cpp
+            ${SRC_ROOT}/PythonBridge_unit.cpp
 
         )
 
@@ -130,6 +136,7 @@ if( RUN_UNIT_TESTS )
             ${CONFIG_ROOT}
             ${CATCH_ROOT}
             ${CMAKE_PREFIX_PATH}/include
+            ${PYTHON_PATH}/include
         )
 
         if( MSVC )
@@ -153,6 +160,10 @@ if( RUN_UNIT_TESTS )
         add_executable( ${PROJECT_NAME} ${UTILITIES_UNITTEST_SOURCES} )
         if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
             target_link_libraries( ${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+        endif()
+        if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
+            target_link_libraries( ${PROJECT_NAME}
+            ${${PROJECT_NAME}_STATIC_LIBS} )
         endif()
 
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)

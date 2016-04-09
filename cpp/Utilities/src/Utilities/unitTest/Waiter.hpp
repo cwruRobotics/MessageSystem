@@ -12,7 +12,7 @@ namespace Utilities
 namespace Tests
 {
 
-    void Waiter(CommonMemoryPtr& pCommon);
+    void Waiter(CommonMemoryPtr pCommon);
 
 } // end of namespace Tests
 } // end of namespace Structures

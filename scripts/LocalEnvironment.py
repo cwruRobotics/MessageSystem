@@ -34,18 +34,18 @@ class LocalEnvironment(object):
                 splitLine = None
                 keyToAdd = None
                 valueToAdd = None
-                line = 1
+                lineNum = 1
                 for line in file:
                     splitLine = line.split('=')
                     if len(splitLine) == 2:
-                        keyToAdd = splitLine[0].trim()
-                        valueToAdd = splitLine[1].trim()
+                        keyToAdd = splitLine[0].strip()
+                        valueToAdd = splitLine[1].strip()
                         if keyToAdd not in env:
                             env[keyToAdd] = valueToAdd
                     else:
                         raise Exception("invalid syntax in [%s] at line [%s] (line 1 is beginning of file)" %
-                                        (toAdd, line))
-                    line += 1
+                                        (toAdd, lineNum))
+                    lineNum += 1
         else:
             print("For potential environment optimization, consider adding\n" +
                   "a file of key=value pairs. These will be injected as environment\n" +

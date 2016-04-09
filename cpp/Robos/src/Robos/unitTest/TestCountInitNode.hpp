@@ -21,7 +21,7 @@ namespace Tests
 
     private:
 
-        virtual MessageBasePtr MainCallbackImpl() override;
+        virtual void MainCallbackImpl() override;
 
     public:
 

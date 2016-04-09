@@ -10,7 +10,7 @@ namespace Utilities
 namespace Tests
 {
 
-    void Waiter(CommonMemoryPtr& pCommon)
+    void Waiter(CommonMemoryPtr pCommon)
     {
         pCommon->_semaphore.wait();
     }

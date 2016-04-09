@@ -40,7 +40,7 @@ namespace Tests
     MessageBasePtr TestNodeSubscriberTemplate::MainCallbackImpl(const MessageBasePtr pMessage)
     {
         assert(pMessage);
-        //std::cout << "Executing TestNodeSubscriberTemplate with topic [" << pMessage->topic << "]" << std::endl;
+        // std::cout << "Executing TestNodeSubscriberTemplate with topic [" << pMessage->topic << "]" << std::endl;
         if(pMessage->topic == "testTopicA")
         {
             return this->TestNodeCallback(std::dynamic_pointer_cast<TestMessageA>(pMessage));

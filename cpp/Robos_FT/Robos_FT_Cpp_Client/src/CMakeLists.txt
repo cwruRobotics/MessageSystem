@@ -46,7 +46,6 @@ if( RUN_UNIT_TESTS )
     find_package( gtest REQUIRED )
 
     if( GTEST_FOUND )
-        message( "GTEST_LIBS: ${GTEST_LIBS}" )
         # ---------------------------------------------------------------------
         # Libararies
         # ---------------------------------------------------------------------
@@ -58,10 +57,9 @@ if( RUN_UNIT_TESTS )
         # source files
         set( ${PROJECT_NAME}_SOURCES
             # non test code
+            ${SRC_ROOT}/Messages/SensorMessage.cpp
 
             # test code
-            ${SRC_ROOT}/Robos_test.cpp
-            ${SRC_ROOT}/main.cpp
         )
 
         set( ${PROJECT_NAME}_HEADERS

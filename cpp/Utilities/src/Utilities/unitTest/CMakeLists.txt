@@ -67,9 +67,12 @@ if( RUN_UNIT_TESTS )
         # all libraries to import when building Async
         "Logging"
     )
-    set( ${PROJECT_NAME}_STATIC_LIST
-        "Python"
-    )
+
+    if( PYTHON_ENABLED )
+        set( ${PROJECT_NAME}_STATIC_LIST
+            "Python"
+        )
+    endif()
     include(ProjectLinker)
     find_package( Catch REQUIRED )
 
@@ -90,8 +93,14 @@ if( RUN_UNIT_TESTS )
             # Utilities sources
             ${SRC_ROOT}/../Semaphore.cpp
             ${SRC_ROOT}/../OSUtils.cpp
-            ${SRC_ROOT}/../PythonBridge.cpp
+        )
 
+        if( PYTHON_ENABLED )
+            list( APPEND UTILITIES_UNITTEST_SOURCES
+                ${SRC_ROOT}/../PythonBridge.cpp
+            )
+        endif()
+        list( APPEND UTILITIES_UNITTEST_SOURCES
             # UtilitiesUnitTests sources
             ${SRC_ROOT}/catchConfig.cpp
             ${SRC_ROOT}/CommonMemory.cpp
@@ -99,9 +108,13 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/Signaler.cpp
             ${SRC_ROOT}/SimpleSemaphoreTest.cpp
             ${SRC_ROOT}/Semaphore_unit.cpp
-            ${SRC_ROOT}/PythonBridge_unit.cpp
-
         )
+
+        if( PYTHON_ENABLED )
+            list( APPEND UTILITIES_UNITTEST_SOURCES
+                ${SRC_ROOT}/PythonBridge_unit.cpp
+            )
+        endif()
 
         if( ENABLE_EXTERNAL_STRUCTURES_TEST )
             LIST( APPEND UTILITIES_UNITTEST_SOURCES

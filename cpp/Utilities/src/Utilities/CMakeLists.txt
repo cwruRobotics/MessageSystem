@@ -52,7 +52,6 @@ set( UTILITIES_SRCS
     # utilities
     ${SRC_ROOT}/Utilities/Semaphore.cpp
     ${SRC_ROOT}/Utilities/OSUtils.cpp
-    ${SRC_ROOT}/Utilities/PythonBridge.cpp
 
     # factories
 
@@ -64,8 +63,6 @@ set( UTILITIES_PUBLIC_HEADERS
     ${INC_ROOT}/Utilities/LibraryExport.hpp
     ${INC_ROOT}/Utilities/Semaphore.hpp
     ${INC_ROOT}/Utilities/OSUtils.hpp
-    ${INC_ROOT}/Utilities/PythonInclude.hpp
-    ${INC_ROOT}/Utilities/PythonBridge.hpp
 
     # third party library data structures
     ${INC_ROOT}/Utilities/btree.h
@@ -81,6 +78,16 @@ set( UTILITIES_PUBLIC_HEADERS
     ${INC_ROOT}/Utilities/rapidxml_print.hpp
     ${INC_ROOT}/Utilities/rapidxml_utils.hpp
 )
+
+if( PYTHON_ENABLED )
+    list( APPEND UTILITIES_SRCS
+        ${SRC_ROOT}/Utilities/PythonBridge.cpp
+    )
+    list( APPEND UTILITIES_PUBLIC_HEADERS
+        ${INC_ROOT}/Utilities/PythonInclude.hpp
+        ${INC_ROOT}/Utilities/PythonBridge.hpp
+    )
+endif()
 
 set( UTILITIES_PRIVATE_HEADERS
     # logging
@@ -162,9 +169,11 @@ set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Async
     "Logging"
 )
-set( ${PROJECT_NAME}_STATIC_LIST
-    "Python"
-)
+if( PYTHON_ENABLED )
+    set( ${PROJECT_NAME}_STATIC_LIST
+        "Python"
+    )
+endif()
 
 include(ProjectLinker)
 

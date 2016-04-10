@@ -225,7 +225,7 @@ class GlobalBuild(object):
         if self._project_name != "Logging":
             self.generateConfig(asyncConfigPath, asyncConfigFileName)
 
-    def getCMakeArgs(self, pathPrefix, workingDirectory, test, logging):
+    def getCMakeArgs(self, pathPrefix, workingDirectory, test, logging, python):
         CMakeProjectDir = "projects"
         relCMakeProjectDir = os.path.relpath(CMakeProjectDir,
                                              workingDirectory)
@@ -300,12 +300,17 @@ class GlobalBuild(object):
             "-DMONO_PATH=\"%s\"" % monoPath,
             "-DPYTHON_PATH=\"%s\"" % pythonPath,
             "-DPYTHON_VERSION=%s" % pythonVer,
+            "-DPYTHON_ENABLED=%s" % python,
             # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
             # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
             # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
         ]
         return CMakeArgs
-        
+
+    def checkForPythonConfigFile(self);
+        returnCode = Utilities.PFork(appToExecute="python-config", args=["--help"], failOnError=False)
+        if returnCode != 0:
+            Utilities.failExecution("python-config was not found. Make sure python-dev package is installed.")
 
     # this method will generate documentation
     # of the project. We are using Doxygen
@@ -414,6 +419,10 @@ def help():
     print "         -logging <ON|OFF>           enables or disables logging capabilites (default = OFF)."
     print "         -test <ON|OFF>              enables or disables running unit tests as part of build"
     print "                                     process."
+    print "         -python <ON|OFF>            enables or disables Python embedding (default = OFF)."
+    print "     UNIX custom variables:"
+    print "         -valgrind <ON|OFF>          enables valgrind for executable testing support"
+    print "                                     (default = OFF)."
     print ""
     print ""
 

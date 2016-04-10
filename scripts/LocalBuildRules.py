@@ -26,18 +26,19 @@ class LocalBuild(GlobalBuild):
 
     # this method will launch CMake.
     # CMake is handling all of our compiling and linking.
-    def cmake(self, test="OFF", logging="OFF"):
+    def cmake(self, test="OFF", logging="OFF", python="OFF"):
         # make directory that CMake will dump output to
         wd = FileSystem.getDirectory(FileSystem.WORKING, self._config, self._project_name)
         Utilities.mkdir(wd)
 
-        CMakeArgs = self.getCMakeArgs("", wd, test, logging)
+        CMakeArgs = self.getCMakeArgs("", wd, test, logging, python)
         if platform.system() == "Windows":
             CMakeArgs.extend(["-G", "\"NMake Makefiles\""])
             Utilities.PForkWithVisualStudio(appToExecute="cmake",
                                             argsForApp=CMakeArgs,
                                             wd=wd)
         else:
+            self.checkForPythonConfigFile()
             CMakeArgs.extend(["-G", "Unix Makefiles"])
             Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd, failOnError=True)
 

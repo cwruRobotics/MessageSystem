@@ -25,6 +25,8 @@ namespace Bridges
 
     UTILITIES_API bool StopPython();
 
+    UTILITIES_API PyObject* RunPythonFile(std::string fileName, PyObject* pArgs);
+
 } // end of namespace Bridges
 } // end of namespace Embedded
 

@@ -307,8 +307,8 @@ class GlobalBuild(object):
         ]
         return CMakeArgs
 
-    def checkForPythonConfigFile(self);
-        returnCode = Utilities.PFork(appToExecute="python-config", args=["--help"], failOnError=False)
+    def checkForPythonConfigFile(self):
+        returnCode = Utilities.PFork(appToExecute="python-config", argsForApp=["--help"], failOnError=False)
         if returnCode != 0:
             Utilities.failExecution("python-config was not found. Make sure python-dev package is installed.")
 

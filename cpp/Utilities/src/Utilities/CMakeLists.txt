@@ -104,8 +104,6 @@ set( INCLUDE_DIRS
     ${INC_ROOT}
     ${SRC_ROOT}
     ${CONFIG_ROOT}
-    ${CMAKE_PREFIX_PATH}/include
-    ${PYTHON_PATH}/include
 )
 
 # load external modules
@@ -176,6 +174,9 @@ if( PYTHON_ENABLED )
 endif()
 
 include(ProjectLinker)
+
+message("From ProjectLinker ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES}")
+list( APPEND INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDES} )
 
 if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )

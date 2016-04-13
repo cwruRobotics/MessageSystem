@@ -1,4 +1,4 @@
-find_path( ROBOS_INCLUDE_DIRS Robos/NodeBase.hpp
+find_path( ROBOS_INCLUDES Robos/NodeBase.hpp
     HINTS
         ${CMAKE_PREFIX_PATH}/include
 )
@@ -21,7 +21,7 @@ else()
     )
 endif()
 
-if( NOT ROBOS_INCLUDE_DIRS OR NOT ROBOS_SHARED_LIB )
+if( NOT ROBOS_INCLUDES OR NOT ROBOS_SHARED_LIB )
     set( ROBOS_FOUND FALSE )
 else()
     # set( ROBOS_SHARED_LIB ${ROBOS_SHARED_LIB}/Robos.dll )

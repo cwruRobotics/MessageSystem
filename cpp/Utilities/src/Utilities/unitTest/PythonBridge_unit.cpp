@@ -1,3 +1,9 @@
+// DO NOT TOUCH THIS LINE. PYTHON DEFINES SOME SYSTEM SPECIFIC VARIABLES ON UNIX.
+// THAT GCC GENERATES WARNINGS FOR (THEY HAVE NO EFFECT ON PERFORMANCE), WHICH
+// WILL FAIL THE BUILD. BY PUTTING THIS INCLUDE BEFORE SYSTEM INCLUDES WE CAN
+// PREVENT THE WARNINGS.
+#include "Utilities/PythonInclude.hpp"
+
 // SYSTEM INCLUDES
 #include <iostream>
 #include <vector>
@@ -5,7 +11,6 @@
 // C++ PROJECT INCLUDES
 #include "catch/catch.hpp"
 
-#include "Utilities/PythonInclude.hpp"
 #include "Utilities/PythonBridge.hpp"
 #include "Utilities/OSUtils.hpp"
 

@@ -1,5 +1,5 @@
 
-find_path( GTEST_INCLUDE_DIRS gtest/gtest.h
+find_path( GTEST_INCLUDES gtest/gtest.h
     HINTS
         ${INC_ROOT}
         ${CMAKE_INSTALL_PREFIX}/include
@@ -39,7 +39,7 @@ else()
     )
 endif()
 
-if( GTEST_INCLUDE_DIRS AND GTEST_SHARED_LIB )
+if( GTEST_INCLUDES AND GTEST_SHARED_LIB )
     set( GTEST_FOUND TRUE )
 else()
     set( GTEST_FOUND FALSE )

@@ -8,6 +8,8 @@ function(LinkProjects Requirement )
         # if the library was found. We assume that
         if( ${ProjectToLinkUpper}_FOUND )
 
+            list( APPEND ${PROJECT_NAME}_INCLUDES ${${ProjectToLinkUpper}_INCLUDES} )
+
             # add an imported library.
             add_library( ${ProjectToLinkUpper}_LIB_VAR SHARED IMPORTED )
 
@@ -30,6 +32,7 @@ function(LinkProjects Requirement )
     endforeach()
 
     set( ${PROJECT_NAME}_IMPORTED_LIBS ${${PROJECT_NAME}_IMPORTED_LIBS} PARENT_SCOPE )
+    set( ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES} PARENT_SCOPE )
 endfunction()
 
 function(LinkStaticProjects Requirement)
@@ -38,20 +41,27 @@ function(LinkStaticProjects Requirement)
         string( TOUPPER ${StaticProjectToLink} StaticProjectToLinkUpper )
         find_package( ${StaticProjectToLink} ${Requirement} )
 
-        # message("${StaticProjectToLink} STATIC LIBRARY: ${${StaticProjectToLinkUpper}_LIB}")
+        #message("${StaticProjectToLink} STATIC LIBRARY: ${${StaticProjectToLinkUpper}_LIB}")
+        #message("${StaticProjectToLinkUpper} INCLUDES: ${${StaticProjectToLinkUpper}_INCLUDES}")
+        #message("${StaticProjectToLinkUpper}_FOUND: ${${StaticProjectToLinkUpper}_FOUND}")
         if( ${StaticProjectToLinkUpper}_FOUND )
+            list( APPEND ${PROJECT_NAME}_INCLUDES ${${StaticProjectToLinkUpper}_INCLUDES} )
             list( APPEND ${PROJECT_NAME}_STATIC_LIBS ${${StaticProjectToLinkUpper}_LIB} )
         else()
             message( FATAL_ERROR "${StaticProjectToLink} not found" )
         endif()
     endforeach()
     set( ${PROJECT_NAME}_STATIC_LIBS ${${PROJECT_NAME}_STATIC_LIBS} PARENT_SCOPE )
+    set( ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES} PARENT_SCOPE )
 endfunction()
 
+set( ${PROJECT_NAME}_INCLUDES )
 set( ${PROJECT_NAME}_IMPORTED_LIBS} )
 LinkProjects( REQUIRED ${${PROJECT_NAME}_IMPORTED_LIST} )
 
 LinkStaticProjects( REQUIRED ${${PROJECT_NAME}_STATIC_LIST} )
+
+message("ProjectLinker: ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES}")
 set( DEPENDENCY_CHECK TRUE )
 list( LENGTH ${PROJECT_NAME}_IMPORTED_LIBS ${PROJECT_NAME}_IMPORTED_LIBS_LENGTH )
 list( LENGTH ${PROJECT_NAME}_STATIC_LIBS ${PROJECT_NAME}_STATIC_LIBS_LENGTH )

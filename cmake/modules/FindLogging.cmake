@@ -1,5 +1,5 @@
 
-find_path( LOGGING_INCLUDE_DIRS Logging/ILogger.hpp
+find_path( LOGGING_INCLUDES Logging/ILogger.hpp
     HINTS
         ${CMAKE_PREFIX_PATH}/include
 )
@@ -22,7 +22,7 @@ else()
     )
 endif()
 
-if( NOT LOGGING_INCLUDE_DIRS OR NOT LOGGING_SHARED_LIB )
+if( NOT LOGGING_INCLUDES OR NOT LOGGING_SHARED_LIB )
     set( LOGGING_FOUND FALSE )
 else()
     set( LOGGING_FOUND TRUE )

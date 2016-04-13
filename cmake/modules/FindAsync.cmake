@@ -1,4 +1,4 @@
-find_path( ASYNC_INCLUDE_DIRS Async/AsyncExecution.hpp
+find_path( ASYNC_INCLUDES Async/AsyncExecution.hpp
     HINTS
         ${CMAKE_PREFIX_PATH}/include
 )
@@ -21,7 +21,7 @@ else()
     )
 endif()
 
-if( NOT ASYNC_INCLUDE_DIRS OR NOT ASYNC_SHARED_LIB )
+if( NOT ASYNC_INCLUDES OR NOT ASYNC_SHARED_LIB )
     set( ASYNC_FOUND FALSE )
 else()
     # set( ASYNC_SHARED_LIB ${ASYNC_SHARED_LIB}/Async.dll )

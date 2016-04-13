@@ -1,9 +1,14 @@
+// DO NOT TOUCH THIS LINE. PYTHON DEFINES SOME SYSTEM SPECIFIC VARIABLES ON UNIX.
+// THAT GCC GENERATES WARNINGS FOR (THEY HAVE NO EFFECT ON PERFORMANCE), WHICH
+// WILL FAIL THE BUILD. BY PUTTING THIS INCLUDE BEFORE SYSTEM INCLUDES WE CAN
+// PREVENT THE WARNINGS.
+#include "Utilities/PythonBridge.hpp"
+
 // SYSTEM INCLUDES
 #include <atomic>
 #include <mutex>
 
 // C++ PROJECT INCLUDES
-#include "Utilities/PythonBridge.hpp"
 #include "Utilities/OSUtils.hpp"
 
 namespace Embedded

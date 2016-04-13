@@ -1,0 +1,12 @@
+Installing Python on Unix:
+
+    1)  Take a look at http://tecadmin.net/install-python-2-7-on-ubuntu-and-linuxmint/
+        BE CAREFUL....when running the configure script...make sure to add the --enable-shared
+        flag to the script:
+            ./configure --enable-shared (look at https://github.com/docker-library/python/issues/21 for more info)
+
+    2)  make sure that your CMake installation has a built in module 'FindPythonLibs.cmake'
+    3)  on Ubuntu...there is a bug. You need to run the command:
+            sudo ln -s /usr/lib/python2.7/plat-*/_sysconfigdata_nd.py /usr/lib/python2.7/
+        (assuming /usr/lib/pythonX.X is where you installed pythonX.X to). This will fix the issue.
+

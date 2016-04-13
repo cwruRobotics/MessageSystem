@@ -1,4 +1,4 @@
-find_path( UTILITIES_INCLUDE_DIRS Utilities/Semaphore.hpp
+find_path( UTILITIES_INCLUDES Utilities/Semaphore.hpp
     HINTS
         ${CMAKE_PREFIX_PATH}/include
 )
@@ -21,7 +21,7 @@ else()
     )
 endif()
 
-if( NOT UTILITIES_INCLUDE_DIRS OR NOT UTILITIES_SHARED_LIB )
+if( NOT UTILITIES_INCLUDES OR NOT UTILITIES_SHARED_LIB )
     set( UTILITIES_FOUND FALSE )
 else()
     set( UTILITIES_FOUND TRUE )

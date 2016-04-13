@@ -148,8 +148,7 @@ if( RUN_UNIT_TESTS )
             ${CMAKE_CURRENT_SOURCE_DIR}/..
             ${CONFIG_ROOT}
             ${CATCH_ROOT}
-            ${CMAKE_PREFIX_PATH}/include
-            ${PYTHON_PATH}/include
+            ${${PROJECT_NAME}_INCLUDES}
         )
 
         if( MSVC )

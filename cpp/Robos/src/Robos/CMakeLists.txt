@@ -78,6 +78,15 @@ set( ROBOS_PRIVATE_HEADERS
     ${INC_ROOT}/Robos/MasterNode.hpp
 )
 
+if( PYTHON_ENABLED )
+    list( APPEND ROBOS_SRCS
+        ${SRC_ROOT}/Robos/PyNodeBase.cpp
+    )
+    list( APPEND ROBOS_PUBLIC_HEADERS
+        ${INC_ROOT}/Robos/PyNodeBase.hpp
+    )
+endif()
+
 # setup visual studio source groups
 source_group( PublicHeaders FILES ${ROBOS_PUBLIC_HEADERS} )
 
@@ -86,7 +95,7 @@ set( INCLUDE_DIRS
     ${INC_ROOT}
     ${SRC_ROOT}
     ${CONFIG_ROOT}
-    ${CMAKE_PREFIX_PATH}/include
+    # ${CMAKE_PREFIX_PATH}/include
 )
 
 # load external modules
@@ -150,7 +159,14 @@ set( ${PROJECT_NAME}_IMPORTED_LIST
     "Utilities"
     "Async"
 )
+if( PYTHON_ENABLED )
+    set( ${PROJECT_NAME}_STATIC_LIST
+        "Python"
+    )
+endif()
 include(ProjectLinker)
+
+list( APPEND INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDES} )
 
 if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )
@@ -176,6 +192,9 @@ include( GenerateExportHeader )
 add_library( ${ROBOS_LIB_NAME} SHARED ${ROBOS_SRCS} ${ROBOS_PUBLIC_HEADERS} ${ROBOS_PRIVATE_HEADERS})
 if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
     target_link_libraries( ${ROBOS_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+endif()
+if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${ROBOS_LIB_NAME} ${${PROJECT_NAME}_STATIC_LIBS} )
 endif()
 
 set_target_properties( ${ROBOS_LIB_NAME} PROPERTIES

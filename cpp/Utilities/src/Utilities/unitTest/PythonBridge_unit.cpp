@@ -39,7 +39,7 @@ namespace Tests
 
     PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, std::string func)
     {
-        PyObject* pFunc, *pValue, *pDict;
+        PyObject* pFunc, *pValue = nullptr, *pDict;
         pFunc = PyObject_GetAttrString(pModule, (char*)func.c_str());
         if(pFunc && PyCallable_Check(pFunc))
         {
@@ -48,7 +48,6 @@ namespace Tests
             {
                 PyErr_Print();
             }
-            return pValue;
         }
         else
         {
@@ -60,7 +59,7 @@ namespace Tests
         }
         Py_XDECREF(pFunc);
         Py_DECREF(pModule);
-        return nullptr;
+        return pValue;
     }
 
     TEST_CASE("Running a file", "[PythonBridge_unit]")
@@ -119,12 +118,32 @@ namespace Tests
                 REQUIRE( PyInt_AsLong(pValue) == 25 );
                 Py_DECREF(pValue);
             }
+            SECTION("Calling Python main")
+            {
+                pValue = CallPythonFunctionWithArgs(pModule, nullptr, "main");
+                REQUIRE( PyInt_AsLong(pValue) == 5 );
+                Py_DECREF(pValue);
+            }
         }
         else
         {
             PyErr_Print();
             std::cout << "Failed to load Plugin.py" << std::endl;
         }
+    }
+
+    TEST_CASE("Testing RunPythonFile", "[PythonBridge_unit]")
+    {
+        PyObject* pValue = RunPythonFile("Plugin", nullptr);
+        if(pValue)
+        {
+            REQUIRE( PyInt_AsLong(pValue) == 5 );
+        }
+        else
+        {
+            REQUIRE( false );
+        }
+        Py_XDECREF(pValue);
     }
 
     TEST_CASE("Testing StopPython()", "[PythonBridge_unit]")

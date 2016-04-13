@@ -22,3 +22,7 @@ def ReturnFunctionOneArg(arg):
 def ReturnFunctionTwoArgs(arg1, arg2):
     print("Calling ReturnFunctionTwoArgs")
     return arg1 + arg2
+
+print("Helloooooo")
+def main():
+    return 5

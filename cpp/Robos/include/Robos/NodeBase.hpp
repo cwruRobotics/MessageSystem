@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ROBOS_NODEBASE_HPP
 #define ROBOS_NODEBASE_HPP
 

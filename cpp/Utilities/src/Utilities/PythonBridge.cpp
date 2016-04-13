@@ -64,5 +64,57 @@ namespace Bridges
         return pythonStarted;
     }
 
+    PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, char* pFuncName)
+    {
+        PyObject* pFunc, * pValue = nullptr;
+        pFunc = PyObject_GetAttrString(pModule, (char*)pFuncName);
+        if(pFunc && PyCallable_Check(pFunc))
+        {
+            pValue = PyObject_CallObject(pFunc, pArgs);
+            if(PyErr_Occurred())
+            {
+                PyErr_Print();
+            }
+        }
+        else
+        {
+            if(PyErr_Occurred())
+            {
+                PyErr_Print();
+            }
+            else
+            {
+                // log error here.
+            }
+        }
+        Py_XDECREF(pFunc);
+        return pValue;
+    }
+
+    UTILITIES_API PyObject* RunPythonFile(std::string fileName, PyObject* pArgs)
+    {
+        PyObject* pName, *pModule, *pValue = nullptr;
+        pName = PyString_FromString((char*)fileName.c_str());
+        pModule = PyImport_Import(pName);
+
+        if(pModule)
+        {
+            pValue = CallPythonFunctionWithArgs(pModule, pArgs, "main");
+            if(!pValue && PyErr_Occurred())
+            {
+                PyErr_Print();
+            }
+            Py_DECREF(pModule);
+        }
+        else
+        {
+            if(PyErr_Occurred())
+            {
+                PyErr_Print();
+            }
+        }
+        return pValue;
+    }
+
 } // end of namespace Bridges
 } // end of namespace Embedded

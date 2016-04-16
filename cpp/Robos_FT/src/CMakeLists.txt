@@ -34,8 +34,9 @@ get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../build/o
 # get_filename_component( TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../TestingFrameworks ABSOLUTE )
 
 if( BUILD_ROBOS_CPP_FT_CLIENT OR (NOT BUILD_ROBOS_PYTHON_FT_CLIENT AND NOT BUILD_ROBOS_JAVA_FT_CLIENT) )
+    message("Building Cpp Client")
     # Logger library
-    add_subdirectory( ${SRC_ROOT}/Robos_FT_Cpp_Client/src
+    add_subdirectory( ${SRC_ROOT}/../Robos_FT_Cpp_Client/src
                       ${OUT_ROOT}/Robos_FT_Cpp_Client )
 
     # give other subprojects a chance to search for libraries and header
@@ -45,7 +46,7 @@ if( BUILD_ROBOS_CPP_FT_CLIENT OR (NOT BUILD_ROBOS_PYTHON_FT_CLIENT AND NOT BUILD
 endif()
 if( BUILD_ROBOS_PYTHON_FT_CLIENT )
     # Logger library
-    add_subdirectory( ${SRC_ROOT}/Robos_FT_Python_Client/src
+    add_subdirectory( ${SRC_ROOT}/../Robos_FT_Python_Client/src
                       ${OUT_ROOT}/Robos_FT_Python_Client )
 
     # give other subprojects a chance to search for libraries and header
@@ -55,7 +56,7 @@ if( BUILD_ROBOS_PYTHON_FT_CLIENT )
 endif()
 if( BUILD_ROBOS_JAVA_FT_CLIENT )
     # Logger library
-    add_subdirectory( ${SRC_ROOT}/Robos_FT_Java_Client/src
+    add_subdirectory( ${SRC_ROOT}/../Robos_FT_Java_Client/src
                       ${OUT_ROOT}/Robos_FT_Java_Client )
 
     # give other subprojects a chance to search for libraries and header

@@ -61,6 +61,10 @@ namespace Async
         if (this->_running)
         {
             this->_running = false;
+            for(auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
+            {
+                it->second->Stop();
+            }
             for (auto it = this->_threadMap.begin(); it != this->_threadMap.end(); ++it)
             {
                 // std::cout << "Joining down WorkerThread" << std::endl;

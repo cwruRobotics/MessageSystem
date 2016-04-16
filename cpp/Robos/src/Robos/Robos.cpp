@@ -49,16 +49,13 @@ namespace Robos
 
     void Start()
     {
-        bool val = false;
-        {
-            std::lock_guard<std::mutex> lock(masterLock);
-            val = masterInitFlag;
-        }
-        if(!val || (val && !pMaster))
+        std::lock_guard<std::mutex> lock(masterLock);
+        if(!masterInitFlag || (masterInitFlag && !pMaster))
         {
             return;
         }
         pMaster->Start();
+        masterInitFlag = true;
         return;
     }
 
@@ -107,7 +104,7 @@ namespace Robos
             std::lock_guard<std::mutex> lock(masterLock);
             val = masterInitFlag;
         }
-        return val && pMaster == nullptr;
+        return val && (pMaster != nullptr);
     }
 
     void Publish(MessageBasePtr pMessage)

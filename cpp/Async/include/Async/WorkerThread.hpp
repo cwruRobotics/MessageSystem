@@ -54,6 +54,8 @@ namespace Concurrency
 
         Types::Result_t Queue(ExecutableWorkItemBasePtr workItem) override;
 
+        void Stop() override;
+
         void Join() override;
 
         Types::Result_t Abort() override;

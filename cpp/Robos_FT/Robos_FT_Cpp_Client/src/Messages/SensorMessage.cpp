@@ -12,7 +12,7 @@ namespace Robos_FT_Cpp_Client
     {
     }
 
-    ~SensorMessage()
+    SensorMessage::~SensorMessage()
     {
     }
 

@@ -29,6 +29,8 @@ namespace Concurrency
 
         virtual Types::Result_t Queue(ExecutableWorkItemBasePtr workItem) = 0;
 
+        virtual void Stop() = 0;
+
         virtual void Join() = 0;
 
         virtual Types::Result_t Abort() = 0;

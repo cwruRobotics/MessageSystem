@@ -70,6 +70,11 @@ namespace Concurrency
         return Types::Result_t::SUCCESS;
     }
 
+    void WorkerThread::Stop()
+    {
+        this->_run = false;
+    }
+
     void WorkerThread::Join()
     {
         this->_run = false;

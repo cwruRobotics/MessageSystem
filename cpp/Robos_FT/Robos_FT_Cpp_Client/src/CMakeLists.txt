@@ -58,12 +58,21 @@ if( RUN_UNIT_TESTS )
         set( ${PROJECT_NAME}_SOURCES
             # non test code
             ${SRC_ROOT}/Messages/SensorMessage.cpp
+            ${SRC_ROOT}/Messages/FactorialMessage.cpp
+            ${SRC_ROOT}/Nodes/SensorNode.cpp
+            ${SRC_ROOT}/Nodes/FactorialNode.cpp
+            ${SRC_ROOT}/Nodes/ConsoleLoggerNode.cpp
+            ${SRC_ROOT}/main.cpp
 
             # test code
         )
 
         set( ${PROJECT_NAME}_HEADERS
-            
+            ${INC_ROOT}/Messages/SensorMessage.hpp
+            ${INC_ROOT}/Messages/FactorialMessage.hpp
+            ${INC_ROOT}/Nodes/SensorNode.hpp
+            ${INC_ROOT}/Nodes/FactorialNode.hpp
+            ${INC_ROOT}/Nodes/ConsoleLoggerNode.hpp
         )
 
         # directories to search for header files
@@ -71,8 +80,7 @@ if( RUN_UNIT_TESTS )
             ${INC_ROOT}
             ${SRC_ROOT}/../..
             ${CONFIG_ROOT}
-            ${CMAKE_CURRENT_SOURCE_DIR}/..
-            ${CMAKE_PREFIX_PATH}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/...
         )
 
         if( MSVC )
@@ -91,21 +99,24 @@ if( RUN_UNIT_TESTS )
 
         set( ${PROJECT_NAME}_IMPORTED_LIST
             # all libraries to import when building Utilities_FT
-            "Utilities"
-            "Robos"
             "gtest"
+            "Logging"
+            "Utilities"
+            "Async"
+            "Robos"
         )
         include( ProjectLinker )
+        list( APPEND INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDES} )
 
         include_directories( ${INCLUDE_DIRS} )
 
-        add_executable( ${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS} )
+        add_executable( Robos_FT ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS} )
 
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
             message( "Linking executable for Debug" )
-            target_link_libraries( ${PROJECT_NAME}
+            target_link_libraries( Robos_FT
                 ${TARGET_PTHREADS_LIB}
                 ${${PROJECT_NAME}_IMPORTED_LIBS}
                 # ${GTEST_LIBS}
@@ -113,7 +124,7 @@ if( RUN_UNIT_TESTS )
             )
         else()
             message( "Linking executable for Release" )
-            target_link_libraries( ${PROJECT_NAME}
+            target_link_libraries( Robos_FT
                 ${TARGET_PTHREADS_LIB}
                 ${${PROJECT_NAME}_IMPORTED_LIBS}
                 # ${GTEST_LIBS}

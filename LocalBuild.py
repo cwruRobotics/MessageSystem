@@ -19,7 +19,7 @@ if __name__ == "__main__":
     customCommands = Utilities.parseCommandLine(sys.argv[1:])
     print(customCommands)
     if "projects" not in customCommands[1]:
-        customCommands[1]["projects"] = ["Logging", "Async", "Robos"]
+        customCommands[1]["projects"] = ["Logging", "Utilities", "Async", "Robos"]
 
     help = False
     for projectName in customCommands[1]["projects"]:

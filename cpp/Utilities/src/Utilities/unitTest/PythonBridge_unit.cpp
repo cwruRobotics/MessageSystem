@@ -6,6 +6,7 @@
 
 // SYSTEM INCLUDES
 #include <iostream>
+#include <thread>
 #include <vector>
 
 // C++ PROJECT INCLUDES
@@ -29,12 +30,6 @@ namespace Tests
         paths.push_back(OSUtils::GetCurrentDirectory(__FILE__));
         REQUIRE( StartPython(paths) );
         //PyRun_SimpleString("import sys; print(sys.path)");
-    }
-
-    TEST_CASE("Running a simple string", "[PythonBridge_unit]")
-    {
-        // python should already be initialized
-        REQUIRE( PyRun_SimpleString("print('Hello from embedded Python!')") == 0 );
     }
 
     PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, std::string func)

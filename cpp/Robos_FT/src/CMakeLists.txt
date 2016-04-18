@@ -33,6 +33,10 @@ get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../build/o
 
 # get_filename_component( TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../TestingFrameworks ABSOLUTE )
 
+if( PYTHON_ENABLED )
+    set( BUILD_ROBOS_PYTHON_FT_CLIENT TRUE )
+endif()
+
 if( BUILD_ROBOS_CPP_FT_CLIENT OR (NOT BUILD_ROBOS_PYTHON_FT_CLIENT AND NOT BUILD_ROBOS_JAVA_FT_CLIENT) )
     message("Building Cpp Client")
     # Logger library

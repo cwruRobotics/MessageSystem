@@ -17,6 +17,9 @@ namespace Robos
     private:
 
         const std::string               _pythonFileName;
+        bool                            _moduleLoaded;
+        PyObject*                       _pModuleName;
+        PyObject*                       _pModule;
 
         virtual MessageBasePtr UnpackPythonObject(PyObject* pObject) = 0;
 

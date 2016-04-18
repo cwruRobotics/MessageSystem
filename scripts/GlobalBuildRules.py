@@ -115,7 +115,7 @@ class GlobalBuild(object):
             # build the project if necessary
             if not os.path.exists(dependentProjectPath):
                 projectBuild = LocalBuildRules.LocalBuild(project[0])
-                projectBuild.run(([], {'configuration': self._config}))
+                projectBuild.run(([], self._custom_args))
 
             # copy over necessary objects to link
             self.moveDependentProjectsToWorkingDir(project[0],

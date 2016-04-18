@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Engine version="1.0" type="example">
+    <Scheduler name="SensorScheduler">
+        <threadPriority value="OTHER"/>
+    </Scheduler>
+    <Scheduler name="FactorialScheduler">
+        <threadPriority value="OTHER"/>
+    </Scheduler>
+    <Scheduler name="ConsoleLoggerScheduler">
+        <threadPriority value="OTHER"/>
+    </Scheduler>
+</Engine>

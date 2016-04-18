@@ -25,6 +25,13 @@ namespace Bridges
 
     UTILITIES_API bool StopPython();
 
+    // UTILITIES_API bool IsPythonRunning();
+
+    // UTILITIES_API PyInterpreterState* GetGlobalPythonState();
+
+    UTILITIES_API PyObject* CallPythonFunctionWithArgs(PyObject* pModule,
+        PyObject* pArgs, char* pFuncName);
+
     UTILITIES_API PyObject* RunPythonFile(std::string fileName, PyObject* pArgs);
 
 } // end of namespace Bridges

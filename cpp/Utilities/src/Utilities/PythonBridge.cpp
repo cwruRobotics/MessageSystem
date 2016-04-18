@@ -6,6 +6,7 @@
 
 // SYSTEM INCLUDES
 #include <atomic>
+#include <iostream>
 #include <mutex>
 
 // C++ PROJECT INCLUDES
@@ -17,7 +18,9 @@ namespace Bridges
 {
 
     std::mutex          pythonLock;
+    PyThreadState*      mainState = nullptr;
     std::atomic<bool>   pythonStarted(false);
+    std::atomic<bool>   pythonUsed(false);
 
     std::string PathJoin(std::vector<std::string>& pathsToAdd)
     {
@@ -47,9 +50,11 @@ namespace Bridges
         if(!pythonStarted)
         {
             Py_Initialize();
+            PyEval_InitThreads();
             PySys_SetPath((char*)(Py_GetPath() +
                                   joinedPaths).c_str());
             pythonStarted = true;
+            mainState = PyEval_SaveThread();
         }
         return pythonStarted;
     }
@@ -59,15 +64,23 @@ namespace Bridges
         std::lock_guard<std::mutex> lock(pythonLock);
         if(pythonStarted)
         {
+            std::cout << "Restoring Python Thread" << std::endl;
+            PyEval_RestoreThread(mainState);
+
+            std::cout << "Shutting down Python" << std::endl;
             Py_Finalize();
+            mainState = nullptr;
         }
         return pythonStarted;
     }
 
     PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, char* pFuncName)
     {
-        PyObject* pFunc, * pValue = nullptr;
+        pythonUsed = true;
+        PyObject* pFunc = nullptr, * pValue = nullptr;
         pFunc = PyObject_GetAttrString(pModule, (char*)pFuncName);
+        Py_INCREF(pFunc);
+
         if(pFunc && PyCallable_Check(pFunc))
         {
             pValue = PyObject_CallObject(pFunc, pArgs);
@@ -88,11 +101,13 @@ namespace Bridges
             }
         }
         Py_XDECREF(pFunc);
+        //Py_XDECREF(pArgs);
         return pValue;
     }
 
-    UTILITIES_API PyObject* RunPythonFile(std::string fileName, PyObject* pArgs)
+    PyObject* RunPythonFile(std::string fileName, PyObject* pArgs)
     {
+        pythonUsed = true;
         PyObject* pName, *pModule, *pValue = nullptr;
         pName = PyString_FromString((char*)fileName.c_str());
         pModule = PyImport_Import(pName);
@@ -113,6 +128,7 @@ namespace Bridges
                 PyErr_Print();
             }
         }
+        Py_XDECREF(pArgs);
         return pValue;
     }
 

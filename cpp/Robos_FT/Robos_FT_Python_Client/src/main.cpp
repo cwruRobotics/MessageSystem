@@ -1,3 +1,5 @@
+#include "Nodes/PyFactorialNode.hpp"
+
 // SYSTEM INCLUDES
 #include <Robos/Robos.hpp>
 #include <Utilities/OSUtils.hpp>
@@ -9,7 +11,6 @@
 
 // C++ PROJECT INCLUDES
 #include "Nodes/SensorNode.hpp"
-#include "Nodes/PyFactorialNode.hpp"
 #include "Nodes/ConsoleLoggerNode.hpp"
 
 namespace RFTCC = Robos_FT_Cpp_Client;

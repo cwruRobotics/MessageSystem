@@ -38,7 +38,6 @@ class LocalBuild(GlobalBuild):
                                             argsForApp=CMakeArgs,
                                             wd=wd)
         else:
-            self.checkForPythonConfigFile()
             CMakeArgs.extend(["-G", "Unix Makefiles"])
             Utilities.PFork(appToExecute="cmake", argsForApp=CMakeArgs, wd=wd, failOnError=True)
 

@@ -1,9 +1,10 @@
+#include "Nodes/PyFactorialNode.hpp"
+
 // SYSTEM INCLUDES
 //#include <stdexcept>
 #include <iostream>
 
 // C++ PROJECT INCLUDES
-#include "Nodes/PyFactorialNode.hpp"
 #include "Messages/FactorialMessage.hpp"
 #include "Messages/SensorMessage.hpp"
 

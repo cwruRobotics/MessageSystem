@@ -74,7 +74,7 @@ namespace Bridges
         return pythonStarted;
     }
 
-    PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, char* pFuncName)
+    PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, const char* pFuncName)
     {
         pythonUsed = true;
         PyObject* pFunc = nullptr, * pValue = nullptr;

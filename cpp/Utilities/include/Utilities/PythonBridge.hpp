@@ -30,7 +30,7 @@ namespace Bridges
     // UTILITIES_API PyInterpreterState* GetGlobalPythonState();
 
     UTILITIES_API PyObject* CallPythonFunctionWithArgs(PyObject* pModule,
-        PyObject* pArgs, char* pFuncName);
+        PyObject* pArgs, const char* pFuncName);
 
     UTILITIES_API PyObject* RunPythonFile(std::string fileName, PyObject* pArgs);
 

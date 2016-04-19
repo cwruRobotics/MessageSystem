@@ -1,8 +1,9 @@
+#include "Robos/PyNodeBase.hpp"
+
 // SYSTEM INCLUDES
 #include <iostream>
 
 // C++ PROJECT INCLUDES
-#include "Robos/PyNodeBase.hpp"
 
 namespace Robos
 {

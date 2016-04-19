@@ -25,9 +25,7 @@ namespace Bridges
 
     UTILITIES_API bool StopPython();
 
-    // UTILITIES_API bool IsPythonRunning();
-
-    // UTILITIES_API PyInterpreterState* GetGlobalPythonState();
+    PyThreadState* GetGlobalPythonState();
 
     UTILITIES_API PyObject* CallPythonFunctionWithArgs(PyObject* pModule,
         PyObject* pArgs, const char* pFuncName);

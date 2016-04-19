@@ -74,6 +74,11 @@ namespace Bridges
         return pythonStarted;
     }
 
+    PyThreadState* GetGlobalPythonState()
+    {
+        return mainState;
+    }
+
     PyObject* CallPythonFunctionWithArgs(PyObject* pModule, PyObject* pArgs, const char* pFuncName)
     {
         pythonUsed = true;

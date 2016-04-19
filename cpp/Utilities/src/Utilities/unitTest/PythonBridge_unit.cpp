@@ -57,8 +57,11 @@ namespace Tests
         return pValue;
     }
 
+    /*
     TEST_CASE("Running a file", "[PythonBridge_unit]")
     {
+        PyEval_RestoreThread(GetGlobalPythonState());
+
         PyObject* pName, *pModule, *pDict, *pFunc, *pValue;
 
         pName = PyString_FromString("Plugin");
@@ -139,8 +142,10 @@ namespace Tests
             REQUIRE( false );
         }
         Py_XDECREF(pValue);
+        PyEval_SaveThread();
     }
 
+    */
     TEST_CASE("Testing StopPython()", "[PythonBridge_unit]")
     {
         REQUIRE( StopPython() );

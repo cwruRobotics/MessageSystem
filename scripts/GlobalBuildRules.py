@@ -307,11 +307,6 @@ class GlobalBuild(object):
         ]
         return CMakeArgs
 
-    def checkForPythonConfigFile(self):
-        returnCode = Utilities.PFork(appToExecute="python-config", argsForApp=["--help"], failOnError=False)
-        if returnCode != 0:
-            Utilities.failExecution("python-config was not found. Make sure python-dev package is installed.")
-
     # this method will generate documentation
     # of the project. We are using Doxygen
     # to fulfill this.

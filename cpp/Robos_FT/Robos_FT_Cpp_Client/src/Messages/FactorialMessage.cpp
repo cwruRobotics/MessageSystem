@@ -8,7 +8,8 @@ namespace Robos_FT_Cpp_Client
 {
 
     FactorialMessage::FactorialMessage(int arg, int result) :
-        Robos::MessageBase("FactorialMessage"), factorialArg(arg), factorialResult(result)
+        Robos::MessageBase("FactorialMessage"), factorialResult(result),
+        factorialArg(arg)
     {
     }
 

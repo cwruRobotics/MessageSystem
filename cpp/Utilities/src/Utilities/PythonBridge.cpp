@@ -32,7 +32,7 @@ namespace Bridges
         }
         joinedPaths.reserve(sizeToReserve + pathsToAdd.size());
         joinedPaths.append(Utilities::OS::GetPathDelimiter());
-        for(int i = 0; i < pathsToAdd.size(); ++i)
+        for(unsigned int i = 0; i < pathsToAdd.size(); ++i)
         {
             joinedPaths.append(pathsToAdd[i]);
             if(i < pathsToAdd.size() - 1)

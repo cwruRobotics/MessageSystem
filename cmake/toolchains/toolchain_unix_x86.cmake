@@ -1,4 +1,4 @@
-set( SECURITY_FLAGS = "-Wall -Wformat-security -fstack-protector-strong -Wstack-protector --param ssp-buffer-size=4 -pie -fPIE -ftrapv -D_FORTIFY_SOURCE=2" )
+set( SECURITY_FLAGS "-Wall -Wformat-security -fstack-protector-strong -Wstack-protector --param ssp-buffer-size=4 -pie -fPIE -ftrapv -D_FORTIFY_SOURCE=2" )
 
 set( SECURITY_LINK_FLAGS "-Wl,-z,relro -Wl,-z,now" )
 

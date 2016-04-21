@@ -26,9 +26,9 @@ namespace Async
 namespace Concurrency
 {
 
-    WorkerThread::WorkerThread() :
-        _state(States::ConcurrencyState::IDLE),
-        _queueMutex(), _queue(), _run(true), _threadCV()
+    WorkerThread::WorkerThread() : _thread(), _threadCV(),
+        _state(States::ConcurrencyState::IDLE), _run(true),
+        _queueMutex(), _queue()
     {
         this->_thread = std::thread(&WorkerThread::Run, this);
     }

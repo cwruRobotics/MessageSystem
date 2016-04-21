@@ -15,9 +15,9 @@ namespace Robos
 namespace Internal
 {
 
-    MasterNode::MasterNode() : _readCount(0), _resourceAccess(1),
-        _readCountAccess(1), _serviceQueue(1), _initNodes(), _initFlag(false),
-        _pUnprotectedNodeDB(std::make_shared<NodeDatabase>())
+    MasterNode::MasterNode() : _pUnprotectedNodeDB(std::make_shared<NodeDatabase>()),
+        _readCount(0), _resourceAccess(1),
+        _readCountAccess(1), _serviceQueue(1), _initFlag(false), _initNodes()
     {
     }
 

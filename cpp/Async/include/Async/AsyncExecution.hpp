@@ -17,7 +17,7 @@ namespace Async
 {
 
 
-    template<typename PROMISE_RESULT> 
+    template<typename PROMISE_RESULT>
     PromisePtr<PROMISE_RESULT> Execute(std::function<PROMISE_RESULT()> pFunc,
                                        std::string& schedulerId,
                                        Types::JobPriority priority=Types::JobPriority::OTHER)
@@ -26,6 +26,10 @@ namespace Async
         pPromise->AttachMainFunction(pFunc);
         Types::Result_t result = SubmitEngineSingletonServiceRequest(pPromise,
                                                                      schedulerId);
+        if(result != Types::Result_t::SUCCESS)
+        {
+             // log error?
+        }
         return pPromise;
     }
 

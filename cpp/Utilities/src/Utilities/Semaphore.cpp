@@ -6,7 +6,7 @@
 namespace Utilities
 {
 
-    Semaphore::Semaphore(int init) : _count(init), _cv(), _mutex(), _trigger(true)
+    Semaphore::Semaphore(int init) : _count(init), _trigger(true), _cv(), _mutex()
     {
     }
 

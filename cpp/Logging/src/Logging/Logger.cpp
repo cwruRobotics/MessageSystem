@@ -30,7 +30,7 @@ namespace Loggers
 		va_start(args, pFormat);
 
 		char localBuffer[LOG_MESSAGE_SIZE];
-		int result = vsnprintf(localBuffer, LOG_MESSAGE_SIZE, pFormat, args);
+		vsnprintf(localBuffer, LOG_MESSAGE_SIZE, pFormat, args);
 		if (this->_outputFile && this->_fileBuffer.is_open())
 		{
 			this->_fileBuffer << LoggingLevelToString(level) << " -> "
@@ -51,7 +51,7 @@ namespace Loggers
 		va_start(args, pFormat);
 
 		char localBuffer[LOG_MESSAGE_SIZE];
-		int result = vsnprintf(localBuffer, LOG_MESSAGE_SIZE, pFormat, args);
+		vsnprintf(localBuffer, LOG_MESSAGE_SIZE, pFormat, args);
 		if (this->_outputFile && this->_fileBuffer.is_open())
 		{
 			this->_fileBuffer << "[" << this->_loggerName << " in file: " << pFileName

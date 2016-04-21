@@ -57,9 +57,18 @@ namespace Async
     public:
 
         WorkItem(uint64_t id=0, Types::JobPriority priority=Types::JobPriority::OTHER) :
-            _id(id), _jobPriority(priority), _pScheduler(nullptr), _pMainFunction(nullptr),
-            _pPostFunction(nullptr), _pException(nullptr), _innerState(States::WorkItemState::IDLE)
+            _id(id), _pScheduler(nullptr), _pMainFunction(nullptr),
+            _pPostFunction(nullptr), _pException(nullptr), _jobPriority(priority), _innerState(States::WorkItemState::IDLE)
         {
+            /*
+            uint64_t                _id;
+        SchedulerBasePtr        _pScheduler;
+        FunctionPtr             _pMainFunction;
+        FunctionPtr             _pPostFunction;
+        std::exception_ptr      _pException;
+        Types::JobPriority      _jobPriority;
+        States::WorkItemState   _innerState;
+            */
         }
 
         ~WorkItem()

@@ -37,8 +37,7 @@ namespace Async
         SimpleChainLinker(std::function<std::function<CHILD_TYPE()>()> pResolutionFunction,
             // std::shared_ptr<Promise<PARENT_TYPE> > pParent,
             // std::function<CHILD_TYPE(PARENT_TYPE)> pChildFunction,
-            std::shared_ptr<Promise<CHILD_TYPE> > pChild, std::string id) : _pChild(pChild),
-            _pResolutionFunction(pResolutionFunction),
+            std::shared_ptr<Promise<CHILD_TYPE> > pChild, std::string id) : _pResolutionFunction(pResolutionFunction), _pChild(pChild),
             _childSchedulerId(id)
             // _pParent(pParent), _pChildFunction(pChildFunction)
         {

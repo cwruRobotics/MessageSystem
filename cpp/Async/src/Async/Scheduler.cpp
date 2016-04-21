@@ -10,8 +10,8 @@
 namespace Async
 {
 
-    Scheduler::Scheduler(std::vector<Types::JobPriority>& configuration, std::string id) : _id(std::move(id)),
-            _threadMap(), _currentWorkItemId(0), _running(true)
+    Scheduler::Scheduler(std::vector<Types::JobPriority>& configuration, std::string id) : _threadMap(), _currentWorkItemId(0),
+    _running(true), _id(std::move(id))
     {
         for(Types::JobPriority priority : configuration)
         {

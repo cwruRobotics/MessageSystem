@@ -88,6 +88,7 @@ if( RUN_UNIT_TESTS )
 
             # Robos sources
             ${SRC_ROOT}/../MessageBase.cpp
+            ${SRC_ROOT}/../NodeHelper.cpp
             ${SRC_ROOT}/../NodeBase.cpp
             ${SRC_ROOT}/../InitNodeBase.cpp
             ${SRC_ROOT}/../NodeDatabase.cpp

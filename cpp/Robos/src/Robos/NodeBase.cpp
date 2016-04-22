@@ -8,23 +8,14 @@ namespace Robos
 {
 
     NodeBase::NodeBase(std::string name, std::string toRunOn,
-                       std::vector<std::string> subscriptions) : _name(name),
-        _executionTopic(toRunOn), _subscriptions(subscriptions)
+                       std::vector<std::string> subscriptions,
+                       Async::Types::JobPriority priority) :
+        NodeHelper(name, toRunOn, priority), _subscriptions(subscriptions)
     {
     }
 
     NodeBase::~NodeBase()
     {
-    }
-
-    const std::string& NodeBase::GetName()
-    {
-        return this->_name;
-    }
-
-    std::string& NodeBase::GetExecutionTopic()
-    {
-        return this->_executionTopic;
     }
 
     const std::vector<std::string>& NodeBase::GetSubscriptions()

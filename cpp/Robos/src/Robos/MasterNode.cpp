@@ -71,7 +71,7 @@ namespace Internal
                 Async::Execute<int>([pInitNodeBase]() -> int
                 {
                     return pInitNodeBase->MainCallback();
-                }, pInitNodeBase->GetExecutionTopic());
+                }, pInitNodeBase->GetExecutionTopic(), pInitNodeBase->GetPriority());
             }
         }
     }
@@ -179,7 +179,7 @@ namespace Internal
                     Async::Execute<MessageBasePtr>([pMessage, pNodeBase]() -> MessageBasePtr
                     {
                         return pNodeBase->MainCallback(pMessage);
-                    }, pNodeBase->GetExecutionTopic())->Then<bool>([this](MessageBasePtr pMessage) -> bool
+                    }, pNodeBase->GetExecutionTopic(), pNodeBase->GetPriority())->Then<bool>([this](MessageBasePtr pMessage) -> bool
                     {
                         this->InvokeSubscribers(pMessage);
                         return true;

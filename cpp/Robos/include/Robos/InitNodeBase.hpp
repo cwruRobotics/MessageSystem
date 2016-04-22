@@ -7,6 +7,7 @@
 
 // C++ PROJECT INCLUDES
 #include "Robos/LibraryExport.hpp"
+#include "Robos/NodeHelper.hpp"
 #include "Robos/MessageBase.hpp"
 
 namespace Robos
@@ -16,16 +17,12 @@ namespace Internal
     class MasterNode;
 } // end of namespace Internal
 
-    class ROBOS_API InitNodeBase : public std::enable_shared_from_this<InitNodeBase>
+    class ROBOS_API InitNodeBase : public NodeHelper,
+        public std::enable_shared_from_this<InitNodeBase>
     {
     private:
 
-        const std::string                       _name;
         std::shared_ptr<Internal::MasterNode>   _pMaster;
-
-        // this *should* correspond to the Scheduler name (in Async) that
-        // this Node should run on.
-        std::string                             _executionTopic;
 
         virtual void MainCallbackImpl() = 0;
 
@@ -40,10 +37,6 @@ namespace Internal
         InitNodeBase(std::string name, std::string toRunOn);
 
         virtual ~InitNodeBase();
-
-        const std::string& GetName();
-
-        std::string& GetExecutionTopic();
 
         int MainCallback();
     };

@@ -9,35 +9,32 @@
 
 // C++ PROJECT INCLUDES
 #include "Robos/LibraryExport.hpp"
+#include "Robos/NodeHelper.hpp"
 #include "Robos/MessageBase.hpp"
 
 namespace Robos
 {
 
-    class ROBOS_API NodeBase : public std::enable_shared_from_this<NodeBase>
+    class ROBOS_API NodeBase : public NodeHelper,
+        public std::enable_shared_from_this<NodeBase>
     {
     private:
 
-        const std::string               _name;
-
-        // this *should* correspond to the Scheduler name (in Async) that
-        // this Node should run on.
-        std::string                     _executionTopic;
-
         const std::vector<std::string>  _subscriptions;
 
+        /**
+          * this method must be overriden.
+          *
+          */
         virtual MessageBasePtr MainCallbackImpl(const MessageBasePtr pMessage) = 0;
 
     public:
 
         NodeBase(std::string name, std::string toRunOn,
-                 std::vector<std::string> subscriptions);
+                 std::vector<std::string> subscriptions,
+                 Async::Types::JobPriority priority=Async::Types::JobPriority::OTHER);
 
         virtual ~NodeBase();
-
-        const std::string& GetName();
-
-        std::string& GetExecutionTopic();
 
         const std::vector<std::string>& GetSubscriptions();
 

@@ -8,23 +8,14 @@
 namespace Robos
 {
 
-    InitNodeBase::InitNodeBase(std::string name, std::string toRunOn) : _name(name),
-        _executionTopic(toRunOn)
+    InitNodeBase::InitNodeBase(std::string name,
+                               std::string toRunOn) :
+        NodeHelper(name, toRunOn, Async::Types::JobPriority::OTHER)
     {
     }
 
     InitNodeBase::~InitNodeBase()
     {
-    }
-
-    const std::string& InitNodeBase::GetName()
-    {
-        return this->_name;
-    }
-
-    std::string& InitNodeBase::GetExecutionTopic()
-    {
-        return this->_executionTopic;
     }
 
     int InitNodeBase::MainCallback()

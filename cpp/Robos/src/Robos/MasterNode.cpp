@@ -31,7 +31,7 @@ namespace Internal
         int count = 0;
         for(auto rit = topic.rbegin(); rit != topic.rend(); ++rit)
         {
-            hash += (*rit) * (31 ^ count);
+            hash += (*rit) * (31 ^ (count));
         }
         return hash;
     }
@@ -95,12 +95,13 @@ namespace Internal
             ///*
             const std::string& nodeName = pNode->GetName();
             // LOG_DEBUG(pLogger, "name of node: %s", nodeName.c_str());
-            unsigned int hash;
+            //unsigned int hash;
             for(const std::string& subscription : pNode->GetSubscriptions())
             {
-                hash = this->HashTopic(subscription);
+                //hash = this->HashTopic(subscription);
                 // LOG_DEBUG(pLogger, "subscription: %s", subscription.c_str());
-                NodeDatabaseImpl::iterator it = this->_pUnprotectedNodeDB->map.find(hash);
+                //NodeDatabaseImpl::iterator it = this->_pUnprotectedNodeDB->map.find(hash);
+                NodeDatabaseImpl::iterator it = this->_pUnprotectedNodeDB->map.find(subscription);
                 if(!this->_pUnprotectedNodeDB->map.empty() &&
                    it != this->_pUnprotectedNodeDB->map.end())
                 {
@@ -134,7 +135,8 @@ namespace Internal
                     }
                     */
                     this->_pUnprotectedNodeDB->map.insert(
-                        std::pair<unsigned int, std::vector<NodeBasePtr> >(hash, subscribers));
+                        //std::pair<unsigned int, std::vector<NodeBasePtr> >(hash, subscribers));
+                        std::pair<std::string, std::vector<NodeBasePtr> >(subscription, subscribers));
                 }
             }
 
@@ -171,7 +173,8 @@ namespace Internal
             //--------------CRITICAL SECTION----------------
             //std::cout << "pMessage use count: " << pMessage.use_count() << std::endl;
             // std::cout << "MasterNode::InvokeSubscribers() Entering Critical Section" << std::endl;
-            auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
+            //auto iterator = this->_pUnprotectedNodeDB->map.find(this->HashTopic(pMessage->topic));
+            auto iterator = this->_pUnprotectedNodeDB->map.find(pMessage->topic);
             if(iterator != this->_pUnprotectedNodeDB->map.end())
             {
                 for(NodeBasePtr pNodeBase : iterator->second)

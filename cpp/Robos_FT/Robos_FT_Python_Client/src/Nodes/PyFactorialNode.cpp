@@ -12,7 +12,7 @@ namespace Robos_FT_Cpp_Client
 {
 
     PyFactorialNode::PyFactorialNode() : Robos::PyNodeBase("FactorialNode", "FactorialScheduler",
-        "Factorial", std::vector<std::string>{"SensorMessage"}),
+        std::vector<std::string>{"SensorMessage"}, "Factorial"),
         _factorialArg(0)
     {
     }

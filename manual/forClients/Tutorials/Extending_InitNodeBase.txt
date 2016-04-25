@@ -1,0 +1,42 @@
+Extending Robos::InitNodeBase is rather simple. InitNodeBase expects certain
+parameters to be given to it in its constructor, and there is a method
+that must be overriden, but that is it. Here is the breakdown:
+
+InitNodeBase(std::string name, std::string toRunOn).
+
+InitNodeBase needs the name of the instance and the name of the Scheduler
+that it should be run on. Beyond that, a child of InitNodeBase needs to override
+
+void InitNodeBase::MainCallbackImpl().
+
+This method is called once at the beginning of Robos' execution (when the call
+to Robos::Start() is made) and it is assumed that this method will execute
+continuously throught Robos' execution. If this is the case and your code
+uses a loop to run continuously, then Robos provides a function:
+
+	bool Robos::IsRunning().
+
+as a convenience for your loop invariant. This function returns true between
+the first call to Robos::Start() and the first call to Robos::Stop() also known
+as the entirety of Robos' execution. More formally, your code can be structured
+like:
+
+while(Robos::IsRunning() <other loop invariant conditions)
+{
+	...
+}
+
+then your InitNodeBase child would exit its execution when Robos is told
+to shut down. This is just a convenience to help guarantee that your
+code will when Robos wants it to.
+
+To publish a message, an InitNodeBase child needs to call the method:
+
+	void InitNodeBase::PublishMessage(MessageBasePtr pMessage).
+
+There is no other way for an InitNodeBase to publish a message to the master.
+In your MainCallbackImpl() method, you need to construct MessageBase instances
+and publish them using the method above.	     
+
+
+please see "Extending_NodeBase.txt"

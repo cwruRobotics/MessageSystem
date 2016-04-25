@@ -1,0 +1,38 @@
+For your code to talk to other people's code, you need to create a message.
+Robos provides a struct called "MessageBase" which can be found in
+the header file "MessageBase.hpp" in the Robos include directory.
+
+To create a message, you need to create a struct or a class that extends
+MessageBase. The only requirement that I enforce is that in your constructor,
+when you call MessageBase's constructor, you pass in the message topic. The
+message topic is marked "const" so you cannot change the value once
+initialized. In other words here is an example message:
+
+in the header file:
+
+struct MyMessage : public Robos::MessageBase
+{
+	int data			intData;
+	double val			doubleData;
+	std::vector<MyDataItem>		MyDataItemList;
+
+	MyMessage();
+	~MyMessage();
+};
+
+in the source file:
+
+MyMessage::MyMessage() : Robos::MessageBase("MyMessageTopic"),
+	intData(0), doubleData(0.0), MyDataItemList()
+{
+}
+
+MyMessage::~MyMessage()
+{
+}
+
+
+You can literally put any data type supported by C/C++ into your custom
+message type, but cannot change the message topic once its initialized.
+
+Please continue on to "Extending_Nodes.txt"

@@ -1,0 +1,67 @@
+Robos provides a build system that can be modified to help automate building
+and testing your code (more on that later). For now, we want to use it to
+build Robos and all associated libraries. The build system is controlled
+through Python scripts (under the /scripts/ directory if you want to see
+how it works). The basic command is:
+
+	>> pythonA.B LocalBuild.py
+(where A.B is the version of your Python installation). On my Windows machine
+I use the command:
+
+	>> python LocalBuild.py
+
+if you add "help" afterwards, the build system will print out a help
+message that specifies what parameters are accepted. We will focus on
+a few here:
+
+To build and test Robos and all supporting libraries, the command can be used:
+
+	>> pythonA.B LocalBuild.py -test ON
+
+This will not only build all Robos libraries, but it will build and run
+each library's unit test executable.
+
+Robos supports embedded Python. By default, this functionality is not
+included, to build Robos with Python functionality, you will have to build
+Robos with the flag -python ON. This command can look like:
+
+	>> pythonA.B LocalBuild.py -test ON -python ON
+
+It is important to note that if you have previously build Robos without
+Python support, you will have to rebuild Robos and all supporting libraries
+with this flag set. The easiest way to do this is to delete the /build/
+directory and run the last command above. Another way to do this would
+be to use the -projects <Projects_to_build...> flag. This flag is special
+in that it takes a list of project names to build. The following command
+could be used to rebuild Robos that supports Python:
+
+
+	>> pythonA.B LocalBuild.py -test ON -python ON -projects Logging Utilities Async Robos
+
+
+
+To build and run any of the functional tests, you have to specify the projects
+to build. Available functional test projects are:
+
+	-Robos_FT (there is a Python and pure C++ versions)
+	-Async_FT
+	-Utilities_FT
+
+
+At the end of the build process, you will either see an error message,
+or:
+
+*****************
+*   COMPLETE    *
+*****************
+
+Either result means that the build process has stopped (Complete means
+everything built and ran successfully, otherwise there was a problem).
+
+One common issue that I've encountered is that if a build fails due to
+a directory/file not being found, it is usually a problem with the build system.
+Deleting the /build/ directory usually fixes the problem. Otherwise, unless
+its a problem with your project code, feel free to reach out to me and I'll take
+a look into the problem.
+
+Now that you've built Robos on your machine, please continue on to "Creating_Messages.txt"

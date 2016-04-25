@@ -1,0 +1,52 @@
+To use the current build system for your projects, you will need
+to modify a couple of things.
+
+First and formost, is that everthing gets easier to explain if you
+put your C++ code in the /cpp/ directory under a folder identified
+by your project title. From there you will need to make a CMakeLists.txt
+file which will be used by CMake to build your C/C++ code.
+
+To tell CMake to build your code, you will need to modify the /projects/CMakeLists.txt
+file. That file is called by the Python side of the build system and is assumed
+to be the entry point into CMake. In that file you will need to tell CMake the location
+of your CMakeLists.txt file (see the already existing code there). In this file, projects
+are build depending on variables called BUILD_<project_name_in_all_caps> which is set
+by the Python side and interpreted by the "-projects" command line parameter. Another
+one is RUN_UNIT_TESTS but that can be interpreted as RUN_TESTS as you can use it
+to run any tests. That flag is used to tell CMake the location of a CMakeLists.txt file
+that will build an executable usually used to build unit tests or functional tests.
+
+In your custom CMakeLists.txt file, you will need to tell CMake HOW to build your code
+and in what order but I leave that up to you to look at examples in my source.
+
+The last thing you will need to do is to modify the /dependencies/dependencies.txt file
+which is used to tell the build system what libraries need to be built in order for yours
+to be built. Check the file to see the syntax. The build system will check this file
+and try to move all libraries and headers from their individual locations in the /build/
+directory to your workspace in the /build/ directory. If the files don't exist, it will
+try and build the project for you and then move the libraries and headers. For this reason,
+I strongly recommend you follow this scheme when modifying /projects/CMakeLists.txt:
+
+	if( BUILD_<your_project_name_in_all_caps> )
+    		# <point to your CMakeLists.txt file
+    		add_subdirectory( ${SRC_ROOT}/<path_from_/cpp/_dir_to_your_CMakeLists.txt>
+                      		  ${OUT_ROOT}/<your_project_name_not_all_caps> )
+
+    		# give other subprojects a chance to search for libraries and header
+    		# files created before the "make install"
+    		list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/<your_project_name_not_all_caps>" )
+    		list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/<your_project_name_not_all_caps>" )
+endif()
+
+If you change this scheme, things will become more complicated about where CMake puts all of
+your binaries, headers, etc.
+
+
+Once you have followed these steps, then you can type:
+
+	>> python LocalBuild.py -projects <your_project_name_not_all_caps>
+
+and the build system should build your code!
+
+
+please see "Configuring_Async.txt"

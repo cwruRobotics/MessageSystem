@@ -1,0 +1,25 @@
+In Robos, there are several types of Nodes, each having different
+functionality (this list will grow as more languages are embedded):
+
+-InitNodeBase:
+	There need to be Nodes that do not subscribe to any message topics.
+	These Nodes just continuously pump out messages, and are assumed
+	to run at max for as long as Robos is running. If your code is designed
+	to be the "source" of something, then this is the class you want to
+	extend to wrap your code. Please see "Extending_InitNodeBase.txt"
+
+-NodeBase:
+	This Node type has the typical subscription and publishing functionality.
+	Nodes of this type receive data from somewhere, compute something, and
+	push out more data for others to operate on. Note that Nodes of this
+	type can be the "end" of an execution chain, and can publish a "null"
+	message in which nothing happens. Please see "Extending_Nodebase.txt"
+
+-PyNodeBase:
+	This Node type is the exact same as NodeBase except that Nodes of this
+	type wrap service calls into embedded Python. If your code is written
+	in Python, you MUST extend this Node type. Please see
+	"Using_Robos_With_Python.txt" and "Extending_PyNodeBase.txt"
+
+
+please continue on to "Extending_InitNodeBase.txt"

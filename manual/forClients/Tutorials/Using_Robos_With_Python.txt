@@ -1,0 +1,41 @@
+Robos supports embedded Python, which only means that we will be running Python
+code from within C++ (another way to view this is that C++ is telling Python
+what to do). To enable this, you have to install Python onto your machine
+in a specific way, if you are using a UNIX (Linux) OS, you need to follow
+the instructions labeled in /manual/PythonUnixInstallation.txt. If you are
+using a Windows OS, all you have to do is to install Python on your machine
+the default way of downloading from the website.
+
+To use Python, you need to tell the build system where it is. To do this,
+you need to create a text file of key = value pairs. If you create an
+environment variable called "DYNAMIC_ENV_VARS_FILE" to point to that file
+(contains the path and the file name), then the build system will inject your
+key, value pairs as environment variables. Don't worry, these values only exist
+for the length of a build, they don't persist in your environment afterwards.
+
+Anyways, ON WINDOWS, you need to have two entries in your files for Python to work:
+
+PYTHON_PATH = <path_to_Python_base_directory>
+PYTHON_VERSION = <version_of_python ex: 27>
+
+Everything else should link together, let me know if there is a problem.
+
+
+TO REITERATE, if you are running on a WINDOWS machine, you need to download
+Python from the website, and create the environment variable file as detailed
+above. If you are running on a UNIX machine, you need to follow the instructions
+in /manual/PythonUnixInstallation.txt, and DO NOT need to follow the the
+environment variable file instructions.
+
+Lastly, you will need to compile ALL ROBOS LIBRARIES with the -python ON flag
+set as shown, this can most easily be done by either:
+
+1) Deleting the /build/ directory and using "python LocalBuild.py -python ON -projects Robos"
+
+2) "python LocalBuild.py -python ON"
+
+
+If you can build everything with -python ON, then your environment is set up
+correctly to support embedded Python.
+
+please see "Extending_PyNodeBase.txt"

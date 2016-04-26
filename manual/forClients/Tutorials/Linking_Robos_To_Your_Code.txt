@@ -1,0 +1,52 @@
+For Robos to run your code, you need to link Robos to your code. In C/C++,
+when you use third party code, you usually get the set of header files and
+the binary. To use the header files, your code needs to know the location of
+the actual implementation, which is stored in the binary. Very simply, telling
+your code where the implementation of third party code is is known as "linking."
+
+You have to do the same with Robos. Fortunatley, Robos provides a cmake file
+that will find and link together your code with all the dependencies you need
+(that are projects listed in the /cpp/ directory and Python if you have it
+enabled).
+
+To use this, you will need to include the ProjectLinker.cmake file in the
+/cmake/modules/ directory. This can be done by having the CMAKE_MODULE_PATH
+include the /cmake/modules/ directory. Generally this is done like this:
+
+get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../cmake ABSOLUTE )
+
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
+
+Then, to include any Robos library, set the value:
+
+set( ${PROJECT_NAME}_IMPORTED_LIST
+    # all libraries to import when building Robos
+    "Logging"
+    "Utilities"
+    "Async"
+    "Robos"
+)
+if( PYTHON_ENABLED )
+    set( ${PROJECT_NAME}_STATIC_LIST
+        "Python"
+    )
+endif()
+include(ProjectLinker)
+
+somewhere in your CMakeLists.txt file. This will output 2 variables:
+${PROJECT_NAME}_IMPORTED_LIBS, ${PROJECT_NAME}_STATIC_LIBS
+
+which should have all the necessary information to link to all Robos libraries,
+which can be done like so:
+
+if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
+endif()
+if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
+    target_link_libraries( ${PROJECT_NAME} ${${PROJECT_NAME}_STATIC_LIBS} )
+endif()
+
+It is important to note that you need to link to "Logging", "Utilities", "Async",
+and "Robos" to be able to use Robos. If you want to use googletest, you can link to "gtest."
+
+please see "Writing_Main.txt"

@@ -1,0 +1,63 @@
+At this point, lets assume you've written your Async config file (see "Configuring_Async.txt"),
+have written your CMake files and linked to Robos (see "Linking_Robos_To_Your_Code.txt"),
+have written your C++ wrapper classes (see "Extending_*.txt"),
+have written your messages (see "Creating_Messages.txt"),
+and are waiting to run your code using the build system (see "Using_Build_System.txt").
+
+Its time to write your main function.
+In a file that I usually call "main.cpp," you will need to:
+
+1. Include all files you need to run. From Robos, this will be:
+	<Robos/Robos.hpp>
+	and usually <Utilities/OSUtils.hpp>
+
+2. Instantiate all of your Nodes
+
+3. Initialize Robos. This involves giving Robos the path to your
+   Async config file. If your Async config file is in your current directory
+   or a subdirectory of your current directory, you can use:
+
+	Utilities::OS::GetCurrentDirectory(__FILE__)
+
+   to get the absolute path to your current directory (directory that main.cpp is in).
+
+   This procedure involves calling:
+
+	bool Robos::Init(std::string asyncConfigPath).
+
+   Which will return true upon successful initialization and false otherwise.
+
+Note that 2. and 3. can be switched, I just prefer to instantiate my Nodes
+before initializing Robos.
+
+4. Register all of your Nodes. For each Node you initialized, you need to register
+   it with Robos. This can be done with:
+
+	bool Robos::Register(const NodeBasePtr& pNode) and its overload.
+
+    This function returns true if successfully registered, and false otherwise.
+    Note that you can only register Nodes BEFORE Robos is started, it will refuse
+    to register any Node afterwards.
+
+5. Start Robos. This is done with:
+
+	void Robos::Start()
+
+6. Wait. This thread so far is the only one that can kill Robos (killing internally
+   creates a circular dependency that is bad), so you can read from the keyboard
+   for the user to kill the executable, sleep for some time, or just do whatever. Remember
+   though that THIS THREAD has to be the one to kill Robos until I create a more elegant
+   strategy.
+
+7. Stop Robos. This is done with:
+
+	bool Robos::Stop()
+
+    This returns true if everything was shut down correctly and false otherwise. More or less,
+    this function returns false after the first call, you can call it multiple times but it
+    will have no effect after the first.
+
+Thats it!
+	
+
+please see "Testing_Your_Code.txt"

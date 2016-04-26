@@ -76,8 +76,9 @@ namespace Robos
          * @param[in]   subscriptions   A list of message topics that this instance subscribes to.
          */
         PyNodeBase(std::string name, std::string toRunOn,
+                   std::vector<std::string> subscriptions,
                    std::string pythonFileName,
-                   std::vector<std::string> subscriptions);
+                   Async::Types::JobPriority priority=Async::Types::JobPriority::OTHER);
 
         /**
          * A destructor. Virtual to allow inheritance.

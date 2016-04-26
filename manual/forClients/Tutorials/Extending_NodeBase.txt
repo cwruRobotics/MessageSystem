@@ -1,0 +1,115 @@
+The purpose of NodeBase is to provide a wrapper for client code that performs
+some computation on data and has an input. In other words, if your code relies
+on some other code spitting out values that you rely on for input, then you
+should wrap your code by deriving from NodeBase. Deriving from NodeBase is
+rather simple, the breadown is as follows:
+
+	NodeBase::NodeBase(std::string name, std::string toRunOn,
+			   std::vector<std::string> subscriptions,
+			   Async::Types::JobPriority priority).
+
+In this case, when deriving from NodeBase, you need to tell Robos what its
+name is, what scheduler is allowed to execute your NodeBase, what priority
+of thread is allowed to execute your NodeBase (defaults to Async::Types::JobPriority::OTHER)
+and what subscriptions this NodeBase has. More specifically:
+
+std::string name - the name of the NodeBase.
+
+std::string toRunOn - When you configure your Asynchronous environment (please
+		      see "Configuring_Async.txt"), you group worker threads
+		      by the priority of jobs they can execute, and by the type
+		      of jobs they can execute (for performance reasons).
+		      The type of job classification is known as a Scheduler,
+		      and each Scheduler gets a name. toRunOn is the Scheduler
+		      name and should correspond to a value in your Async config
+		      file.
+
+std::vector<std::string> subscriptions - This is the other half of the subscriber/publisher
+					 relationship. Each element of this vector should
+					 correspond to a message topic that is produced by
+					 some node in Robos. When a message is published
+					 by some Node with a topic in subscriptions, your code
+					 will be queued for execution on a Scheduler with the name
+					 toRunOn and to be executed on a thread with the threadPriority
+					 specified.
+
+Async::Types::JobPriority priority - The priority of your code. This controls what threads
+			    	     in your Asynchronous environment can run your code.
+			    	     This value defaults to Async::Types::JobPriority::OTHER
+			    	     if left unspecified.
+
+
+NodeBases and their children publish messages implicitly. When deriving from NodeBase,
+you need to overwrite the method:
+
+	Robos::MessageBasePtr NodeBase::MainCallbackImpl(const Robos::MessageBasePtr pMessage).
+
+This method will call act as a "main" function by calling your code. I recommend
+that you parse the message by topic (if(pMessage->topic == "myTopic") {...} if you
+have multiple subscriptions and to do error checking). When your MainCallbackImpl message returns
+a Robos::MessageBasePtr, that message is published automatically to master.
+Here is an example of a NodeBase child that expects MessageBase derivative
+with topic "FactorialMessage" and computes a factorial as a library
+call (and produces a MessageBase derivative ResultMessage):
+
+in the header file:
+
+// SYSTEM INCLUDES (built in code)
+#include <Robos/NodeBase.hpp>
+
+
+//C++ PROJECT INCLUDES (project under development code)
+
+
+class FactorialNode : public Robos::NodeBase
+{
+private:
+
+	Robos::MessageBasePtr MainCallbackImpl(const Robos::MessageBasePtr pMessage) override;
+
+public:
+
+	FactorialNode();
+	~FactorialNode();
+
+};
+
+
+and in the source file:
+
+// SYSTEM INCLUDES
+
+
+// C++ PROJECT INCLUDES
+#include "FactorialNode.hpp"
+#include "Factorial.hpp"
+#include "ResultMessage.hpp"
+#include "FactorialMessage.hpp"
+
+
+FactorialNode::FactorialNode() : Robos::NodeBase("FactorialNode", "FactorialScheduler",
+						 std::vector<std::string>{"FactorialMessage"},
+						 Async::Types::JobPriority::OTHER)
+{
+}
+
+
+FactorialNode::~FactorialNode()
+{
+}
+
+Robos::MessageBasePtr FactorialNode::MainCallbackImpl(const Robos::MessageBasePtr pMessage)
+{
+	if(pMessage->topic == "FactorialMessage")
+	{
+		// library call
+		long factorial = Factorial(std::dynamic_pointer_cast<FactorialMessage>(pMessage)->value);
+		ResultMessage p = std::make_shared<ResultMessage>();
+		p->result = factorial;
+		return p;
+	}
+	throw std::logic_error("Unknown Message topic: " + pMessage->topic);
+}
+
+
+please see "Using_Robos_With_Python.txt"

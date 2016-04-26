@@ -1,0 +1,23 @@
+Robos currently uses two testing frameworks for unit testing and functional testing. Those are:
+
+Catch: A header only testing framework. See https://github.com/philsquared/Catch for more info.
+
+GoogleTest (known as gtest): Google's open source testing framework. See https://github.com/google/googletest
+			     for more info.
+
+
+Both are included in the Robos source. You can build gtest as a project and then link to it in your CMake
+files. Catch is header only, you just need to know the location of where catch.hpp is (in /cpp/TestingFrameworks/catch/).
+One thing to know about catch is that you generally want catch to generate a main function for you. Take a look
+at any of my unit test projects (in the /<project>/src/<project>/ directory there should be a /unitTest/ folder.
+Take a look at the file called "catchConfig.cpp").
+
+I encourage you to use these frameworks in your own development, primarily because they are quite powerful,
+but also because I provide them as a convenience to you.
+
+Congrats on making it to the end of the tutorial, happy developing with Robos!!!
+
+Feel free to reach out to me:
+
+Andrew Wood,
+aew61@case.edu

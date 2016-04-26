@@ -1,0 +1,30 @@
+Robos Tutorial --part 1
+
+
+Robos is a framework that intends to manage how your code is executed, and handles the interfacing
+between your code and other people's code. More generally, Robos handles the execution of "Nodes,"
+where a "Node" is a program written by clients.
+
+Nodes communicate by passing messages. Every message has a "topic" which is a string value
+that is supposed to summarize what data a message type contains, for instance a message
+that contains Radar data could have a topic of "Radar Data." Nodes consume and produce
+messages, which from now on will be known as a "subscriber / publisher" relationship.
+
+
+Nodes "subscribe" to a message topic, which means that when a message is produced by some
+arbitrary OTHER Node, that message's topic is read, and all Nodes who have told Robos that they
+subscribe to that message topic are given that message to execute with.
+
+Nodes "publish" messages by telling Robos that they have a message to produce. Robos will take
+that message and give it to all Nodes who subscribe to that message's topic. Following is an
+example relationship:
+
+Noda A produces messages with the topic "Radar Data."
+Node B subscribes to the "Radar Data" message topic.
+When Node A executes, it publishes "Radar Data" messages, and Node B will be given those message
+to execute with.
+
+
+To get Robos to manage your code, you need to write a Node, which will interface Robos with your code.
+
+Please continue to "Table_Of_Contents.txt"

@@ -1,0 +1,53 @@
+Now that embedded Python is supported by your environment lets go ahead
+and see how to call your Python scripts.
+
+There is a class called Robos::PyNodeBase which is essentially Robos::NodeBase
+but for calling Python code. The interface is a little different, but the functionality
+is exactly the same. Currently there is no Robos::PyInitNodeBase. Here is the
+breakdown:
+
+	PyNodeBase(std::string name, std::string toRunOn,
+                   std::vector<std::string> subscriptions,
+                   std::string pythonFileName,
+                   Async::Types::JobPriority priority=Async::Types::JobPriority::OTHER).
+
+The only difference between this constructor and NodeBase's constructor
+is:
+
+std::string pythonFileName - The name of the Python file that will be called by
+			     PyNodeBase.
+
+There is a restriction on Python. A PyNodeBase instance will try and call the
+python file you tell it to call, but it will try and call a function called
+"main" in that file. You will have to write that, as well as specify the arguments
+of that "main" function.
+
+PyNodeBase has some methods that must be overriden:
+
+	Robos::MessageBasePtr PyNodeBase::UnpackPythonObject(PyObject* pObject)
+
+	PyObject* PyNodeBase::PackArgs(const Robos::MessageBasePtr pMessage)
+
+You CANNOT OVERRIDE Robos::MessageBasePtr PyNodeBase::MainCallbackImpl(const Robos::MessageBasePtr pMessage)
+anymore, that is taken care of for you. The point of PackArgs() is to convert a MessageBasePtr into memory
+that Python can use (known in C/C++ as a "PyObject"). To do this, take a look at the Python/C interface located
+here:
+	https://docs.python.org/2/c-api/arg.html
+
+The point of UnpackPythonObject() is to take the result of your python call and
+turn it into a MessageBasePtr. You need to take PyObject* and turn it into memory
+that C/C++ can use. For an example on how to do this, see the above link and also
+see:
+
+	https://docs.python.org/2/extending/extending.html SECTION 1.7-1.9
+
+DO NOT DECREMENT THE REFERENCE COUNT OF EITHER THE RESULT OF PackArgs() OR
+THE ARGUMENT TO UnpackPythonObject() THEY ARE TAKEN CARE OF. DOING SO WILL CRASH
+YOUR PROGRAM SOMEWHERE.
+
+Other than these rules, you can do whatever you want in Python. Be aware that
+using Python to access the internet can cause security vulnerabilities if you 
+do not protect yourself!
+
+
+please see "Using_Build_System.txt"

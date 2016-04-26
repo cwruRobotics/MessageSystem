@@ -1,0 +1,77 @@
+Robos executes code concurrently, or has a series of threads that all run
+simultaneously. To control these threads for the best performance, Robos
+executes your code asynchronously. You don't need to know what that is to
+get Robos running, all you need to know is this:
+
+Robos has a set of threads that are used to execute your code. For performance
+reasons, these threads are grouped together by the type of jobs they execute,
+for instance you can designate three threads to execute jobs related to "Radar"
+functionality. The way I think of this is that you can designate a group of
+threads for each message type you have in your Robos system. This grouping
+is called a "Scheduler" and is a data structure internal to Robos that governs
+a set of threads.
+
+For another performance boost, WITHIN a grouping of threads, you can identify
+each thread with a priority. Supported priorities are:
+
+	IMMEDIATE,
+	RELAXED,
+	OTHER
+
+These priorities describe the "time sensativity"
+of the jobs that each thread executes, for instance if you have job A which
+takes a long time to run, and you have job B which is time critical (lets say
+that is publishes messages that tell the robos how fast to go), then you don't
+want job A hogging up the thread and job B unable to run until job A is done.
+The solution is to create two threads WITHIN a Scheduler that have different
+priorities; job A might not be time critical so it can have a priority of OTHER,
+while job B, which is really time critical, might have a priority of IMMEDIATE.
+
+What Robos will guarantee is that, if the Scheduler that job A and job B are run
+on has 2 threads, then if you identify thread 1 with IMMEDIATE, then job B will
+always run on that thread, and if you identify thread 2 as OTHER, then job A will
+always run on that thread and now job B doesn't ever have to wait for job A to finish.
+
+This is known as "configuring your asynchronous environment," and you can do this
+by writing an xml file. The syntax goes:
+
+<?xml version="1.0" encoding="utf-8"?>
+<Engine version="1.0" type="Your_Engine_Name">
+
+	<Scheduler name="MyFirstScheduler">
+        	<threadPriority value="IMMEDIATE"/>
+        	<threadPriority value="OTHER"/>
+    	</Scheduler>
+	<Scheduler name="MySecondScheduler">
+        	<threadPriority value="IMMEDIATE"/>
+        	<threadPriority value="OTHER"/>
+		.
+		.
+		.
+    	</Scheduler>
+	.
+	.
+	.
+
+</Engine>
+
+
+The first two lines and the last line are REQUIRED, but the rest is up to you.
+To declare a Scheduler, you need to give it a name, which can be done with
+the following tags:
+
+<Scheduler name="<Scheduler_Name>">
+</Scheduler>
+
+To declare the threads a Scheduler holds, you identify them by priority, which
+can be done with the following tag:
+
+<threadPriority value="<Priority>"/>
+
+
+Remember there are only three types of Priorities at the moment.
+One more thing to remember is that if you declare there to be "n" threads
+in this xml file, then Robos will spawn "n" threads for your code to execute on
+for a total of "n + 1" threads (including the main thread that spawned them all).
+
+please see "Linking_Robos_To_Your_Code.txt"

@@ -9,9 +9,10 @@ namespace Robos
 {
 
     PyNodeBase::PyNodeBase(std::string name, std::string toRunOn,
+                           std::vector<std::string> subscriptions,
                            std::string pythonFileName,
-                           std::vector<std::string> subscriptions) :
-        NodeBase(name, toRunOn, subscriptions), _pythonFileName(pythonFileName), _moduleLoaded(false), _pModuleName(nullptr),
+                           Async::Types::JobPriority priority) :
+        NodeBase(name, toRunOn, subscriptions, priority), _pythonFileName(pythonFileName), _moduleLoaded(false), _pModuleName(nullptr),
         _pModule(nullptr)
     {
     }

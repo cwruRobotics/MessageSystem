@@ -3,7 +3,7 @@
 
 // C++ PROJECT INCLUDES
 #include "Robos/NodeHelper.hpp"
-
+#include "Robos/Robos.hpp"
 
 namespace Robos
 {
@@ -32,6 +32,11 @@ namespace Robos
     Async::Types::JobPriority& NodeHelper::GetPriority()
     {
         return this->_priority;
+    }
+
+    void NodeHelper::ShutdownRobos()
+    {
+        ShutdownRobosFromNode();
     }
 
 } // end of namespace Robos

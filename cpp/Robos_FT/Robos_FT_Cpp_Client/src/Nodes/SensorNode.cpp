@@ -20,10 +20,10 @@ namespace Robos_FT_Cpp_Client
     void SensorNode::MainCallbackImpl()
     {
         //std::cout << "Running SensorNode" << std::endl;
-        while(Robos::IsRunning())
+        int n = 0;
+        while(Robos::IsRunning() && n >= 0)
         {
-            std::cout << "Please enter a number to compute the factorial of" << std::endl;
-            int n;
+            std::cout << "Please enter a number to compute the factorial of (negative to quit)" << std::endl;
             std::cin >> n;
             if(n >= 0)
             {
@@ -32,6 +32,7 @@ namespace Robos_FT_Cpp_Client
                 this->PublishMessage(sensorMessage);
             }
         }
+        this->ShutdownRobos();
     }
 
 } // end of namespace Robos_FT_Cpp_Client

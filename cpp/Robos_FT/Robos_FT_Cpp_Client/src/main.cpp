@@ -31,7 +31,8 @@ int main(int argc, char** argv)
 
     EXPECT_EQ(Robos::IsRunning(), true);
 
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    //std::this_thread::sleep_for(std::chrono::seconds(5));
+    Robos::WaitForShutdown();
 
     Robos::Stop();
     return 0;

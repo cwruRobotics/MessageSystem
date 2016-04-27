@@ -67,6 +67,8 @@ namespace Robos
          */
         Async::Types::JobPriority& GetPriority();
 
+        void ShutdownRobos();
+
     };
 
 } // end of namespace Robos

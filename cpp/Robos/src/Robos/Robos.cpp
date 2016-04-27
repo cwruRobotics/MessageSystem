@@ -2,6 +2,7 @@
 #include <atomic>
 #include <mutex>
 #include <Async/Async.hpp>
+#include <Utilities/Semaphore.hpp>
 #include <iostream>
 
 
@@ -15,6 +16,7 @@ namespace Robos
     std::mutex              masterLock;
     std::atomic<bool>       masterInitFlag(false);
     Internal::MasterNodePtr pMaster = nullptr;
+    Utilities::Semaphore    robosSemaphore(0);
 
     Internal::MasterNodePtr GetMasterNode()
     {
@@ -105,6 +107,16 @@ namespace Robos
             val = masterInitFlag;
         }
         return val && (pMaster != nullptr);
+    }
+
+    void WaitForShutdown()
+    {
+        robosSemaphore.wait();
+    }
+
+    void ShutdownRobosFromNode()
+    {
+        robosSemaphore.signal();
     }
 
     void Publish(MessageBasePtr pMessage)

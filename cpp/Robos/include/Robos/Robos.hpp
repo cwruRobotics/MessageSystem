@@ -64,6 +64,10 @@ namespace Robos
      */
     ROBOS_API bool IsRunning();
 
+    ROBOS_API void WaitForShutdown();
+
+    void ShutdownRobosFromNode();
+
 } // end of namespace Robos
 
 #endif // end of ROBOS_ROBOS_HPP

@@ -11,6 +11,7 @@
 #include "Robos/unitTest/TestNodeSubscriberTemplate.hpp"
 #include "Robos/unitTest/TestCountInitNode.hpp"
 #include "Robos/unitTest/CountTestNode.hpp"
+#include "Robos/unitTest/ShutdownTestNode.hpp"
 #include "Robos/Robos.hpp"
 
 namespace OSUtils = Utilities::OS;
@@ -94,6 +95,23 @@ namespace Tests
             std::rethrow_exception(pException);
         }
         std::cout << "Calling Robos::Stop()" << std::endl;
+        REQUIRE( Stop() );
+    }
+
+    TEST_CASE("Testing Robos::WaitForShutdown()", "[Robos_unit]")
+    {
+        std::cout << "Executing Robos_unit [" << 5 << "]" << std::endl;
+        auto pInit = std::make_shared<ShutdownTestNode>();
+
+        REQUIRE( Init(OSUtils::GetCurrentDirectory(__FILE__) + OSUtils::GetPathSep() + "TestEngineConfig.xml") );
+        REQUIRE( Register(pInit) );
+
+        Start();
+
+        std::cout << "Waiting for Nodes to decide that Robos needs to shutdown" << std::endl;
+        WaitForShutdown();
+        std::cout << "Nodes have determined shutdown...calling Robos::Stop()" << std::endl;
+
         REQUIRE( Stop() );
     }
 

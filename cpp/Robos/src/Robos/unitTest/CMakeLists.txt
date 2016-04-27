@@ -108,6 +108,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/TestNodeSubscriberTemplate.cpp
             ${SRC_ROOT}/CountTestNode.cpp
             ${SRC_ROOT}/TestCountInitNode.cpp
+            ${SRC_ROOT}/ShutdownTestNode.cpp
             ${SRC_ROOT}/MessageBase_unit.cpp
             ${SRC_ROOT}/NodeDatabase_unit.cpp
             ${SRC_ROOT}/MasterNode_unit.cpp
@@ -129,6 +130,7 @@ if( RUN_UNIT_TESTS )
             ${SRC_ROOT}/TestNodeSubscriberTemplate.hpp
             ${SRC_ROOT}/CountTestNode.hpp
             ${SRC_ROOT}/TestCountInitNode.hpp
+            ${SRC_ROOT}/ShutdownTestNode.hpp
         )
 
         # directories to search for header files

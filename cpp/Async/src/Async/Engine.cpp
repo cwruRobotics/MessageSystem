@@ -35,10 +35,12 @@ namespace EntryPoint
 
     void Engine::Configure(std::string& configPath)
     {
+        /**
         std::string loggingPath = Async::Config::LOGGING_ROOT + "/EngineLog.txt";
         Logging::LoggerPtr pLogger = Logging::Factory::MakeLogger("EngineLogger",
             loggingPath.c_str());
         LOG_DEBUG(pLogger, "Entering %s", "Engine::Configure()");
+        */
         // using ConfigMapType = std::map<std::string, std::vector<Types::JobPriority> >;
         // check validity of file path, open if it exists, and try to parse out configurations
         // for Async. Pass down these configurations to each Scheduler.
@@ -46,11 +48,11 @@ namespace EntryPoint
 
         // check file path validity
         // open file and parse
-        LOG_DEBUG(pLogger, "Creating Document");
+        //LOG_DEBUG(pLogger, "Creating Document");
         rapidxml::file<> configFile(configPath.c_str());
         rapidxml::xml_document<> doc;
 
-        LOG_DEBUG(pLogger, "XML file to parse: %s", configFile.data());
+        //LOG_DEBUG(pLogger, "XML file to parse: %s", configFile.data());
         doc.parse<rapidxml::parse_declaration_node | rapidxml::parse_no_data_nodes>(configFile.data());
 
         const char engineXMLId[] = "Engine";
@@ -63,12 +65,12 @@ namespace EntryPoint
         while (node != nullptr)
         {
             std::string name = node->first_attribute(schedulerNameAttributeXMLId)->value();
-            LOG_DEBUG(pLogger, "Scheduler Node: %s", name.c_str());
+            //LOG_DEBUG(pLogger, "Scheduler Node: %s", name.c_str());
             std::vector<Types::JobPriority> vec;
             childNode = node->first_node(workerThreadXMLId);
             while (childNode != nullptr)
             {
-                LOG_DEBUG(pLogger, "\t Thread priority: %s", childNode->first_attribute(workerThreadPriorityXMLId)->value());
+                //LOG_DEBUG(pLogger, "\t Thread priority: %s", childNode->first_attribute(workerThreadPriorityXMLId)->value());
                 vec.push_back(GetPriorityFromString(childNode->first_attribute(workerThreadPriorityXMLId)->value()));
                 childNode = childNode->next_sibling(workerThreadXMLId);
             }
@@ -78,7 +80,7 @@ namespace EntryPoint
             node = node->next_sibling(schedulerXMLNodeId);
         }
 
-        LOG_DEBUG(pLogger, "Engine built, exiting Engine::Configure()");
+        //LOG_DEBUG(pLogger, "Engine built, exiting Engine::Configure()");
         /*
         for(ConfigMapType::iterator it = configuration.begin(); it != configuration.end(); ++it)
         {

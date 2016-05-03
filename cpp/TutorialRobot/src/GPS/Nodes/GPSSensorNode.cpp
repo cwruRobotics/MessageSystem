@@ -11,7 +11,7 @@ namespace TutorialRobot
 namespace GPS
 {
 
-    GPSSensorNode::GPSSensorNode(iterations) : Robos::InitNodeBase(), _iterations(iterations)
+    GPSSensorNode::GPSSensorNode(int iterations) : Robos::InitNodeBase("GPSSensorNode", "GPSScheduler"), _iterations(iterations)
     {
         // in GenerateGPSData.hpp to intialize path.
         InitializeGPSData(this->_iterations);

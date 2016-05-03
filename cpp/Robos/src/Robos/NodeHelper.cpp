@@ -9,7 +9,7 @@ namespace Robos
 {
 
     NodeHelper::NodeHelper(std::string name, std::string toRunOn,
-                            Async::Types::JobPriority priority) :
+                           Async::Types::JobPriority priority) :
         _name(name), _executionTopic(toRunOn), _priority(priority)
     {
         

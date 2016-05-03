@@ -16,7 +16,7 @@ namespace TutorialRobot
 namespace GPS
 {
 
-    struct TUTORIAL_GPS_API GPSMessage : public Robos::MessageBase
+    struct TUTORIALROBOT_GPS_API GPSMessage : public Robos::MessageBase
     {
         std::vector<double> gpsCoords;
 

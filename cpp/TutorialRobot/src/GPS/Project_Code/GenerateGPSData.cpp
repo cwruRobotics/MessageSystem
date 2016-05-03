@@ -26,7 +26,6 @@ std::vector<std::vector<double> > globalGPSData;
 
     std::vector<double> GenerateGPSData(int position)
     {
-        std::lock_guard<std::mutex> lock(positionMutex);
         if(position < globalGPSData.size())
         {
             return globalGPSData[position];

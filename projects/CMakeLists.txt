@@ -137,6 +137,17 @@ if( BUILD_ROBOS_FT )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Robos_FT" )
 endif()
 
+if( BUILD_TUTORIALROBOT )
+    # Async_FT executable
+    add_subdirectory( ${SRC_ROOT}/TutorialRobot/src
+                      ${OUT_ROOT}/TutorialRobot )
+
+    # give other subprojects a chance to search for libraries and header
+    # files created before the "make install"
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/TutorialRobot" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TutorialRobot" )
+endif()
+
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 

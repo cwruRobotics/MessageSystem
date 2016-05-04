@@ -44,7 +44,6 @@ if( RUN_UNIT_TESTS )
     find_package( gtest REQUIRED )
 
     if( GTEST_FOUND )
-        message( "GTEST_LIBS: ${GTEST_LIBS}" )
         # ---------------------------------------------------------------------
         # Libararies
         # ---------------------------------------------------------------------
@@ -81,11 +80,11 @@ if( RUN_UNIT_TESTS )
 
         if( MSVC )
             include( GNUInstallDirs )
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
             set(TARGET_UUID_LIB "uuid")
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "OSX")
+        elseif( APPLE )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
             set(TARGET_UUID_LIB "uuid")

@@ -62,22 +62,3 @@ if( RUN_UNIT_TESTS )
 #                      ${OUT_ROOT}/TutorialRobot )
 
 endif()
-
-
-# if( RUN_CPP_CHECK )
-#     find_package( cppcheck REQUIRED)
-#     if( CPPCHECK_FOUND )
-#          # include the .cmake file for CppCheck to run
-#          # if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-#               # add windows.cfg (set ( CPPCHECK_LIBRARY_USE "--library=windows.cfg"))
-#          # use linux version
-#
-#        add_custom_target(TARGET
-#            # cppcheck target name
-#            PRE_BUILD
-#            COMMAND ${CMAKE_COMMAND} -E make_directory # output directory
-#        )
-#     else()
-#         message(ERROR "CppCheck not found")
-#     endif()
-# endif()

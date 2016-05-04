@@ -143,26 +143,6 @@ set( DEPENDENCY_CHECK FALSE )
 
 include( GNUInstallDirs )
 
-# set( UTILITIES_LIBS )
-# if( ENABLE_LOGGING )
-#     find_package( Logging REQUIRED )
-#     if( LOGGING_FOUND )
-#         add_library( LOGGING SHARED IMPORTED )
-#         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
-#         else()
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
-#         endif()
-
-#         list( APPEND UTILITIES_LIBS LOGGING )
-
-#     else()
-#         message( WARNING "Logging not found...skipping usage" )
-#     endif()
-# endif()
-# list( LENGTH UTILITIES_LIBS UTILITIES_LIBS_LENGTH )
-
 set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Async
     "Logging"
@@ -175,7 +155,6 @@ endif()
 
 include(ProjectLinker)
 
-message("From ProjectLinker ${PROJECT_NAME}_INCLUDES ${${PROJECT_NAME}_INCLUDES}")
 list( APPEND INCLUDE_DIRS ${${PROJECT_NAME}_INCLUDES} )
 
 if( NOT DEPENDENCY_CHECK )

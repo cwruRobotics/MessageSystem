@@ -118,26 +118,6 @@ set( DEPENDENCY_CHECK FALSE )
 
 include( GNUInstallDirs )
 
-# set( ROBOS_LIBS )
-# if( ENABLE_LOGGING )
-#     find_package( Logging REQUIRED )
-#     if( LOGGING_FOUND )
-#         add_library( LOGGING SHARED IMPORTED )
-#         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
-#         else()
-#             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
-#         endif()
-# 
-#         list( APPEND ROBOS_LIBS LOGGING )
-# 
-#     else()
-#         message( WARNING "Logging not found...skipping usage" )
-#     endif()
-# endif()
-# list( LENGTH ROBOS_LIBS ROBOS_LIBS_LENGTH )
-
 set( ${PROJECT_NAME}_IMPORTED_LIST
     # all libraries to import when building Robos
     "Logging"
@@ -171,7 +151,6 @@ include( GenerateExportHeader )
 
 add_library( ${TUTORIALROBOT_GPS_LIB_NAME} SHARED ${TUTORIALROBOT_GPS_SRCS} ${TUTORIALROBOT_GPS_PUBLIC_HEADERS} ${TUTORIALROBOT_GPS_PRIVATE_HEADERS})
 if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
-    message("\n\n\nLinking TutorialRobot_GPS lib to Robos libraries\n\n\n")
     target_link_libraries( ${TUTORIALROBOT_GPS_LIB_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
 endif()
 if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
@@ -188,8 +167,6 @@ set_target_properties( ${TUTORIALROBOT_GPS_LIB_NAME} PROPERTIES
 # -------------------------------------------------------------------------------
 # INSTALLATION
 # -------------------------------------------------------------------------------
-
-message("OUT_ROOT: ${OUT_ROOT}")
 
 # install targets
 install( TARGETS ${TUTORIALROBOT_GPS_LIB_NAME}

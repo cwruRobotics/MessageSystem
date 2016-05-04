@@ -42,26 +42,6 @@ if( RUN_UNIT_TESTS )
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
 
-    # set( ASYNC_LIBS )
-    # if( ENABLE_LOGGING )
-    #     find_package( Logging REQUIRED )
-    #     if( LOGGING_FOUND )
-    #         add_library( LOGGING SHARED IMPORTED )
-    #         if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-    #             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_SHARED} )
-    #             set_property( TARGET LOGGING PROPERTY IMPORTED_IMPLIB ${LOGGING_LIBRARY} )
-    #         else()
-    #             set_property( TARGET LOGGING PROPERTY IMPORTED_LOCATION ${LOGGING_LIBRARY} )
-    #         endif()
-
-    #         list( APPEND ASYNC_LIBS LOGGING )
-
-    #     else()
-    #         message( WARNING "Logging not found...skipping usage" )
-    #     endif()
-    # endif()
-    # list( LENGTH ASYNC_LIBS ASYNC_LIBS_LENGTH )
-
     set( ${PROJECT_NAME}_IMPORTED_LIST
         # all libraries to import when building Async
         "Logging"
@@ -140,11 +120,11 @@ if( RUN_UNIT_TESTS )
 
         if( MSVC )
             include( GNUInstallDirs )
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
             include( GNUInstallDirs )
-            set(TARGET_PTHREADS_LIB "pthread")
+            set(TARGET_PTHREADS_LIB "pthread" )
             set(TARGET_UUID_LIB "uuid")
-        elseif( ${CMAKE_SYSTEM_NAME} MATCHES "OSX")
+        elseif( APPLE )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
             set(TARGET_UUID_LIB "uuid")

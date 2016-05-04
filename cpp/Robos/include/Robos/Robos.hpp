@@ -9,7 +9,6 @@
 #include "Robos/LibraryExport.hpp"
 #include "Robos/NodeBase.hpp"
 #include "Robos/InitNodeBase.hpp"
-#include "RobosConfig.hpp"
 
 /**
  * @namespace Robos The Robos namespace.
@@ -24,7 +23,7 @@ namespace Robos
      * @param[in]   asyncConfigPath     The absolute path to the Async config file.
      * @param[out]  bool                True if successful, false otherwise.
      */
-    ROBOS_API bool Init(std::string asyncConfigPath=Config::ASYNC_CONFIG_PATH);
+    ROBOS_API bool Init(std::string asyncConfigPath="");
 
     /**
      * Starts Robos. During a call to Robos::Start(), the master node will start

@@ -10,6 +10,7 @@
 #include "Robos/Robos.hpp"
 #include "Robos/MasterNode.hpp"
 #include "Robos/MessageBase.hpp"
+#include "RobosConfig.hpp"
 
 namespace Robos
 {
@@ -34,6 +35,10 @@ namespace Robos
 
     bool Init(std::string asyncConfigPath)
     {
+        if(asyncConfigPath == "")
+        {
+            asyncConfigPath = Config::ASYNC_CONFIG_PATH;
+        }
         bool val = false;
         {
             std::lock_guard<std::mutex> lock(masterLock);

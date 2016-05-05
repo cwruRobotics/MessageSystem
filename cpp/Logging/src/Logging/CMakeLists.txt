@@ -1,7 +1,3 @@
-# ===============================================================================
-# CMAKE PROPERTIES
-# ===============================================================================
-
 # this is the required version of CMake necessary
 # to run. CMake will fail if you have anything
 # less than 3.3
@@ -20,10 +16,6 @@ get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../..
 # if <module_name> is located in ${CMAKE_LOCAL_ROOT}/modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
-# ===============================================================================
-# PROJECT PROPERTIES
-# ===============================================================================
-
 # Project name
 project( Logging CXX )
 
@@ -33,17 +25,11 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE )
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../include ABSOLUTE )
 
-# ===============================================================================
-# PROJECT EXTERNAL OPTIONS
-# ===============================================================================
 # this is where we could get the Version numbering from Version.h and
 # save them as CMake variables. for now, lets just declare them
 set( PROJECT_VERSION_MAJOR "1" )
 set( PROJECT_VERSION_MINOR "0" )
 set( PROJECT_VERSION_PATCH "0" )
-
-# -------------------------------------------------------------------------------
-# Logging library
 
 # Source files
 set( LOGGING_SRCS
@@ -74,12 +60,6 @@ set( INCLUDE_DIRS
     ${SRC_ROOT}
 )
 
-# load external modules
-# (none yet)...Logging does not depend on anything else
-
-# set target specific compiler definitions
-# this should ONLY be definitions needed to build the source code.
-# examples: macros ON/OFF, etc.
 set( LOGGING_COMPILE_DEFINITIONS )
 
 # check required libraries and header files and such.
@@ -87,42 +67,13 @@ set( LOGGING_COMPILE_DEFINITIONS )
 # modules requiring their own dependencies
 set( DEPENDENCY_CHECK TRUE )
 
-# OS specific files and definitions
-# if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-
-#     include( ${SRC_ROOT}/Logging/Windows/Windows.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-    
-# elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
-    
-#     include( ${SRC_ROOT}/Logging/Linux/Linux.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-
-# elseif( ${CMAKE_SYSTEM_NAME} MATCHES "OSX" )
-
-#     include( ${SRC_ROOT}/Logging/OSX/OSX.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-
-# else()
-#     message( SEND_ERROR "${CMAKE_SYSTEM_NAME} system build not supported" )
-# endif()
-
 include( GNUInstallDirs )
 
 if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )
 endif()
 
-
-# -------------------------------------------------------------------------------
-# TARGET SETUP
-# -------------------------------------------------------------------------------
-
 include_directories( ${INCLUDE_DIRS} )
-
-# -------------------------------------------------------------------------------
-# Libraries
-#
 
 # Logging library
 set( LOGGING_LIB_NAME ${PROJECT_NAME} )
@@ -131,7 +82,6 @@ set( LOGGING_LIB_NAME ${PROJECT_NAME} )
 include( GenerateExportHeader )
 
 add_library( ${LOGGING_LIB_NAME} SHARED ${LOGGING_SRCS} ${LOGGING_PUBLIC_HEADERS} ${LOGGING_PRIVATE_HEADERS} )
-# target_link_libraries( ${LOGGING_LIB_NAME} ${LOGGING_LIBS} )
 
 set_target_properties( ${LOGGING_LIB_NAME} PROPERTIES
     PUBLIC_HEADER       "${LOGGING_PUBLIC_HEADERS}"
@@ -139,10 +89,6 @@ set_target_properties( ${LOGGING_LIB_NAME} PROPERTIES
     SOVERSION           "${PROJECT_VERSION_MAJOR}"
     VERSION             "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
-
-# -------------------------------------------------------------------------------
-# INSTALLATION
-# -------------------------------------------------------------------------------
 
 # install targets
 install( TARGETS ${LOGGING_LIB_NAME}

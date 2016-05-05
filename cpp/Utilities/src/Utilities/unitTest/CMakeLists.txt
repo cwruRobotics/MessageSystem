@@ -1,7 +1,3 @@
-# ===============================================================================
-# CMAKE PROPERTIES
-# ===============================================================================
-
 # this is the required version of CMake necessary
 # to run. CMake will fail if you have anything
 # less than 3.3
@@ -16,9 +12,6 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../cmake ABSOLUTE )
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
-# ===============================================================================
-# PROJECT PROPERTIES
-# ===============================================================================
 
 # Project name
 project( UtilitiesUnitTests CXX )
@@ -32,10 +25,6 @@ get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../include AB
 get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../build/out/include ABSOLUTE )
 
 get_filename_component( CATCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../TestingFrameworks ABSOLUTE )
-
-# ------------------------------------------------------------------------------
-# GTest
-#
 
 if( RUN_UNIT_TESTS )
     enable_testing()
@@ -57,13 +46,6 @@ if( RUN_UNIT_TESTS )
     find_package( Catch REQUIRED )
 
     if( CATCH_FOUND )
-        # ---------------------------------------------------------------------
-        # Libararies
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # Targets Setup
-        # ---------------------------------------------------------------------
 
         # source files
         set( UTILITIES_UNITTEST_SOURCES
@@ -110,8 +92,6 @@ if( RUN_UNIT_TESTS )
         endif()
 
         set( UTILITIES_UNITTEST_HEADERS
-            # apparently we don't need to include Async headers.
-            # I assume its because we are not exporting them.
 
             # UtilitiesUnitTests headers
             ${SRC_ROOT}/CommonMemory.hpp
@@ -136,11 +116,9 @@ if( RUN_UNIT_TESTS )
         elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
         elseif( APPLE )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
         else()
             message(SEND_ERROR "OS [${CMAKE_SYSTEM_NAME}] not supported")
         endif()
@@ -150,25 +128,20 @@ if( RUN_UNIT_TESTS )
         include_directories( ${INCLUDE_DIRS} )
 
         add_executable( ${PROJECT_NAME} ${UTILITIES_UNITTEST_SOURCES} )
-        if( ${${PROJECT_NAME}_IMPORTED_LIBS_LENGTH} GREATER 0 )
-            target_link_libraries( ${PROJECT_NAME} ${${PROJECT_NAME}_IMPORTED_LIBS} )
-        endif()
-        if( ${${PROJECT_NAME}_STATIC_LIBS_LENGTH} GREATER 0 )
-            target_link_libraries( ${PROJECT_NAME}
-            ${${PROJECT_NAME}_STATIC_LIBS} )
-        endif()
 
         # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
-                # ${TARGET_UUID_LIB}
+                ${${PROJECT_NAME}_IMPORTED_LIBS}
+                ${${PROJECT_NAME}_STATIC_LIBS}
             )
         else()
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
-                # ${TARGET_UUID_LIB}
+                ${${PROJECT_NAME}_IMPORTED_LIBS}
+                ${${PROJECT_NAME}_STATIC_LIBS}
             )
         endif()
 

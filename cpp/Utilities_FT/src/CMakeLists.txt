@@ -1,7 +1,3 @@
-# ===============================================================================
-# CMAKE PROPERTIES
-# ===============================================================================
-
 # this is the required version of CMake necessary
 # to run. CMake will fail if you have anything
 # less than 3.3
@@ -16,9 +12,6 @@ set( CMAKE_VERBOSE_MAKEFILE "ON" )
 get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake ABSOLUTE )
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
-# ===============================================================================
-# PROJECT PROPERTIES
-# ===============================================================================
 
 # Project name
 project( Utilities_FT CXX )
@@ -29,29 +22,14 @@ get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 # Public header file root directory
 get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../include ABSOLUTE )
 
-# get_filename_component( TEST_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../TestingFrameworks ABSOLUTE )
-
-# ------------------------------------------------------------------------------
-# GTest
-#
-
 if( RUN_UNIT_TESTS )
     enable_testing()
     
     list( APPEND CMAKE_FIND_ROOT_PATH ${INSTALL_ROOT} )
-    # include(BringInPackages)  # NOT build in
-    # BringInPackages()
     find_package( gtest REQUIRED )
 
     if( GTEST_FOUND )
         message( "GTEST_LIBS: ${GTEST_LIBS}" )
-        # ---------------------------------------------------------------------
-        # Libararies
-        # ---------------------------------------------------------------------
-
-        # ---------------------------------------------------------------------
-        # Targets Setup
-        # ---------------------------------------------------------------------
 
         # source files
         set( UTILITIES_FT_UNITTEST_SOURCES
@@ -72,11 +50,9 @@ if( RUN_UNIT_TESTS )
         elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
         elseif( APPLE )
             include( GNUInstallDirs )
             set(TARGET_PTHREADS_LIB "pthread")
-            set(TARGET_UUID_LIB "uuid")
         else()
             message(SEND_ERROR "OS [${CMAKE_SYSTEM_NAME}] not supported")
         endif()
@@ -92,23 +68,18 @@ if( RUN_UNIT_TESTS )
 
         add_executable( ${PROJECT_NAME} ${UTILITIES_FT_UNITTEST_SOURCES} )
 
-        # set_target_properties( ${PROJECT_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
         string( TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_LOWER )
         if( CMAKE_BUILD_TYPE_LOWER STREQUAL "debug" )
             message( "Linking executable for Debug" )
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
                 ${${PROJECT_NAME}_IMPORTED_LIBS}
-                # ${GTEST_LIBS}
-                # ${TARGET_UUID_LIB}
             )
         else()
             message( "Linking executable for Release" )
             target_link_libraries( ${PROJECT_NAME}
                 ${TARGET_PTHREADS_LIB}
                 ${${PROJECT_NAME}_IMPORTED_LIBS}
-                # ${GTEST_LIBS}
-                # ${TARGET_UUID_LIB}
             )
         endif()
 

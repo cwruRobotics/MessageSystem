@@ -1,7 +1,3 @@
-# ===============================================================================
-# CMAKE PROPERTIES
-# ===============================================================================
-
 # this is the required version of CMake necessary
 # to run. CMake will fail if you have anything
 # less than 3.3
@@ -20,28 +16,13 @@ get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../cm
 # if <module_name> is located in ${CMAKE_LOCAL_ROOT}/modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
-# ===============================================================================
-# PROJECT PROPERTIES
-# ===============================================================================
-
 # this is the project name and type
 project( Robos CXX )
 
 get_filename_component( SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE )
 
-# this is where all build intermediate files will go
-#get_filename_component( OUT_ROOT ${CMAKE_CURRENT_BINARY_DIR}/out ABSOLUTE )
-
-# ===============================================================================
-# PROJECT EXTERNAL OPTIONS
-# ===============================================================================
-
 option( RUN_UNIT_TESTS "Unit test support (default OFF)" OFF )
 option( RUN_CPP_CHECK  "Static analysis support (default OFF)" OFF )
-
-# ===============================================================================
-# PROJECT SUBMODULES
-# ===============================================================================
 
 # documentation variables...ignore for now
 set(DOC_PUBLIC_INPUT_LIST )

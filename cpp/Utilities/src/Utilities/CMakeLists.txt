@@ -1,7 +1,3 @@
-# ===============================================================================
-# CMAKE PROPERTIES
-# ===============================================================================
-
 # this is the required version of CMake necessary
 # to run. CMake will fail if you have anything
 # less than 3.3
@@ -17,10 +13,6 @@ get_filename_component( CMAKE_LOCAL_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../..
 
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_LOCAL_ROOT}/modules )
 
-# ===============================================================================
-# PROJECT PROPERTIES
-# ===============================================================================
-
 # Project name
 project( Utilities CXX )
 
@@ -32,17 +24,11 @@ get_filename_component( INC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../include ABSOL
 
 get_filename_component( CONFIG_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../../../../build/out/include ABSOLUTE )
 
-# ===============================================================================
-# PROJECT EXTERNAL OPTIONS
-# ===============================================================================
 # this is where we could get the Version numbering from Version.h and
 # save them as CMake variables. for now, lets just declare them
 set( PROJECT_VERSION_MAJOR "1" )
 set( PROJECT_VERSION_MINOR "0" )
 set( PROJECT_VERSION_PATCH "0" )
-
-# -------------------------------------------------------------------------------
-# Logging library
 
 # Source files
 set( UTILITIES_SRCS
@@ -106,40 +92,14 @@ set( INCLUDE_DIRS
     ${CONFIG_ROOT}
 )
 
-# load external modules
-# (none yet)...Logging does not depend on anything else
-
 set( ENABLE_EXTERNAL_STRUCTURES_TEST "OFF" )
 
-# set target specific compiler definitions
-# this should ONLY be definitions needed to build the source code.
-# examples: macros ON/OFF, etc.
 set( UTILITIES_COMPILE_DEFINITIONS )
 
 # check required libraries and header files and such.
 # this will fail CMake if set to False due to required
 # modules requiring their own dependencies
 set( DEPENDENCY_CHECK FALSE )
-
-# OS specific files and definitions
-# if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
-
-#     include( ${SRC_ROOT}/Logging/Windows/Windows.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-    
-# elseif( ${CMAKE_SYSTEM_NAME} MATCHES "Linux" )
-    
-#     include( ${SRC_ROOT}/Logging/Linux/Linux.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-
-# elseif( ${CMAKE_SYSTEM_NAME} MATCHES "OSX" )
-
-#     include( ${SRC_ROOT}/Logging/OSX/OSX.cmake )
-#     include( GNUInstallDirs ) # TODO make a Windows module if necessary
-
-# else()
-#     message( SEND_ERROR "${CMAKE_SYSTEM_NAME} system build not supported" )
-# endif()
 
 include( GNUInstallDirs )
 
@@ -161,16 +121,7 @@ if( NOT DEPENDENCY_CHECK )
     message( SEND_ERROR "Required header files or libraries not found" )
 endif()
 
-
-# -------------------------------------------------------------------------------
-# TARGET SETUP
-# -------------------------------------------------------------------------------
-
 include_directories( ${INCLUDE_DIRS} )
-
-# -------------------------------------------------------------------------------
-# Libraries
-#
 
 # Logging library
 set( UTILITIES_LIB_NAME ${PROJECT_NAME} )
@@ -192,10 +143,6 @@ set_target_properties( ${UTILITIES_LIB_NAME} PROPERTIES
     SOVERSION           "${PROJECT_VERSION_MAJOR}"
     VERSION             "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
 )
-
-# -------------------------------------------------------------------------------
-# INSTALLATION
-# -------------------------------------------------------------------------------
 
 # install targets
 install( TARGETS ${UTILITIES_LIB_NAME}

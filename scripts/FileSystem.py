@@ -27,8 +27,11 @@ OUT_ROOT = 11               # the absolute path to the directory where built cod
 INSTALL_ROOT = 12           # the absolute path to the top level directory where all built code goes
 INSTALL_DIR = 13            # the absolute path to the directory where public c++ headers go when built
 LOG_DIR = 14                # the absolute path to the directory where all log files will be written
-DEPENDENCIES = 15
-VISUAL_STUDIO_ROOT = 16
+DEPENDENCIES = 15           # the absolute path to the directory containing the file that the build system
+                            # uses to determine which libraries depend on others. The build system
+                            # will move these (project) libraries into the currently building project's
+                            # workspace for linking.
+IDE_ROOT = 16
 CLIENT_ROOT = 17
 CLIENT_CONFIG = 18
 
@@ -66,8 +69,8 @@ def getDirectory(directoryEnum, configuration='', projectName=''):
         return os.path.join(getDirectory(WORKING, configuration, projectName), 'logs')
     elif directoryEnum == DEPENDENCIES:
         return os.path.join(getDirectory(ROOT), "dependencies")
-    elif directoryEnum == VISUAL_STUDIO_ROOT:
-        return os.path.join(getDirectory(OUT_ROOT, configuration, projectName), "VisualStudio")
+    elif directoryEnum == IDE_ROOT:
+        return os.path.join(getDirectory(OUT_ROOT, configuration, projectName), "IDE")
     elif directoryEnum == CLIENT_ROOT:
         return os.path.join(getDirectory(ROOT), "client")
     elif directoryEnum == CLIENT_CONFIG:

@@ -37,11 +37,9 @@ set( ASYNC_SRCS
 
     ${SRC_ROOT}/Async/Result.cpp
     ${SRC_ROOT}/Async/WorkItemStates.cpp
-    # ${SRC_ROOT}/Async/WorkItemStateMachine.cpp
     ${SRC_ROOT}/Async/Scheduler.cpp
     ${SRC_ROOT}/Async/WorkItem.cpp
     ${SRC_ROOT}/Async/SettlementStates.cpp
-    # ${SRC_ROOT}/Async/ContinuableWorkItem.cpp
     ${SRC_ROOT}/Async/JobPriorities.cpp
     ${SRC_ROOT}/Async/PromiseBaseImpl.cpp
     ${SRC_ROOT}/Async/ConcurrencyStates.cpp
@@ -81,10 +79,8 @@ set( ASYNC_PRIVATE_HEADERS
     # logging
     ${CONFIG_ROOT}/AsyncConfig.hpp
 
-    # ${INC_ROOT}/Async/WorkItemStateMachine.hpp
     ${INC_ROOT}/Async/WorkItem.hpp
     ${INC_ROOT}/Async/Scheduler.hpp
-    # ${INC_ROOT}/Async/ContinuableWorkItem.hpp
     ${INC_ROOT}/Async/WorkerThread.hpp
     ${INC_ROOT}/Async/Engine.hpp
 )

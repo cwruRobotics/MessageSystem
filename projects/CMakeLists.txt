@@ -132,6 +132,22 @@ if( BUILD_TUTORIALROBOT )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/TutorialRobot" )
 endif()
 
+if( BUILD_ADC )
+    add_subdirectory( ${SRC_ROOT}/ADC/src/ADC
+                      ${SRC_ROOT}/ADC )
+
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/ADC" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/ADC" )
+endif()
+
+if ( BUILD_I2C )
+    add_subdirectory( ${SRC_ROOT}/I2C/src
+	              ${SRC_ROOT}/I2C )
+
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/I2C" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/I2C" )
+endif()
+
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )
 
@@ -157,6 +173,16 @@ if( RUN_UNIT_TESTS )
         # Robos unit tests
         add_subdirectory( ${SRC_ROOT}/Robos/src/Robos/unitTest
                           ${OUT_ROOT}/RobosUnit )
+    endif()
+
+    if( BUILD_ADC )
+	add_subdirectory( ${SRC_ROOT}/ADC/src/ADC/unitTest
+                          ${OUT_ROOT}/ADCUnit )
+    endif()
+
+    if( BUILD_I2C )
+	add_subdirectory( ${SRC_ROOT}/I2C/src/I2C/unitTest
+		          ${OUT_ROOT}/I2CUnit )
     endif()
 
 endif()

@@ -3,6 +3,8 @@ set( SECURITY_FLAGS "-Wall -Wformat-security -fstack-protector-strong -Wstack-pr
 set( SECURITY_LINK_FLAGS "-Wl,-z,relro -Wl,-z,now" )
 
 if( ${PROCESSOR} MATCHES "aarch64" )
+    set( SECURITY_FLAGS "" )        # disable flags that aarch64 doesn't support
+    set( SECURITY_LINK_FLAGS "" )   # disable flags that aarch64 doesn't support
     set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SECURITY_FLAGS} -fpic -Werror -std=c++11 -lrt -ldl" CACHE STRING "c++ flags" )
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SECURITY_FLAGS} -fpic -Werror -lrt -ldl" CACHE STRING "c flags" )
     set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SECURITY_LINK_FLAGS}" CACHE STRING "exe linker flags" )

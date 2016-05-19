@@ -154,6 +154,7 @@ if ( BUILD_GLENN )
     
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Glenn" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Glenn" )
+endif()
 
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )

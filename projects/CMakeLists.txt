@@ -141,12 +141,19 @@ if( BUILD_ADC )
 endif()
 
 if ( BUILD_I2C )
-    add_subdirectory( ${SRC_ROOT}/I2C/src
+    add_subdirectory( ${SRC_ROOT}/I2C/src/I2C
 	              ${SRC_ROOT}/I2C )
 
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/I2C" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/I2C" )
 endif()
+
+if ( BUILD_GLENN )
+    add_subdirectory( ${SRC_ROOT}/Glenn/src/Glenn
+	              ${SRC_ROOT}/Glenn )
+    
+    list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Glenn" )
+    list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Glenn" )
 
 # this variable is also set through the python build scripts.
 if( RUN_UNIT_TESTS )

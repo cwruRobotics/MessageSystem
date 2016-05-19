@@ -133,24 +133,24 @@ if( BUILD_TUTORIALROBOT )
 endif()
 
 if( BUILD_ADC )
-    add_subdirectory( ${SRC_ROOT}/ADC/src/ADC
-                      ${SRC_ROOT}/ADC )
+    add_subdirectory( ${SRC_ROOT}/../../cpp/src/ADC
+                      ${OUT_ROOT}/ADC )
 
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/ADC" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/ADC" )
 endif()
 
 if ( BUILD_I2C )
-    add_subdirectory( ${SRC_ROOT}/I2C/src/I2C
-	              ${SRC_ROOT}/I2C )
+    add_subdirectory( ${SRC_ROOT}/../../cpp/src/I2C
+	              ${OUT_ROOT}/I2C )
 
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/I2C" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/I2C" )
 endif()
 
 if ( BUILD_GLENN )
-    add_subdirectory( ${SRC_ROOT}/Glenn/src/Glenn
-	              ${SRC_ROOT}/Glenn )
+    add_subdirectory( ${SRC_ROOT}/../../cpp/src/Glenn
+	              ${OUT_ROOT}/Glenn )
     
     list( APPEND CMAKE_INCLUDE_PATH "${OUT_ROOT}/Glenn" )
     list( APPEND CMAKE_LIBRARY_PATH "${OUT_ROOT}/Glenn" )

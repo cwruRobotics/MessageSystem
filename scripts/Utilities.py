@@ -10,6 +10,7 @@ import traceback
 
 # PYTHON PROJECT IMPORTS
 
+
 def failExecution(errorMsg):
     print("Failed Build Stack:")
     traceback.print_stack(file=sys.stdout)
@@ -128,12 +129,14 @@ def getWindowsRegistryValue(key, subkey, value):
         failExecution("Cannot get registry values on Unix based system")
 '''
 
+
 def getVisualStudioVersion():
     return int(os.environ.get('VS_VERSION')) if os.environ.get('VS_VERSION') is not None else 14
 
+
 def formatVisualStudioVersion(visualStudioVersion=14):
     return "%s 20%s" % (visualStudioVersion, visualStudioVersion + 1)
-    
+
 
 def getMachineBits():
     if "64" in getProcessorInfo():

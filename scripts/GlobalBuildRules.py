@@ -88,7 +88,8 @@ class GlobalBuild(object):
                 if not os.path.exists(baseRoot):
                     baseRoot = os.path.join(rootToCopyFrom, "lib64")
                 if not os.path.exists(baseRoot):
-                    Utilities.failExecution("directories [%s, %s] do not exist" % (os.path.join(rootToCopyFrom, "lib"), baseRoot))
+                    Utilities.failExecution("directories [%s, %s] do not exist" %
+                                            (os.path.join(rootToCopyFrom, "lib"), baseRoot))
                 fileRegex = "lib" + projectToCopyFrom
                 currentFilePath = None
                 for entry in os.listdir(baseRoot):
@@ -102,11 +103,10 @@ class GlobalBuild(object):
                            os.path.join(destinationDir, "include", projectToCopyFrom))
 
     def buildAndLoadDependencies(self):
-        rootBuildDirectory = FileSystem.getDirectory(FileSystem.WORKING, self._config)
         dependentProjects = self.parseDependencyFile()
         print("dependentProjects %s" % dependentProjects)
         projectBuild = None
-        
+
         Utilities.mkdir(FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name))
         allBuiltOutDir = FileSystem.getDirectory(FileSystem.OUT_ROOT, self._config)
         for project in dependentProjects:
@@ -121,7 +121,6 @@ class GlobalBuild(object):
             self.moveDependentProjectsToWorkingDir(project[0],
                                                    project[1] if len(project) >= 2 else None,
                                                    allBuiltOutDir)
-            
 
     def setupWorkspace(self):
         print("Setting up workspaces for project [%s]" % self._project_name)
@@ -163,8 +162,8 @@ class GlobalBuild(object):
 
             formattedHeader += offset + "extern const " + arg[0] + " " + arg[1] + ";\n\n"
             formattedSrc += offset + "const " + arg[0] + " " + \
-                            arg[1] + " = " + ("\"" + str(arg[3]) + "\"" if "string" in arg[0] else str(arg[3])) + \
-                            ";\n\n"
+                arg[1] + " = " + ("\"" + str(arg[3]) + "\"" if "string" in arg[0] else str(arg[3])) + \
+                ";\n\n"
 
         return formattedHeader, formattedSrc
 
@@ -175,7 +174,7 @@ class GlobalBuild(object):
         asyncConfig = None
         if asyncConfigPath is None:
             asyncConfig = os.path.join(FileSystem.getDirectory(FileSystem.CLIENT_CONFIG),
-                                      (asyncConfigFileName if asyncConfigFileName is not None else "AsyncConfig.xml"))
+                                       (asyncConfigFileName if asyncConfigFileName is not None else "AsyncConfig.xml"))
         else:
             asyncConfig = asyncConfigPath
         Utilities.mkdir(outIncludeDir)
@@ -202,11 +201,11 @@ class GlobalBuild(object):
                        "namespace " + self._project_name + "\n"
                        "{\n"
                        "namespace Config\n"
-                       "{\n\n" + \
-                       formattedConfigArgsHeader + \
+                       "{\n\n" +
+                       formattedConfigArgsHeader +
                        "} // end of namespace Config\n"
                        "} // end of namespace " + self._project_name + "\n"
-                       "#endif // end of " + projNameUpper  + "_CONFIG_" + projNameUpper + "CONFIG_HPP\n")
+                       "#endif // end of " + projNameUpper + "_CONFIG_" + projNameUpper + "CONFIG_HPP\n")
         with open(os.path.join(outIncludeDir, self._project_name + "Config.cpp"), 'w') as file:
             file.write("// SYSTEM INCLUDES\n\n"
                        "// C++ PROJECT INCLUDES\n"
@@ -214,8 +213,8 @@ class GlobalBuild(object):
                        "namespace " + self._project_name + "\n"
                        "{\n"
                        "namespace Config\n"
-                       "{\n\n" + \
-                       formattedConfigArgsSrc + \
+                       "{\n\n" +
+                       formattedConfigArgsSrc +
                        "} // end of namespace Config\n"
                        "} // end of namespace " + self._project_name + "\n")
 
@@ -244,11 +243,6 @@ class GlobalBuild(object):
             dummyDir
         )
 
-        includeDir = os.path.relpath(
-            os.path.join(FileSystem.getDirectory(FileSystem.INSTALL_DIR, self._config), "include"),
-            dummyDir
-        )
-
         libDir = os.path.relpath(
             os.path.join(FileSystem.getDirectory(FileSystem.INSTALL_ROOT, self._config, self._project_name), "lib"),
             dummyDir
@@ -261,7 +255,7 @@ class GlobalBuild(object):
         if platform.system() == "Windows":
             installRootDir = "\"%s\"" % installRootDir.replace("\\", "/")
             outIncludeDir = "\"%s\"" % outIncludeDir.replace("\\", "/")
-            toolchain = "\"%s\"" % toolchainDir.replace("\\", "/")
+            # toolchain = "\"%s\"" % toolchainDir.replace("\\", "/")
 
         if self._config == "release":
             cmake_config = "Release"
@@ -275,35 +269,31 @@ class GlobalBuild(object):
         else:
             fullToolchainPath = os.path.join(toolchainDir, "toolchain_unix_%s.cmake" % Utilities.getMachineBits())
 
-        monoPath = os.environ.get("MONO_BASE_PATH").replace("\\", "/") if os.environ.get("MONO_BASE_PATH") is not None else ""
-        pythonPath = os.environ.get("PYTHON_BASE_PATH").replace("\\", "/") if os.environ.get("PYTHON_BASE_PATH") is not None else ""
+        monoPath = os.environ.get("MONO_BASE_PATH").replace("\\", "/") \
+            if os.environ.get("MONO_BASE_PATH") is not None else ""
+        pythonPath = os.environ.get("PYTHON_BASE_PATH").replace("\\", "/") \
+            if os.environ.get("PYTHON_BASE_PATH") is not None else ""
         pythonVer = os.environ.get("PYTHON_VERSION") if os.environ.get("PYTHON_VERSION") is not None else 0
 
         # remember CMake paths need to be relative to the top level
         # directory that CMake is called (in this case projects/<project_name>)
         CMakeArgs = [
             relCMakeProjectDir,
-            # "--build \"%s\"" % (workingDirectory),
             "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, binDir),
-            # "-DCMAKE_INCLUDE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, includeDir),
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
             "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=%s%s" % (pathPrefix, libDir),
             "-DCMAKE_PREFIX_PATH=%s" % (installRootDir),  # absolute path
-            # "-DOUT_INCLUDE_DIRECTORY=%s" % (outIncludeDir),  # absolute path
             "-DCMAKE_BUILD_TYPE=%s" % cmake_config,
             "-DPROCESSOR=%s" % Utilities.getProcessorInfo(),
             "-DCMAKE_TOOLCHAIN_FILE=%s" % fullToolchainPath,  # toolchain file path (relative)
             "-DBUILD_%s=ON" % self._project_name.upper(),
-            "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir, # install root dir
+            "-DCMAKE_INSTALL_PREFIX=%s" % allBuiltOutDir,  # install root dir
             "-DRUN_UNIT_TESTS=%s" % test,
             "-DENABLE_LOGGING=%s" % logging,
             "-DMONO_PATH=\"%s\"" % monoPath,
             "-DPYTHON_PATH=\"%s\"" % pythonPath,
             "-DPYTHON_VERSION=%s" % pythonVer,
             "-DPYTHON_ENABLED=%s" % python,
-            # "-DINSTALL_ROOT=%s" %  # install root dir (absolute)
-            # "-DCMAKE_PREFIX_PATH=%s" %  # out include dir path (absolute)
-            # "-DCMAKE_INCLUDE_PATH=%s" % (dependencyIncludeDir)  # absolute path
         ]
         return CMakeArgs
 

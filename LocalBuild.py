@@ -6,7 +6,8 @@ import sys
 
 
 # PYTHON PROJECT IMPORTS
-sys.path.append("scripts")  # now we can import modules from <currentDirectory>/scripts
+currentDir = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(currentDir, "scripts"))  # now we can import modules from <currentDirectory>/scripts
 import LocalBuildRules
 import GlobalBuildRules
 import Utilities

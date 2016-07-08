@@ -135,6 +135,13 @@ namespace Async
             }
             return pSuccessor;
         }
+
+        //template<typename NEXT_RESULT>
+        //PromisePtr<NEXT_RESULT> Catch()
+        //{
+            
+        //}
+
     };
 
     /*

@@ -7,6 +7,7 @@ import FileSystem
 from GlobalBuildRules import GlobalBuild
 import Utilities
 
+
 class LocalBuild(GlobalBuild):
     def __init__(self, projectName):
         super(LocalBuild, self).__init__()
@@ -62,7 +63,6 @@ class LocalBuild(GlobalBuild):
             Utilities.PForkWithVisualStudio(appToExecute="cmake",
                                             argsForApp=CMakeArgs,
                                             wd=wd)
-        
 
     def make(self):
         self.makeTarget(["all"])
